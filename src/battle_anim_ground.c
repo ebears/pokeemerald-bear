@@ -8,6 +8,7 @@
 
 static void AnimBonemerangProjectile(struct Sprite *);
 static void AnimBoneHitProjectile(struct Sprite *);
+static void AnimDirtPlumeParticle(struct Sprite *);
 static void AnimDirtPlumeParticle_Step(struct Sprite *);
 static void AnimDigDirtMound(struct Sprite *);
 static void AnimBonemerangProjectile_Step(struct Sprite *);
@@ -223,7 +224,7 @@ void AnimDirtScatter(struct Sprite *sprite)
     u8 targetXPos, targetYPos;
     s16 xOffset, yOffset;
 
-    InitSpritePosToAnimAttacker(sprite, TRUE);
+    InitSpritePosToAnimAttacker(sprite, 1);
 
     targetXPos = GetBattlerSpriteCoord2(gBattleAnimTarget, BATTLER_COORD_X_2);
     targetYPos = GetBattlerSpriteCoord2(gBattleAnimTarget, BATTLER_COORD_Y_PIC_OFFSET);

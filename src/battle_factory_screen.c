@@ -410,7 +410,7 @@ static const struct OamData sOam_Select_Pokeball =
     .y = 0,
     .affineMode = ST_OAM_AFFINE_OFF,
     .objMode = ST_OAM_OBJ_NORMAL,
-    .mosaic = FALSE,
+    .mosaic = 0,
     .bpp = ST_OAM_4BPP,
     .shape = SPRITE_SHAPE(32x32),
     .x = 0,
@@ -427,7 +427,7 @@ static const struct OamData sOam_Select_Arrow =
     .y = 0,
     .affineMode = ST_OAM_AFFINE_OFF,
     .objMode = ST_OAM_OBJ_NORMAL,
-    .mosaic = FALSE,
+    .mosaic = 0,
     .bpp = ST_OAM_4BPP,
     .shape = SPRITE_SHAPE(16x16),
     .x = 0,
@@ -444,7 +444,7 @@ static const struct OamData sOam_Select_MenuHighlight =
     .y = 0,
     .affineMode = ST_OAM_AFFINE_OFF,
     .objMode = ST_OAM_OBJ_NORMAL,
-    .mosaic = FALSE,
+    .mosaic = 0,
     .bpp = ST_OAM_4BPP,
     .shape = SPRITE_SHAPE(32x16),
     .x = 0,
@@ -461,7 +461,7 @@ static const struct OamData sOam_Select_MonPicBgAnim =
     .y = 0,
     .affineMode = ST_OAM_AFFINE_DOUBLE,
     .objMode = ST_OAM_OBJ_BLEND,
-    .mosaic = FALSE,
+    .mosaic = 0,
     .bpp = ST_OAM_4BPP,
     .shape = SPRITE_SHAPE(64x64),
     .x = 0,
@@ -661,7 +661,7 @@ static const struct OamData sOam_Swap_Pokeball =
     .y = 0,
     .affineMode = ST_OAM_AFFINE_OFF,
     .objMode = ST_OAM_OBJ_NORMAL,
-    .mosaic = FALSE,
+    .mosaic = 0,
     .bpp = ST_OAM_4BPP,
     .shape = SPRITE_SHAPE(32x32),
     .x = 0,
@@ -678,7 +678,7 @@ static const struct OamData sOam_Swap_Arrow =
     .y = 0,
     .affineMode = ST_OAM_AFFINE_OFF,
     .objMode = ST_OAM_OBJ_NORMAL,
-    .mosaic = FALSE,
+    .mosaic = 0,
     .bpp = ST_OAM_4BPP,
     .shape = SPRITE_SHAPE(16x16),
     .x = 0,
@@ -695,7 +695,7 @@ static const struct OamData sOam_Swap_MenuHighlight =
     .y = 0,
     .affineMode = ST_OAM_AFFINE_OFF,
     .objMode = ST_OAM_OBJ_NORMAL,
-    .mosaic = FALSE,
+    .mosaic = 0,
     .bpp = ST_OAM_4BPP,
     .shape = SPRITE_SHAPE(32x16),
     .x = 0,
@@ -712,7 +712,7 @@ static const struct OamData sOam_Swap_MonPicBgAnim =
     .y = 0,
     .affineMode = ST_OAM_AFFINE_DOUBLE,
     .objMode = ST_OAM_OBJ_BLEND,
-    .mosaic = FALSE,
+    .mosaic = 0,
     .bpp = ST_OAM_4BPP,
     .shape = SPRITE_SHAPE(64x64),
     .x = 0,
@@ -1131,7 +1131,8 @@ static void CB2_InitSelectScreen(void)
     switch (gMain.state)
     {
     case 0:
-        TRY_FREE_AND_SET_NULL(sFactorySelectMons);
+        if (sFactorySelectMons != NULL)
+            FREE_AND_SET_NULL(sFactorySelectMons);
         SetHBlankCallback(NULL);
         SetVBlankCallback(NULL);
         CpuFill32(0, (void *)VRAM, VRAM_SIZE);
@@ -1747,9 +1748,9 @@ static void CreateFrontierFactorySelectableMons(u8 firstMonId)
         u16 monId = gSaveBlock2Ptr->frontier.rentalMons[i].monId;
         sFactorySelectScreen->mons[i + firstMonId].monId = monId;
         if (i < rentalRank)
-            ivs = GetFactoryMonFixedIV(challengeNum + 1, FALSE);
+            ivs = GetFactoryMonFixedIV(challengeNum + 1, 0);
         else
-            ivs = GetFactoryMonFixedIV(challengeNum, FALSE);
+            ivs = GetFactoryMonFixedIV(challengeNum, 0);
         CreateMonWithEVSpreadNatureOTID(&sFactorySelectScreen->mons[i + firstMonId].monData,
                                              gFacilityTrainerMons[monId].species,
                                              level,
@@ -2473,7 +2474,7 @@ static void Swap_Task_HandleYesNo(u8 taskId)
                 gTasks[taskId].tSaidYes = TRUE;
                 hiPtr = gTasks[taskId].tFollowUpTaskPtrHi;
                 loPtr = gTasks[taskId].tFollowUpTaskPtrLo;
-                gTasks[taskId].func = (void *)((hiPtr << 16) | loPtr);
+                gTasks[taskId].func = (void*)((hiPtr << 16) | loPtr);
             }
             else
             {
@@ -2482,7 +2483,7 @@ static void Swap_Task_HandleYesNo(u8 taskId)
                 Swap_ErasePopupMenu(SWAP_WIN_YES_NO);
                 hiPtr = gTasks[taskId].tFollowUpTaskPtrHi;
                 loPtr = gTasks[taskId].tFollowUpTaskPtrLo;
-                gTasks[taskId].func = (void *)((hiPtr << 16) | loPtr);
+                gTasks[taskId].func = (void*)((hiPtr << 16) | loPtr);
             }
         }
         else if (JOY_NEW(B_BUTTON))
@@ -2492,7 +2493,7 @@ static void Swap_Task_HandleYesNo(u8 taskId)
             Swap_ErasePopupMenu(SWAP_WIN_YES_NO);
             hiPtr = gTasks[taskId].tFollowUpTaskPtrHi;
             loPtr = gTasks[taskId].tFollowUpTaskPtrLo;
-            gTasks[taskId].func = (void *)((hiPtr << 16) | loPtr);
+            gTasks[taskId].func = (void*)((hiPtr << 16) | loPtr);
         }
         else if (JOY_REPEAT(DPAD_UP))
         {
@@ -2508,7 +2509,7 @@ static void Swap_Task_HandleYesNo(u8 taskId)
     }
 }
 
-static void Swap_HandleQuitSwappingResponse(u8 taskId)
+static void Swap_HandleQuitSwappingResposne(u8 taskId)
 {
     if (gTasks[taskId].tSaidYes == TRUE)
     {
@@ -2532,8 +2533,8 @@ static void Swap_AskQuitSwapping(u8 taskId)
         Swap_PrintOnInfoWindow(gText_QuitSwapping);
         sFactorySwapScreen->monSwapped = FALSE;
         gTasks[taskId].tState = STATE_YESNO_SHOW;
-        gTasks[taskId].tFollowUpTaskPtrHi = (u32)(Swap_HandleQuitSwappingResponse) >> 16;
-        gTasks[taskId].tFollowUpTaskPtrLo = (u32)(Swap_HandleQuitSwappingResponse);
+        gTasks[taskId].tFollowUpTaskPtrHi = (u32)(Swap_HandleQuitSwappingResposne) >> 16;
+        gTasks[taskId].tFollowUpTaskPtrLo = (u32)(Swap_HandleQuitSwappingResposne);
         gTasks[taskId].func = Swap_Task_HandleYesNo;
     }
 }
@@ -4220,12 +4221,17 @@ static void Task_OpenMonPic(u8 taskId)
             return;
         break;
     default:
+        #ifndef UBFIX
         DestroyTask(taskId);
-        // Accessing data of destroyed task. Task data isn't reset until a new task needs that task id.
+        #endif
+        // UB: Should not use the task after it has been deleted.
         if (gTasks[taskId].tIsSwapScreen == TRUE)
             Swap_CreateMonSprite();
         else
             Select_CreateMonSprite();
+        #ifdef UBFIX
+        DestroyTask(taskId);
+        #endif
         return;
     }
     task->tState++;

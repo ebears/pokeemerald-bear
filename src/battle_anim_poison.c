@@ -8,6 +8,7 @@ static void AnimSludgeProjectile_Step(struct Sprite *);
 static void AnimAcidPoisonBubble(struct Sprite *);
 static void AnimSludgeBombHitParticle_Step(struct Sprite *);
 static void AnimAcidPoisonDroplet(struct Sprite *);
+static void AnimBubbleEffect(struct Sprite *);
 static void AnimBubbleEffect_Step(struct Sprite *);
 static void AnimSuckerPunchStep(struct Sprite *sprite);
 static void AnimSuckerPunch(struct Sprite *sprite);
@@ -160,7 +161,7 @@ static const union AffineAnimCmd sAffineAnim_Bubble[] =
     AFFINEANIMCMD_END,
 };
 
-const union AffineAnimCmd *const gAffineAnims_Bubble[] =
+static const union AffineAnimCmd *const sAffineAnims_Bubble[] =
 {
     sAffineAnim_Bubble,
 };
@@ -172,7 +173,7 @@ const struct SpriteTemplate gPoisonBubbleSpriteTemplate =
     .oam = &gOamData_AffineNormal_ObjNormal_16x16,
     .anims = gAnims_PoisonProjectile,
     .images = NULL,
-    .affineAnims = gAffineAnims_Bubble,
+    .affineAnims = sAffineAnims_Bubble,
     .callback = AnimBubbleEffect,
 };
 
@@ -183,7 +184,7 @@ const struct SpriteTemplate gWaterBubbleSpriteTemplate =
     .oam = &gOamData_AffineNormal_ObjBlend_16x16,
     .anims = gAnims_WaterBubble,
     .images = NULL,
-    .affineAnims = gAffineAnims_Bubble,
+    .affineAnims = sAffineAnims_Bubble,
     .callback = AnimBubbleEffect,
 };
 
@@ -403,7 +404,7 @@ static void AnimSludgeProjectile(struct Sprite *sprite)
     if (!gBattleAnimArgs[3])
         StartSpriteAnim(sprite, 2);
 
-    InitSpritePosToAnimAttacker(sprite, TRUE);
+    InitSpritePosToAnimAttacker(sprite, 1);
 
     sprite->data[0] = gBattleAnimArgs[2];
     sprite->data[2] = GetBattlerSpriteCoord(gBattleAnimTarget, BATTLER_COORD_X_2);
@@ -427,9 +428,9 @@ static void AnimAcidPoisonBubble(struct Sprite *sprite)
     if (!gBattleAnimArgs[3])
         StartSpriteAnim(sprite, 2);
 
-    InitSpritePosToAnimAttacker(sprite, TRUE);
+    InitSpritePosToAnimAttacker(sprite, 1);
     if (gBattleAnimArgs[6])
-        SetAverageBattlerPositions(gBattleAnimTarget, TRUE, &l1, &l2);
+        SetAverageBattlerPositions(gBattleAnimTarget, 1, &l1, &l2);
     else
         l1 = GetBattlerSpriteCoord(gBattleAnimTarget, BATTLER_COORD_X_2), l2 = GetBattlerSpriteCoord(gBattleAnimTarget, BATTLER_COORD_Y_PIC_OFFSET);
 
@@ -504,7 +505,7 @@ static void AnimAcidPoisonDroplet(struct Sprite *sprite)
 // arg 0: initial x pixel offset
 // arg 1: initial y pixel offset
 // arg 2: 0 = single-target, 1 = multi-target
-void AnimBubbleEffect(struct Sprite *sprite)
+static void AnimBubbleEffect(struct Sprite *sprite)
 {
     if (!gBattleAnimArgs[2])
     {

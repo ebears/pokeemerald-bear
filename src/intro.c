@@ -23,6 +23,7 @@
 #include "sound.h"
 #include "util.h"
 #include "title_screen.h"
+#include "rhh_copyright.h"
 #include "constants/rgb.h"
 #include "constants/battle_anim.h"
 
@@ -216,7 +217,7 @@ static const struct OamData sOamData_Sparkle =
     .y = DISPLAY_HEIGHT,
     .affineMode = ST_OAM_AFFINE_OFF,
     .objMode = ST_OAM_OBJ_NORMAL,
-    .mosaic = FALSE,
+    .mosaic = 0,
     .bpp = ST_OAM_4BPP,
     .shape = SPRITE_SHAPE(16x16),
     .x = 0,
@@ -284,7 +285,7 @@ static const struct OamData sOamData_Volbeat =
     .y = DISPLAY_HEIGHT,
     .affineMode = ST_OAM_AFFINE_OFF,
     .objMode = ST_OAM_OBJ_NORMAL,
-    .mosaic = FALSE,
+    .mosaic = 0,
     .bpp = ST_OAM_4BPP,
     .shape = SPRITE_SHAPE(32x32),
     .x = 0,
@@ -320,7 +321,7 @@ static const struct OamData sOamData_Torchic =
     .y = DISPLAY_HEIGHT,
     .affineMode = ST_OAM_AFFINE_OFF,
     .objMode = ST_OAM_OBJ_NORMAL,
-    .mosaic = FALSE,
+    .mosaic = 0,
     .bpp = ST_OAM_4BPP,
     .shape = SPRITE_SHAPE(32x32),
     .x = 0,
@@ -380,7 +381,7 @@ static const struct OamData sOamData_Manectric =
     .y = DISPLAY_HEIGHT,
     .affineMode = ST_OAM_AFFINE_OFF,
     .objMode = ST_OAM_OBJ_NORMAL,
-    .mosaic = FALSE,
+    .mosaic = 0,
     .bpp = ST_OAM_4BPP,
     .shape = SPRITE_SHAPE(64x64),
     .x = 0,
@@ -428,7 +429,7 @@ static const struct OamData sOamData_Lightning =
     .y = DISPLAY_HEIGHT,
     .affineMode = ST_OAM_AFFINE_OFF,
     .objMode = ST_OAM_OBJ_NORMAL,
-    .mosaic = FALSE,
+    .mosaic = 0,
     .bpp = ST_OAM_4BPP,
     .shape = SPRITE_SHAPE(32x32),
     .x = 0,
@@ -519,7 +520,7 @@ static const struct OamData sOamData_Bubbles =
     .y = DISPLAY_HEIGHT,
     .affineMode = ST_OAM_AFFINE_OFF,
     .objMode = ST_OAM_OBJ_NORMAL,
-    .mosaic = FALSE,
+    .mosaic = 0,
     .bpp = ST_OAM_4BPP,
     .shape = SPRITE_SHAPE(16x32),
     .x = 0,
@@ -558,7 +559,7 @@ static const struct OamData sOamData_WaterDrop =
     .y = DISPLAY_HEIGHT,
     .affineMode = ST_OAM_AFFINE_OFF,
     .objMode = ST_OAM_OBJ_NORMAL,
-    .mosaic = FALSE,
+    .mosaic = 0,
     .bpp = ST_OAM_4BPP,
     .shape = SPRITE_SHAPE(32x32),
     .x = 0,
@@ -660,7 +661,7 @@ static const struct OamData sOamData_GameFreakLetter =
     .y = DISPLAY_HEIGHT,
     .affineMode = ST_OAM_AFFINE_DOUBLE,
     .objMode = ST_OAM_OBJ_NORMAL,
-    .mosaic = FALSE,
+    .mosaic = 0,
     .bpp = ST_OAM_4BPP,
     .shape = SPRITE_SHAPE(16x16),
     .x = 0,
@@ -676,7 +677,7 @@ static const struct OamData sOamData_PresentsLetter =
     .y = DISPLAY_HEIGHT,
     .affineMode = ST_OAM_AFFINE_OFF,
     .objMode = ST_OAM_OBJ_NORMAL,
-    .mosaic = FALSE,
+    .mosaic = 0,
     .bpp = ST_OAM_4BPP,
     .shape = SPRITE_SHAPE(8x8),
     .x = 0,
@@ -692,7 +693,7 @@ static const struct OamData sOamData_GameFreakLogo =
     .y = DISPLAY_HEIGHT,
     .affineMode = ST_OAM_AFFINE_DOUBLE,
     .objMode = ST_OAM_OBJ_BLEND,
-    .mosaic = FALSE,
+    .mosaic = 0,
     .bpp = ST_OAM_4BPP,
     .shape = SPRITE_SHAPE(32x64),
     .x = 0,
@@ -931,7 +932,7 @@ static const struct OamData sOamData_FlygonSilhouette =
     .y = DISPLAY_HEIGHT,
     .affineMode = ST_OAM_AFFINE_OFF,
     .objMode = ST_OAM_OBJ_NORMAL,
-    .mosaic = FALSE,
+    .mosaic = 0,
     .bpp = ST_OAM_4BPP,
     .shape = SPRITE_SHAPE(64x32),
     .x = 0,
@@ -983,7 +984,7 @@ static const struct OamData sOamData_RayquazaOrb =
     .y = DISPLAY_HEIGHT,
     .affineMode = ST_OAM_AFFINE_OFF,
     .objMode = ST_OAM_OBJ_NORMAL,
-    .mosaic = FALSE,
+    .mosaic = 0,
     .bpp = ST_OAM_4BPP,
     .shape = SPRITE_SHAPE(64x64),
     .x = 0,
@@ -1024,6 +1025,16 @@ static const struct SpritePalette sSpritePalette_RayquazaOrb[] =
     {},
 };
 
+static void VBlankCB_PretIntro()
+{
+    LoadOam();
+    ProcessSpriteCopyRequests();
+    TransferPlttBuffer();
+    ScanlineEffect_InitHBlankDmaTransfer();
+    RunTasks();
+    AnimateSprites();
+    BuildOamBuffer();
+}
 
 static void VBlankCB_Intro(void)
 {
@@ -1039,7 +1050,7 @@ static void MainCB2_Intro(void)
     AnimateSprites();
     BuildOamBuffer();
     UpdatePaletteFade();
-    if (gMain.newKeys != 0 && !gPaletteFade.active)
+    if (gMain.newKeys && !gPaletteFade.active)
         SetMainCallback2(MainCB2_EndIntro);
     else if (gIntroFrameCounter != -1)
         gIntroFrameCounter++;
@@ -1080,38 +1091,73 @@ static u8 SetUpCopyrightScreen(void)
         CpuFill32(0, (void *)OAM, OAM_SIZE);
         CpuFill16(0, (void *)(PLTT + 2), PLTT_SIZE - 2);
         ResetPaletteFade();
-        LoadCopyrightGraphics(0, 0x3800, 0);
         ScanlineEffect_Stop();
         ResetTasks();
         ResetSpriteData();
         FreeAllSpritePalettes();
-        BeginNormalPaletteFade(PALETTES_ALL, 0, 16, 0, RGB_WHITEALPHA);
         SetGpuReg(REG_OFFSET_BG0CNT, BGCNT_PRIORITY(0)
                                    | BGCNT_CHARBASE(0)
                                    | BGCNT_SCREENBASE(7)
                                    | BGCNT_16COLOR
                                    | BGCNT_TXT256x256);
         EnableInterrupts(INTR_FLAG_VBLANK);
-        SetVBlankCallback(VBlankCB_Intro);
         REG_DISPCNT = DISPCNT_MODE_0 | DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON;
+
+        gMain.state++;
+        break;
+
+    case 1:
+        RhhIntro_InitCopyrightBgs();
+        BeginNormalPaletteFade(0xFFFFFFFF, 0, 0x10, 0, RGB_WHITEALPHA);
+        SetVBlankCallback(VBlankCB_PretIntro);
         SetSerialCallback(SerialCB_CopyrightScreen);
         GameCubeMultiBoot_Init(&gMultibootProgramStruct);
     default:
+        RunTasks();
         UpdatePaletteFade();
         gMain.state++;
         GameCubeMultiBoot_Main(&gMultibootProgramStruct);
         break;
-    case 140:
+
+    case 30:
+        RhhIntro_LoadCopyrightBgGraphics();
+        BeginNormalPaletteFade(0x00000001, 0, 0x10, 0, RGB_BLACK); 
+        UpdatePaletteFade(); 
+        GameCubeMultiBoot_Main(&gMultibootProgramStruct);
+        gMain.state++;
+        break;
+
+    case 31:
+        RhhIntro_LoadCopyrightSpriteGraphics();
+        RhhIntro_CreateCopyRightSprites();
+        UpdatePaletteFade(); 
+        GameCubeMultiBoot_Main(&gMultibootProgramStruct);
+        gMain.state++;
+        break;
+
+    case 45:
+        RhhIntro_ShowRhhCredits();
+        UpdatePaletteFade();
+        GameCubeMultiBoot_Main(&gMultibootProgramStruct);
+        gMain.state++;
+        break;
+
+    case 253:
         GameCubeMultiBoot_Main(&gMultibootProgramStruct);
         if (gMultibootProgramStruct.gcmb_field_2 != 1)
         {
-            BeginNormalPaletteFade(PALETTES_ALL, 0, 0, 16, RGB_BLACK);
+            BeginNormalPaletteFade(0xFFFFFFFF, 3, 0, 0x10, RGB_BLACK);
             gMain.state++;
         }
         break;
-    case 141:
+    case 254:
         if (UpdatePaletteFade())
             break;
+        RhhIntro_DestroyRhhCreditSprites();
+        gMain.state++;
+        break;
+
+    case 255:
         CreateTask(Task_Scene1_Load, 0);
         SetMainCallback2(MainCB2_Intro);
         if (gMultibootProgramStruct.gcmb_field_2 != 0)
@@ -1848,7 +1894,7 @@ static void Task_Scene3_StartGroudon(u8 taskId)
 {
     gTasks[taskId].tState = 0;
     gTasks[taskId].func = Task_Scene3_Groudon;
-    ScanlineEffect_InitWave(0, 160, 4, 4, 1, SCANLINE_EFFECT_REG_BG1HOFS, FALSE);
+    ScanlineEffect_InitWave(0, 160, 4, 4, 1, SCANLINE_EFFECT_REG_BG1HOFS, 0);
 }
 
 #define tScreenX data[1]
@@ -2058,7 +2104,7 @@ static void Task_Scene3_LoadKyogre(u8 taskId)
     gTasks[taskId].tDelay = 16;
     gTasks[taskId].tZoom = 256;
     PanFadeAndZoomScreen(gTasks[taskId].tScreenX, gTasks[taskId].tScreenY, gTasks[taskId].tZoom, 0);
-    ScanlineEffect_InitWave(0, 0xA0, 4, 4, 1, SCANLINE_EFFECT_REG_BG1VOFS, FALSE);
+    ScanlineEffect_InitWave(0, 0xA0, 4, 4, 1, SCANLINE_EFFECT_REG_BG1VOFS, 0);
 }
 
 static void Task_Scene3_Kyogre(u8 taskId)
@@ -2933,7 +2979,7 @@ static void SpriteCB_WaterDrop_ReachLeafEnd(struct Sprite *sprite)
     SetOamMatrix(sprite->data[1], sprite->data[6] + 64, 0, 0, sprite->data[6] + 64);
     SetOamMatrix(sprite->data[1] + 1, sprite->data[6] + 64, 0, 0, sprite->data[6] + 64);
     SetOamMatrix(sprite->data[1] + 2, sprite->data[6] + 64, 0, 0, sprite->data[6] + 64);
-    if (sprite->data[4] != MAX_SPRITES)
+    if (sprite->data[4] != 64)
     {
         u16 sinIdx;
         sprite->data[4] -= 8;
@@ -3322,29 +3368,24 @@ static u8 CreateGameFreakLogoSprites(s16 x, s16 y, s16 unused)
 #undef sLetterX
 #undef COLOR_CHANGES
 
-#define sScale   data[1]
-#define sRot     data[2]
-#define sPos     data[3]
-#define sTimer   data[7]
-
 static void SpriteCB_FlygonSilhouette(struct Sprite *sprite)
 {
-    sprite->sTimer++;
+    sprite->data[7]++;
 
     if (sprite->sState != 0)
     {
-        s16 sin;
-        s16 cos;
+        s16 sin1;
+        s16 sin2;
 
         s16 a, b, c, d;
-        // Determines rotation of the sprite
-        sin = gSineTable[(u8)sprite->sRot];
-        cos = gSineTable[(u8)(sprite->sRot + 64)];
-        // Converts rotation and scale into the OAM matrix
-        d = Q_8_8_TO_INT( cos * sprite->sScale);
-        c = Q_8_8_TO_INT(-sin * sprite->sScale);
-        b = Q_8_8_TO_INT( sin * sprite->sScale);
-        a = Q_8_8_TO_INT( cos * sprite->sScale);
+
+        sin1 = gSineTable[(u8)sprite->data[2]];
+        sin2 = gSineTable[(u8)(sprite->data[2] + 64)];
+
+        d = Q_8_8_TO_INT(sin2 * sprite->data[1]);
+        c = Q_8_8_TO_INT(-sin1 * sprite->data[1]);
+        b = Q_8_8_TO_INT(sin1 * sprite->data[1]);
+        a = Q_8_8_TO_INT(sin2 * sprite->data[1]);
 
         SetOamMatrix(1, a, b, c, d);
     }
@@ -3358,40 +3399,35 @@ static void SpriteCB_FlygonSilhouette(struct Sprite *sprite)
         CalcCenterToCornerVec(sprite, SPRITE_SHAPE(64x32), SPRITE_SIZE(64x32), ST_OAM_AFFINE_DOUBLE);
         sprite->invisible = FALSE;
         sprite->sState = 1;
-        sprite->sScale = 128;
-        sprite->sRot = 0;
-        sprite->sPos = 0;
+        sprite->data[1] = 0x80;
+        sprite->data[2] = 0;
+        sprite->data[3] = 0;
         break;
     case 1:
-        sprite->x2 = -Sin((u8)sprite->sPos, 140);
-        sprite->y2 = -Sin((u8)sprite->sPos, 120);
-        sprite->sScale += 7;
-        sprite->sPos += 3;
+        sprite->x2 = -Sin((u8)sprite->data[3], 140);
+        sprite->y2 = -Sin((u8)sprite->data[3], 120);
+        sprite->data[1] += 7;
+        sprite->data[3] += 3;
         if (sprite->x + sprite->x2 <= -16)
         {
             sprite->oam.priority = 3;
             sprite->sState++;
             sprite->x = 20;
             sprite->y = 40;
-            sprite->sScale = 512;
-            sprite->sRot = 0;
-            sprite->sPos = 16;
+            sprite->data[1] = 0x200;
+            sprite->data[2] = 0;
+            sprite->data[3] = 0x10;
         }
         break;
     case 2:
-        sprite->x2 = Sin((u8)sprite->sPos, 34);
-        sprite->y2 = -Cos((u8)sprite->sPos, 60);
-        sprite->sScale += 2;
-        if (sprite->sTimer % 5 == 0)
-            sprite->sPos++;
+        sprite->x2 = Sin((u8)sprite->data[3], 34);
+        sprite->y2 = -Cos((u8)sprite->data[3], 60);
+        sprite->data[1] += 2;
+        if (sprite->data[7] % 5 == 0)
+            sprite->data[3]++;
         break;
     }
 }
-
-#undef sScale
-#undef sRot
-#undef sPos
-#undef sTimer
 
 static void SpriteCB_RayquazaOrb(struct Sprite *sprite)
 {

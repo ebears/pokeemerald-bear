@@ -15,6 +15,7 @@ static void AnimZapCannonSpark_Step(struct Sprite *);
 static void AnimThunderboltOrb(struct Sprite *);
 static void AnimThunderboltOrb_Step(struct Sprite *);
 static void AnimSparkElectricityFlashing_Step(struct Sprite *);
+static void AnimElectricity(struct Sprite *);
 static void AnimTask_ElectricBolt_Step(u8 taskId);
 static void AnimElectricBoltSegment(struct Sprite *);
 static void AnimThunderWave_Step(struct Sprite *);
@@ -664,7 +665,7 @@ void AnimSparkElectricity(struct Sprite *sprite)
 
 void AnimZapCannonSpark(struct Sprite *sprite)
 {
-    InitSpritePosToAnimAttacker(sprite, TRUE);
+    InitSpritePosToAnimAttacker(sprite, 1);
     sprite->data[0] = gBattleAnimArgs[3];
     sprite->data[1] = sprite->x;
     sprite->data[2] = GetBattlerSpriteCoord(gBattleAnimTarget, BATTLER_COORD_X_2);
@@ -676,7 +677,7 @@ void AnimZapCannonSpark(struct Sprite *sprite)
     sprite->data[7] = gBattleAnimArgs[4];
     sprite->oam.tileNum += gBattleAnimArgs[6] * 4;
     sprite->callback = AnimZapCannonSpark_Step;
-    sprite->callback(sprite);
+    AnimZapCannonSpark_Step(sprite);
 }
 
 static void AnimZapCannonSpark_Step(struct Sprite *sprite)
@@ -757,7 +758,7 @@ static void AnimSparkElectricityFlashing_Step(struct Sprite *sprite)
 }
 
 // Electricity arcs around the target. Used for Paralysis and various electric move hits
-void AnimElectricity(struct Sprite *sprite)
+static void AnimElectricity(struct Sprite *sprite)
 {
     if (!InitSpritePosToAnimBattler(gBattleAnimArgs[4], sprite, FALSE))
         return;
@@ -1262,7 +1263,7 @@ void AnimTask_ShockWaveProgressingBolt(u8 taskId)
         task->data[4] = 7;
         task->data[5] = -1;
         task->data[11] = 12;
-        task->data[12] = BattleAnimAdjustPanning(SOUND_PAN_ATTACKER);
+        task->data[12] = BattleAnimAdjustPanning(task->data[11] - 76);
         task->data[13] = BattleAnimAdjustPanning(SOUND_PAN_TARGET);
         task->data[14] = task->data[12];
         task->data[15] = (task->data[13] - task->data[12]) / 3;

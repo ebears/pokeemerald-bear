@@ -22,7 +22,7 @@ LittlerootTown_BrendansHouse_2F_EventScript_TryUpdateBrendanPos::
 	checkplayergender
 	goto_if_eq VAR_RESULT, MALE, LittlerootTown_BrendansHouse_2F_EventScript_Ret
 	@ Odd that the MaysHouse equivalent was used below instead
-	goto_if_ge VAR_DEX_UPGRADE_JOHTO_STARTER_STATE, 2, LittlerootTown_MaysHouse_2F_EventScript_Ret
+	goto_if_ge VAR_DEX_UPGRADE_JOHTO_STARTER_STATE, 2 LittlerootTown_MaysHouse_2F_EventScript_Ret
 	setobjectxyperm LOCALID_RIVAL, 0, 2
 	setobjectmovementtype LOCALID_RIVAL, MOVEMENT_TYPE_FACE_UP
 	return
@@ -243,7 +243,7 @@ LittlerootTown_BrendansHouse_2F_EventScript_PC::
 	end
 
 LittlerootTown_BrendansHouse_2F_EventScript_CheckPlayersPC::
-	setvar VAR_0x8004, PC_LOCATION_BRENDANS_HOUSE
+	setvar VAR_0x8004, 1
 	special DoPCTurnOnEffect
 	playse SE_PC_ON
 	msgbox gText_PlayerHouseBootPC, MSGBOX_DEFAULT
@@ -253,7 +253,7 @@ LittlerootTown_BrendansHouse_2F_EventScript_CheckPlayersPC::
 	end
 
 LittlerootTown_BrendansHouse_2F_EventScript_TurnOffPlayerPC::
-	setvar VAR_0x8004, PC_LOCATION_BRENDANS_HOUSE
+	setvar VAR_0x8004, 1
 	playse SE_PC_OFF
 	special DoPCTurnOffEffect
 	releaseall
@@ -277,26 +277,26 @@ PlayersHouse_2F_Text_ClockIsStopped:
 	.string "Better set it and start it!$"
 
 PlayersHouse_2F_Text_HowDoYouLikeYourRoom:
-	.string "MOM: {PLAYER}, how do you like your\n"
+	.string "Mom: {PLAYER}, how do you like your\n"
 	.string "new room?\p"
 	.string "Good! Everything's put away neatly!\p"
 	.string "They finished moving everything in\n"
 	.string "downstairs, too.\p"
-	.string "POKéMON movers are so convenient!\p"
+	.string "Pokémon movers are so convenient!\p"
 	.string "Oh, you should make sure that\n"
 	.string "everything's all there on your desk.$"
 
 PlayersHouse_2F_Text_Notebook:
 	.string "{PLAYER} flipped open the notebook.\p"
-	.string "ADVENTURE RULE NO. 1\n"
-	.string "Open the MENU with START.\p"
-	.string "ADVENTURE RULE NO. 2\n"
-	.string "Record your progress with SAVE.\p"
+	.string "Adventure Rule No. 1\n"
+	.string "Open the Menu with Start.\p"
+	.string "Adventure Rule No. 2\n"
+	.string "Record your progress with Save.\p"
 	.string "The remaining pages are blank…$"
 
 Common_Text_LookCloserAtMap:
 	.string "{PLAYER} took a closer look at the\n"
-	.string "HOENN region map.$"
+	.string "Hoenn region map.$"
 
 PlayersHouse_2F_Text_ItsAGameCube:
 	.string "It's a Nintendo GameCube.\p"

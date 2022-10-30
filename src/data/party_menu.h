@@ -29,6 +29,12 @@ static const struct BgTemplate sPartyMenuBgTemplates[] =
     },
 };
 
+enum
+{
+    PARTY_BOX_LEFT_COLUMN,
+    PARTY_BOX_RIGHT_COLUMN
+};
+
 static const struct PartyMenuBoxInfoRects sPartyBoxInfoRects[] =
 {
     [PARTY_BOX_LEFT_COLUMN] =
@@ -106,8 +112,8 @@ static const u8 sPartyMenuSpriteCoords[PARTY_LAYOUT_COUNT][PARTY_SIZE][4 * 2] =
 };
 
 // Used only when both Cancel and Confirm are present
-static const u32 sConfirmButton_Tilemap[] = INCBIN_U32("graphics/party_menu/confirm_button.bin");
-static const u32 sCancelButton_Tilemap[] = INCBIN_U32("graphics/party_menu/cancel_button.bin");
+static const u32 sConfirmButton_Tilemap[] = INCBIN_U32("graphics/interface/party_menu_confirm_button.bin");
+static const u32 sCancelButton_Tilemap[] = INCBIN_U32("graphics/interface/party_menu_cancel_button.bin");
 
 // Text colors for BG, FG, and Shadow in that order
 static const u8 sFontColorTable[][3] =
@@ -559,14 +565,34 @@ static const struct WindowTemplate sUnusedWindowTemplate2 =
     .baseBlock = 0x39D,
 };
 
-// Plain tilemaps for party menu slots.
-// The versions with no HP bar are used by eggs, and in certain displays like registering at a battle facility.
-// There is no empty version of the main slot because it shouldn't ever be empty.
-static const u8 sSlotTilemap_Main[]      = INCBIN_U8("graphics/party_menu/slot_main.bin");
-static const u8 sSlotTilemap_MainNoHP[]  = INCBIN_U8("graphics/party_menu/slot_main_no_hp.bin");
-static const u8 sSlotTilemap_Wide[]      = INCBIN_U8("graphics/party_menu/slot_wide.bin");
-static const u8 sSlotTilemap_WideNoHP[]  = INCBIN_U8("graphics/party_menu/slot_wide_no_hp.bin");
-static const u8 sSlotTilemap_WideEmpty[] = INCBIN_U8("graphics/party_menu/slot_wide_empty.bin");
+// Tile nums
+static const u8 sMainSlotTileNums[] = {24, 25, 25, 25, 25, 25, 25, 25, 25, 26,
+                                       32, 33, 33, 33, 33, 33, 33, 33, 33, 34,
+                                       32, 33, 33, 33, 33, 33, 33, 33, 33, 34,
+                                       32, 33, 33, 33, 33, 33, 33, 33, 33, 34,
+                                       40, 59, 60, 58, 58, 58, 58, 58, 58, 61,
+                                       15, 16, 16, 16, 16, 16, 16, 16, 16, 17,
+                                       46, 47, 47, 47, 47, 47, 47, 47, 47, 48};
+
+static const u8 sMainSlotTileNums_Egg[] = {24, 25, 25, 25, 25, 25, 25, 25, 25, 26,
+                                           32, 33, 33, 33, 33, 33, 33, 33, 33, 34,
+                                           32, 33, 33, 33, 33, 33, 33, 33, 33, 34,
+                                           32, 33, 33, 33, 33, 33, 33, 33, 33, 34,
+                                           40, 41, 41, 41, 41, 41, 41, 41, 41, 42,
+                                           15, 16, 16, 16, 16, 16, 16, 16, 16, 17,
+                                           46, 47, 47, 47, 47, 47, 47, 47, 47, 48};
+
+static const u8 sOtherSlotsTileNums[] = {43, 44, 44, 44, 44, 44, 44, 44, 44, 44, 44, 44, 44, 44, 44, 44, 44, 45,
+                                         49, 33, 33, 33, 33, 33, 33, 33, 33, 52, 53, 51, 51, 51, 51, 51, 51, 54,
+                                         55, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 57};
+
+static const u8 sOtherSlotsTileNums_Egg[] = {43, 44, 44, 44, 44, 44, 44, 44, 44, 44, 44, 44, 44, 44, 44, 44, 44, 45,
+                                             49, 33, 33, 33, 33, 33, 33, 33, 33, 33, 33, 33, 33, 33, 33, 33, 33, 50,
+                                             55, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 57};
+
+static const u8 sEmptySlotTileNums[] = {21, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 23,
+                                        30, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 31,
+                                        37, 38, 38, 38, 38, 38, 38, 38, 38, 38, 38, 38, 38, 38, 38, 38, 38, 39};
 
 // Palette offsets
 static const u8 sGenderPalOffsets[] = {11, 12};
@@ -651,6 +677,51 @@ static const u16 sUnusedData[] =
     0x0121, 0x013b, 0x000f, 0x0013, 0x0039, 0x0046, 0x0094, 0x00f9, 0x007f, 0x0123,
 };
 
+enum
+{
+    MENU_SUMMARY,
+    MENU_SWITCH,
+    MENU_CANCEL1,
+    MENU_ITEM,
+    MENU_GIVE,
+    MENU_TAKE_ITEM,
+    MENU_MAIL,
+    MENU_TAKE_MAIL,
+    MENU_READ,
+    MENU_CANCEL2,
+    MENU_SHIFT,
+    MENU_SEND_OUT,
+    MENU_ENTER,
+    MENU_NO_ENTRY,
+    MENU_STORE,
+    MENU_REGISTER,
+    MENU_TRADE1,
+    MENU_TRADE2,
+    MENU_TOSS,
+    MENU_FIELD_MOVES,
+};
+
+enum
+{
+    FIELD_MOVE_CUT,
+    FIELD_MOVE_FLASH,
+    FIELD_MOVE_ROCK_SMASH,
+    FIELD_MOVE_STRENGTH,
+    FIELD_MOVE_SURF,
+    FIELD_MOVE_FLY,
+    FIELD_MOVE_DIVE,
+    FIELD_MOVE_WATERFALL,
+    FIELD_MOVE_TELEPORT,
+    FIELD_MOVE_DIG,
+    FIELD_MOVE_SECRET_POWER,
+    FIELD_MOVE_MILK_DRINK,
+    FIELD_MOVE_SOFT_BOILED,
+    FIELD_MOVE_SWEET_SCENT,
+};
+
+// What a weird choice of table termination;
+#define FIELD_MOVE_TERMINATOR MOVE_SWORDS_DANCE
+
 struct
 {
     const u8 *text;
@@ -706,6 +777,25 @@ static const u8 sPartyMenuAction_TradeSummaryCancel1[] = {MENU_TRADE1, MENU_SUMM
 static const u8 sPartyMenuAction_TradeSummaryCancel2[] = {MENU_TRADE2, MENU_SUMMARY, MENU_CANCEL1};
 static const u8 sPartyMenuAction_TakeItemTossCancel[] = {MENU_TAKE_ITEM, MENU_TOSS, MENU_CANCEL1};
 
+// IDs for the action lists that appear when a party mon is selected
+enum
+{
+    ACTIONS_NONE,
+    ACTIONS_SWITCH,
+    ACTIONS_SHIFT,
+    ACTIONS_SEND_OUT,
+    ACTIONS_ENTER,
+    ACTIONS_NO_ENTRY,
+    ACTIONS_STORE,
+    ACTIONS_SUMMARY_ONLY,
+    ACTIONS_ITEM,
+    ACTIONS_MAIL,
+    ACTIONS_REGISTER,
+    ACTIONS_TRADE,
+    ACTIONS_SPIN_TRADE,
+    ACTIONS_TAKEITEM_TOSS
+};
+
 static const u8 *const sPartyMenuActions[] =
 {
     [ACTIONS_NONE]          = NULL,
@@ -742,32 +832,17 @@ static const u8 sPartyMenuActionCounts[] =
     [ACTIONS_TAKEITEM_TOSS] = ARRAY_COUNT(sPartyMenuAction_TakeItemTossCancel)
 };
 
-static const u16 sFieldMoves[FIELD_MOVES_COUNT + 1] =
+static const u16 sFieldMoves[] =
 {
-    [FIELD_MOVE_CUT]          = MOVE_CUT,
-    [FIELD_MOVE_FLASH]        = MOVE_FLASH,
-    [FIELD_MOVE_ROCK_SMASH]   = MOVE_ROCK_SMASH,
-    [FIELD_MOVE_STRENGTH]     = MOVE_STRENGTH,
-    [FIELD_MOVE_SURF]         = MOVE_SURF,
-    [FIELD_MOVE_FLY]          = MOVE_FLY,
-    [FIELD_MOVE_DIVE]         = MOVE_DIVE,
-    [FIELD_MOVE_WATERFALL]    = MOVE_WATERFALL,
-    [FIELD_MOVE_TELEPORT]     = MOVE_TELEPORT,
-    [FIELD_MOVE_DIG]          = MOVE_DIG,
-    [FIELD_MOVE_SECRET_POWER] = MOVE_SECRET_POWER,
-    [FIELD_MOVE_MILK_DRINK]   = MOVE_MILK_DRINK,
-    [FIELD_MOVE_SOFT_BOILED]  = MOVE_SOFT_BOILED,
-    [FIELD_MOVE_SWEET_SCENT]  = MOVE_SWEET_SCENT,
-    // NOTE: This value is used as the terminal value for the table. There's no reason to do this, as the size of the table is known.
-    //       Whichever move shares this value (MOVE_SWORDS_DANCE by default) if present will be treated as the end of the array rather than a field move.
-    [FIELD_MOVES_COUNT]       = FIELD_MOVES_COUNT
+    MOVE_CUT, MOVE_FLASH, MOVE_ROCK_SMASH, MOVE_STRENGTH, MOVE_SURF, MOVE_FLY, MOVE_DIVE, MOVE_WATERFALL, MOVE_TELEPORT,
+    MOVE_DIG, MOVE_SECRET_POWER, MOVE_MILK_DRINK, MOVE_SOFT_BOILED, MOVE_SWEET_SCENT, FIELD_MOVE_TERMINATOR
 };
 
 struct
 {
     bool8 (*fieldMoveFunc)(void);
     u8 msgId;
-} static const sFieldMoveCursorCallbacks[FIELD_MOVES_COUNT] =
+} static const sFieldMoveCursorCallbacks[] =
 {
     [FIELD_MOVE_CUT]          = {SetUpFieldMove_Cut,         PARTY_MSG_NOTHING_TO_CUT},
     [FIELD_MOVE_FLASH]        = {SetUpFieldMove_Flash,       PARTY_MSG_CANT_USE_HERE},
@@ -789,8 +864,8 @@ static const u8 *const sUnionRoomTradeMessages[] =
 {
     [UR_TRADE_MSG_NOT_MON_PARTNER_WANTS - 1]       = gText_NotPkmnOtherTrainerWants,
     [UR_TRADE_MSG_NOT_EGG - 1]                     = gText_ThatIsntAnEgg,
-    [UR_TRADE_MSG_MON_CANT_BE_TRADED_NOW - 1]      = gText_PkmnCantBeTradedNow,
-    [UR_TRADE_MSG_MON_CANT_BE_TRADED - 1]          = gText_PkmnCantBeTraded,
+    [UR_TRADE_MSG_MON_CANT_BE_TRADED_1 - 1]        = gText_PkmnCantBeTradedNow,
+    [UR_TRADE_MSG_MON_CANT_BE_TRADED_2 - 1]        = gText_PkmnCantBeTradedNow,
     [UR_TRADE_MSG_PARTNERS_MON_CANT_BE_TRADED - 1] = gText_OtherTrainersPkmnCantBeTraded,
     [UR_TRADE_MSG_EGG_CANT_BE_TRADED -1]           = gText_EggCantBeTradedNow,
     [UR_TRADE_MSG_PARTNER_CANT_ACCEPT_MON - 1]     = gText_OtherTrainerCantAcceptPkmn,
@@ -798,15 +873,15 @@ static const u8 *const sUnionRoomTradeMessages[] =
     [UR_TRADE_MSG_CANT_TRADE_WITH_PARTNER_2 - 1]   = gText_CantTradeWithTrainer,
 };
 
-static const u32 sHeldItemGfx[] = INCBIN_U32("graphics/party_menu/hold_icons.4bpp");
-static const u16 sHeldItemPalette[] = INCBIN_U16("graphics/party_menu/hold_icons.gbapal");
+static const u32 sHeldItemGfx[] = INCBIN_U32("graphics/interface/hold_icons.4bpp");
+static const u16 sHeldItemPalette[] = INCBIN_U16("graphics/interface/hold_icons.gbapal");
 
 static const struct OamData sOamData_HeldItem =
 {
     .y = 0,
     .affineMode = ST_OAM_AFFINE_OFF,
     .objMode = ST_OAM_OBJ_NORMAL,
-    .mosaic = FALSE,
+    .mosaic = 0,
     .bpp = ST_OAM_4BPP,
     .shape = SPRITE_SHAPE(8x8),
     .x = 0,
@@ -838,23 +913,23 @@ static const union AnimCmd *const sSpriteAnimTable_HeldItem[] =
 
 static const struct SpriteSheet sSpriteSheet_HeldItem =
 {
-    .data = sHeldItemGfx, .size = sizeof(sHeldItemGfx), .tag = TAG_HELD_ITEM
+    sHeldItemGfx, sizeof(sHeldItemGfx), 0xd750
 };
 
 static const struct SpritePalette sSpritePalette_HeldItem =
 {
-    .data = sHeldItemPalette, .tag = TAG_HELD_ITEM
+    sHeldItemPalette, 0xd750
 };
 
 static const struct SpriteTemplate sSpriteTemplate_HeldItem =
 {
-    .tileTag = TAG_HELD_ITEM,
-    .paletteTag = TAG_HELD_ITEM,
-    .oam = &sOamData_HeldItem,
-    .anims = sSpriteAnimTable_HeldItem,
-    .images = NULL,
-    .affineAnims = gDummySpriteAffineAnimTable,
-    .callback = SpriteCallbackDummy
+    0xd750,
+    0xd750,
+    &sOamData_HeldItem,
+    sSpriteAnimTable_HeldItem,
+    NULL,
+    gDummySpriteAffineAnimTable,
+    SpriteCallbackDummy
 };
 
 static const struct OamData sOamData_MenuPokeball =
@@ -862,7 +937,7 @@ static const struct OamData sOamData_MenuPokeball =
     .y = 0,
     .affineMode = ST_OAM_AFFINE_OFF,
     .objMode = ST_OAM_OBJ_NORMAL,
-    .mosaic = FALSE,
+    .mosaic = 0,
     .bpp = ST_OAM_4BPP,
     .shape = SPRITE_SHAPE(32x32),
     .x = 0,
@@ -894,19 +969,19 @@ static const union AnimCmd *const sSpriteAnimTable_MenuPokeball[] =
 
 static const struct CompressedSpriteSheet sSpriteSheet_MenuPokeball =
 {
-    gPartyMenuPokeball_Gfx, 0x400, TAG_POKEBALL
+    gPartyMenuPokeball_Gfx, 0x400, 0x04b0
 };
 
 static const struct CompressedSpritePalette sSpritePalette_MenuPokeball =
 {
-    gPartyMenuPokeball_Pal, TAG_POKEBALL
+    gPartyMenuPokeball_Pal, 0x04b0
 };
 
 // Used for the pokeball sprite on each party slot / Cancel button
 static const struct SpriteTemplate sSpriteTemplate_MenuPokeball =
 {
-    .tileTag = TAG_POKEBALL,
-    .paletteTag = TAG_POKEBALL,
+    .tileTag = 0x04b0,
+    .paletteTag = 0x04b0,
     .oam = &sOamData_MenuPokeball,
     .anims = sSpriteAnimTable_MenuPokeball,
     .images = NULL,
@@ -919,7 +994,7 @@ static const struct OamData sOamData_MenuPokeballSmall =
     .y = 0,
     .affineMode = ST_OAM_AFFINE_OFF,
     .objMode = ST_OAM_OBJ_NORMAL,
-    .mosaic = FALSE,
+    .mosaic = 0,
     .bpp = ST_OAM_4BPP,
     .shape = SPRITE_SHAPE(16x16),
     .x = 0,
@@ -980,14 +1055,14 @@ static const union AnimCmd *const sSpriteAnimTable_MenuPokeballSmall[] =
 
 static const struct CompressedSpriteSheet sSpriteSheet_MenuPokeballSmall =
 {
-    gPartyMenuPokeballSmall_Gfx, 0x0300, TAG_POKEBALL_SMALL
+    gPartyMenuPokeballSmall_Gfx, 0x0300, 0x04b1
 };
 
 // Used for the pokeball sprite next to Cancel and Confirm when both are present, otherwise sSpriteTemplate_MenuPokeball is used
 static const struct SpriteTemplate sSpriteTemplate_MenuPokeballSmall =
 {
-    .tileTag = TAG_POKEBALL_SMALL,
-    .paletteTag = TAG_POKEBALL,
+    .tileTag = 1201,
+    .paletteTag = 1200,
     .oam = &sOamData_MenuPokeballSmall,
     .anims = sSpriteAnimTable_MenuPokeballSmall,
     .images = NULL,
@@ -1000,7 +1075,7 @@ static const struct OamData sOamData_StatusCondition =
     .y = 0,
     .affineMode = ST_OAM_AFFINE_OFF,
     .objMode = ST_OAM_OBJ_NORMAL,
-    .mosaic = FALSE,
+    .mosaic = 0,
     .bpp = ST_OAM_4BPP,
     .shape = SPRITE_SHAPE(32x8),
     .x = 0,
@@ -1074,18 +1149,18 @@ static const union AnimCmd *const sSpriteTemplate_StatusCondition[] =
 
 static const struct CompressedSpriteSheet sSpriteSheet_StatusIcons =
 {
-    gStatusGfx_Icons, 0x400, TAG_STATUS_ICONS
+    gStatusGfx_Icons, 0x400, 1202
 };
 
 static const struct CompressedSpritePalette sSpritePalette_StatusIcons =
 {
-    gStatusPal_Icons, TAG_STATUS_ICONS
+    gStatusPal_Icons, 1202
 };
 
-const struct SpriteTemplate gSpriteTemplate_StatusIcons =
+static const struct SpriteTemplate sSpriteTemplate_StatusIcons =
 {
-    .tileTag = TAG_STATUS_ICONS,
-    .paletteTag = TAG_STATUS_ICONS,
+    .tileTag = 1202,
+    .paletteTag = 1202,
     .oam = &sOamData_StatusCondition,
     .anims = sSpriteTemplate_StatusCondition,
     .images = NULL,

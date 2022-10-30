@@ -39,3 +39,6 @@ prefabs.json
 *.diff
 *.sym
 *.js
+tools/poryscript
+Porymap-Animation
+porymap.user.cfg

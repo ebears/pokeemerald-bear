@@ -18,6 +18,7 @@
 #include "constants/frontier_util.h"
 #include "constants/abilities.h"
 #include "constants/battle_config.h"
+#include "constants/easy_chat.h"
 #include "constants/layouts.h"
 #include "constants/rgb.h"
 #include "constants/trainers.h"
@@ -574,7 +575,7 @@ static void SetupRoomObjectEvents(void)
         objGfx1 = OBJ_EVENT_GFX_LINK_RECEPTIONIST;
         break;
     case PIKE_ROOM_NPC:
-        objGfx1 = (u8)(GetNPCRoomGraphicsId());
+        objGfx1 = (u16)(GetNPCRoomGraphicsId());
         break;
     case PIKE_ROOM_STATUS:
         objGfx1 = OBJ_EVENT_GFX_GENTLEMAN;
@@ -685,7 +686,7 @@ static void SetBattlePikeData(void)
 
 static void IsNextRoomFinal(void)
 {
-    if (gSaveBlock2Ptr->frontier.curChallengeBattleNum > NUM_PIKE_ROOMS)
+    if (gSaveBlock2Ptr->frontier.curChallengeBattleNum > 14)
         gSpecialVar_Result = TRUE;
     else
         gSpecialVar_Result = FALSE;
@@ -813,9 +814,6 @@ static bool8 DoesAbilityPreventStatus(struct Pokemon *mon, u32 status)
     u16 ability = GetMonAbility(mon);
     bool8 ret = FALSE;
 
-    if (ability == ABILITY_COMATOSE)
-        return TRUE;
-
     switch (status)
     {
     case STATUS1_FREEZE:
@@ -859,10 +857,8 @@ static bool8 DoesTypePreventStatus(u16 species, u32 status)
         break;
     case STATUS1_PARALYSIS:
         if (gBaseStats[species].type1 == TYPE_GROUND || gBaseStats[species].type2 == TYPE_GROUND
-        #if B_PARALYZE_ELECTRIC >= GEN_6
-            || gBaseStats[species].type1 == TYPE_ELECTRIC || gBaseStats[species].type2 == TYPE_ELECTRIC
-        #endif
-        )
+            || (B_PARALYZE_ELECTRIC >= GEN_6 &&
+                (gBaseStats[species].type1 == TYPE_ELECTRIC || gBaseStats[species].type2 == TYPE_ELECTRIC)))
             ret = TRUE;
         break;
     case STATUS1_BURN:
@@ -1091,7 +1087,7 @@ static u8 GetNextRoomType(void)
     }
 
     nextRoomType = roomCandidates[Random() % numRoomCandidates];
-    Free(roomCandidates);
+    free(roomCandidates);
     if (nextRoomType == PIKE_ROOM_STATUS)
         TryInflictRandomStatus();
 
@@ -1124,20 +1120,20 @@ bool32 TryGenerateBattlePikeWildMon(bool8 checkKeenEyeIntimidate)
     if (gSaveBlock2Ptr->frontier.lvlMode != FRONTIER_LVL_50)
     {
         monLevel = GetHighestLevelInPlayerParty();
-        if (monLevel < FRONTIER_MIN_LEVEL_OPEN)
+        if (monLevel < 60)
         {
-            monLevel = FRONTIER_MIN_LEVEL_OPEN;
+            monLevel = 60;
         }
         else
         {
             monLevel -= wildMons[headerId][pikeMonId].levelDelta;
-            if (monLevel < FRONTIER_MIN_LEVEL_OPEN)
-                monLevel = FRONTIER_MIN_LEVEL_OPEN;
+            if (monLevel < 60)
+                monLevel = 60;
         }
     }
     else
     {
-        monLevel = FRONTIER_MAX_LEVEL_50 - wildMons[headerId][pikeMonId].levelDelta;
+        monLevel = 50 - wildMons[headerId][pikeMonId].levelDelta;
     }
 
     if (checkKeenEyeIntimidate == TRUE && !CanEncounterWildMon(monLevel))
@@ -1165,11 +1161,11 @@ u8 GetBattlePikeWildMonHeaderId(void)
     u8 lvlMode = gSaveBlock2Ptr->frontier.lvlMode;
     u16 winStreak = gSaveBlock2Ptr->frontier.pikeWinStreaks[lvlMode];
 
-    if (winStreak <= 20 * NUM_PIKE_ROOMS)
+    if (winStreak <= 280)
         headerId = 0;
-    else if (winStreak <= 40 * NUM_PIKE_ROOMS)
+    else if (winStreak <= 560)
         headerId = 1;
-    else if (winStreak <= 60 * NUM_PIKE_ROOMS)
+    else if (winStreak <= 840)
         headerId = 2;
     else
         headerId = 3;
@@ -1258,7 +1254,7 @@ static void Task_DoStatusInflictionScreenFlash(u8 taskId)
     {
         if (IsStatusInflictionScreenFlashTaskFinished())
         {
-            ScriptContext_Enable();
+            EnableBothScriptContexts();
             DestroyTask(taskId);
         }
     }
@@ -1370,7 +1366,7 @@ static void SetHintedRoom(void)
         }
 
         gSaveBlock2Ptr->frontier.pikeHintedRoomType = roomCandidates[Random() % count];
-        Free(roomCandidates);
+        free(roomCandidates);
         if (gSaveBlock2Ptr->frontier.pikeHintedRoomType == PIKE_ROOM_STATUS && !AtLeastOneHealthyMon())
             gSaveBlock2Ptr->frontier.pikeHintedRoomType = PIKE_ROOM_NPC;
         if (gSaveBlock2Ptr->frontier.pikeHintedRoomType == PIKE_ROOM_DOUBLE_BATTLE && !AtLeastTwoAliveMons())
@@ -1399,10 +1395,10 @@ static void PrepareOneTrainer(bool8 difficult)
     if (!difficult)
         battleNum = 1;
     else
-        battleNum = FRONTIER_STAGES_PER_CHALLENGE - 1;
+        battleNum = 6;
 
     lvlMode = gSaveBlock2Ptr->frontier.lvlMode;
-    challengeNum = gSaveBlock2Ptr->frontier.pikeWinStreaks[lvlMode] / NUM_PIKE_ROOMS;
+    challengeNum = gSaveBlock2Ptr->frontier.pikeWinStreaks[lvlMode] / 14;
     do
     {
         trainerId = GetRandomScaledFrontierTrainerId(challengeNum, battleNum);
@@ -1416,7 +1412,7 @@ static void PrepareOneTrainer(bool8 difficult)
     gTrainerBattleOpponent_A = trainerId;
     gFacilityTrainers = gBattleFrontierTrainers;
     SetBattleFacilityTrainerGfxId(gTrainerBattleOpponent_A, 0);
-    if (gSaveBlock2Ptr->frontier.curChallengeBattleNum < NUM_PIKE_ROOMS)
+    if (gSaveBlock2Ptr->frontier.curChallengeBattleNum < 14)
         gSaveBlock2Ptr->frontier.trainerIds[gSaveBlock2Ptr->frontier.curChallengeBattleNum - 1] = gTrainerBattleOpponent_A;
 }
 
@@ -1425,7 +1421,7 @@ static void PrepareTwoTrainers(void)
     int i;
     u16 trainerId;
     u8 lvlMode = gSaveBlock2Ptr->frontier.lvlMode;
-    u16 challengeNum = gSaveBlock2Ptr->frontier.pikeWinStreaks[lvlMode] / NUM_PIKE_ROOMS;
+    u16 challengeNum = gSaveBlock2Ptr->frontier.pikeWinStreaks[lvlMode] / 14;
 
     gFacilityTrainers = gBattleFrontierTrainers;
     do
@@ -1440,7 +1436,7 @@ static void PrepareTwoTrainers(void)
 
     gTrainerBattleOpponent_A = trainerId;
     SetBattleFacilityTrainerGfxId(gTrainerBattleOpponent_A, 0);
-    if (gSaveBlock2Ptr->frontier.curChallengeBattleNum <= NUM_PIKE_ROOMS)
+    if (gSaveBlock2Ptr->frontier.curChallengeBattleNum <= 14)
         gSaveBlock2Ptr->frontier.trainerIds[gSaveBlock2Ptr->frontier.curChallengeBattleNum - 1] = gTrainerBattleOpponent_A;
 
     do
@@ -1455,7 +1451,7 @@ static void PrepareTwoTrainers(void)
 
     gTrainerBattleOpponent_B = trainerId;
     SetBattleFacilityTrainerGfxId(gTrainerBattleOpponent_B, 1);
-    if (gSaveBlock2Ptr->frontier.curChallengeBattleNum < NUM_PIKE_ROOMS)
+    if (gSaveBlock2Ptr->frontier.curChallengeBattleNum < 14)
         gSaveBlock2Ptr->frontier.trainerIds[gSaveBlock2Ptr->frontier.curChallengeBattleNum - 2] = gTrainerBattleOpponent_B;
 }
 
@@ -1463,7 +1459,7 @@ static void ClearPikeTrainerIds(void)
 {
     u8 i;
 
-    for (i = 0; i < NUM_PIKE_ROOMS; i++)
+    for (i = 0; i < 14; i++)
         gSaveBlock2Ptr->frontier.trainerIds[i] = 0xFFFF;
 }
 

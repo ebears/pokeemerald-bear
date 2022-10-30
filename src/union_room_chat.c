@@ -793,8 +793,7 @@ static const union AnimCmd *const sAnims_KeyboardCursor[] = {
     sAnim_KeyboardCursorWide_Closed
 };
 
-static const struct SpriteTemplate sSpriteTemplate_KeyboardCursor =
-{
+static const struct SpriteTemplate sSpriteTemplate_KeyboardCursor = {
     .tileTag = GFXTAG_KEYBOARD_CURSOR,
     .paletteTag = PALTAG_INTERFACE,
     .oam = &sOam_KeyboardCursor,
@@ -810,8 +809,7 @@ static const struct OamData sOam_TextEntrySprite = {
     .priority = 2
 };
 
-static const struct SpriteTemplate sSpriteTemplate_TextEntryCursor =
-{
+static const struct SpriteTemplate sSpriteTemplate_TextEntryCursor = {
     .tileTag = GFXTAG_TEXT_ENTRY_CURSOR,
     .paletteTag = PALTAG_INTERFACE,
     .oam = &sOam_TextEntrySprite,
@@ -821,8 +819,7 @@ static const struct SpriteTemplate sSpriteTemplate_TextEntryCursor =
     .callback = SpriteCB_TextEntryCursor
 };
 
-static const struct SpriteTemplate sSpriteTemplate_TextEntryArrow =
-{
+static const struct SpriteTemplate sSpriteTemplate_TextEntryArrow = {
     .tileTag = GFXTAG_TEXT_ENTRY_ARROW,
     .paletteTag = PALTAG_INTERFACE,
     .oam = &sOam_TextEntrySprite,
@@ -871,8 +868,7 @@ static const union AnimCmd *const sAnims_RButtonLabels[] = {
     sAnim_RegisterIcon
 };
 
-static const struct SpriteTemplate sSpriteTemplate_RButtonIcon =
-{
+static const struct SpriteTemplate sSpriteTemplate_RButtonIcon = {
     .tileTag = GFXTAG_RBUTTON_ICON,
     .paletteTag = PALTAG_INTERFACE,
     .oam = &sOam_RButtonIcon,
@@ -882,8 +878,7 @@ static const struct SpriteTemplate sSpriteTemplate_RButtonIcon =
     .callback = SpriteCallbackDummy
 };
 
-static const struct SpriteTemplate sSpriteTemplate_RButtonLabels =
-{
+static const struct SpriteTemplate sSpriteTemplate_RButtonLabels = {
     .tileTag = GFXTAG_RBUTTON_LABELS,
     .paletteTag = PALTAG_INTERFACE,
     .oam = &sOam_RButtonLabel,
@@ -1044,7 +1039,7 @@ static void Chat_HandleInput(void)
         {
             SetChatFunction(CHAT_FUNC_SWITCH);
         }
-        else if (JOY_REPEAT(B_BUTTON))
+        else if (gMain.newAndRepeatedKeys & B_BUTTON)
         {
             if (sChat->bufferCursorPos)
             {
@@ -2165,7 +2160,8 @@ static bool32 IsDisplaySubtask0Active(void)
 static void FreeDisplay(void)
 {
     FreeSprites();
-    TRY_FREE_AND_SET_NULL(sDisplay);
+    if (sDisplay)
+        FREE_AND_SET_NULL(sDisplay);
 
     FreeAllWindowBuffers();
     gScanlineEffect.state = 3;
@@ -2991,7 +2987,7 @@ static void ShowKeyboardSwapMenu(void)
 {
     FillWindowPixelBuffer(3, PIXEL_FILL(1));
     DrawTextBorderOuter(3, 1, 13);
-    PrintMenuActionTextsAtPos(3, FONT_SHORT, 8, 1, 14, ARRAY_COUNT(sKeyboardPageTitleTexts), sKeyboardPageTitleTexts);
+    PrintMenuActionTextsAtPos(3, FONT_SHORT, 8, 1, 14, 5, sKeyboardPageTitleTexts);
     InitMenuNormal(3, FONT_SHORT, 0, 1, 14, 5, GetCurrentKeyboardPage());
     PutWindowTilemap(3);
 }

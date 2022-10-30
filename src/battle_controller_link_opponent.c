@@ -370,13 +370,16 @@ static void TryShinyAnimAfterMonAnim(void)
         {
             TryShinyAnimation(gActiveBattler, &gEnemyParty[gBattlerPartyIndexes[gActiveBattler]]);
         }
-        else if (gBattleSpritesDataPtr->healthBoxesData[gActiveBattler].finishedShinyMonAnim)
+        else
         {
-            gBattleSpritesDataPtr->healthBoxesData[gActiveBattler].triedShinyMonAnim = FALSE;
-            gBattleSpritesDataPtr->healthBoxesData[gActiveBattler].finishedShinyMonAnim = FALSE;
-            FreeSpriteTilesByTag(ANIM_TAG_GOLD_STARS);
-            FreeSpritePaletteByTag(ANIM_TAG_GOLD_STARS);
-            LinkOpponentBufferExecCompleted();
+            if (gBattleSpritesDataPtr->healthBoxesData[gActiveBattler].finishedShinyMonAnim)
+            {
+                gBattleSpritesDataPtr->healthBoxesData[gActiveBattler].triedShinyMonAnim = FALSE;
+                gBattleSpritesDataPtr->healthBoxesData[gActiveBattler].finishedShinyMonAnim = FALSE;
+                FreeSpriteTilesByTag(ANIM_TAG_GOLD_STARS);
+                FreeSpritePaletteByTag(ANIM_TAG_GOLD_STARS);
+                LinkOpponentBufferExecCompleted();
+            }
         }
     }
 }
@@ -388,9 +391,13 @@ static void CompleteOnHealthbarDone(void)
     SetHealthboxSpriteVisible(gHealthboxSpriteIds[gActiveBattler]);
 
     if (hpValue != -1)
-        UpdateHpTextInHealthbox(gHealthboxSpriteIds[gActiveBattler], HP_CURRENT, hpValue, gBattleMons[gActiveBattler].maxHP);
+    {
+        UpdateHpTextInHealthbox(gHealthboxSpriteIds[gActiveBattler], hpValue, HP_CURRENT);
+    }
     else
+    {
         LinkOpponentBufferExecCompleted();
+    }
 }
 
 static void HideHealthboxAfterMonFaint(void)
@@ -621,7 +628,7 @@ static u32 CopyLinkOpponentMonData(u8 monId, u8 *dst)
             moveData.pp[size] = GetMonData(&gEnemyParty[monId], MON_DATA_PP1 + size);
         }
         moveData.ppBonuses = GetMonData(&gEnemyParty[monId], MON_DATA_PP_BONUSES);
-        src = (u8 *)(&moveData);
+        src = (u8*)(&moveData);
         for (size = 0; size < sizeof(moveData); size++)
             dst[size] = src[size];
         break;
@@ -1392,9 +1399,16 @@ static void LinkOpponentHandleMoveAnimation(void)
         gWeatherMoveAnim = gBattleResources->bufferA[gActiveBattler][12] | (gBattleResources->bufferA[gActiveBattler][13] << 8);
         gAnimDisableStructPtr = (struct DisableStruct *)&gBattleResources->bufferA[gActiveBattler][16];
         gTransformedPersonalities[gActiveBattler] = gAnimDisableStructPtr->transformedMonPersonality;
-        gBattleSpritesDataPtr->healthBoxesData[gActiveBattler].animationState = 0;
-        gBattlerControllerFuncs[gActiveBattler] = LinkOpponentDoMoveAnimation;
-        BattleTv_SetDataBasedOnMove(move, gWeatherMoveAnim, gAnimDisableStructPtr);
+        if (IsMoveWithoutAnimation(move, gAnimMoveTurn)) // always returns FALSE
+        {
+            LinkOpponentBufferExecCompleted();
+        }
+        else
+        {
+            gBattleSpritesDataPtr->healthBoxesData[gActiveBattler].animationState = 0;
+            gBattlerControllerFuncs[gActiveBattler] = LinkOpponentDoMoveAnimation;
+            BattleTv_SetDataBasedOnMove(move, gWeatherMoveAnim, gAnimDisableStructPtr);
+        }
     }
 }
 
@@ -1453,7 +1467,7 @@ static void LinkOpponentHandlePrintString(void)
 
     gBattle_BG0_X = 0;
     gBattle_BG0_Y = 0;
-    stringId = (u16 *)(&gBattleResources->bufferA[gActiveBattler][2]);
+    stringId = (u16*)(&gBattleResources->bufferA[gActiveBattler][2]);
     BufferStringBattle(*stringId);
     BattlePutTextOnWindow(gDisplayedStringBattle, B_WIN_MSG);
     gBattlerControllerFuncs[gActiveBattler] = CompleteOnInactiveTextPrinter;
@@ -1745,14 +1759,14 @@ static void LinkOpponentHandleDrawPartyStatusSummary(void)
 
         if (gBattleResources->bufferA[gActiveBattler][2] != 0)
         {
-            if (gBattleSpritesDataPtr->healthBoxesData[gActiveBattler].opponentDrawPartyStatusSummaryDelay < 2)
+            if (gBattleSpritesDataPtr->healthBoxesData[gActiveBattler].field_1_x1E < 2)
             {
-                gBattleSpritesDataPtr->healthBoxesData[gActiveBattler].opponentDrawPartyStatusSummaryDelay++;
+                gBattleSpritesDataPtr->healthBoxesData[gActiveBattler].field_1_x1E++;
                 return;
             }
             else
             {
-                gBattleSpritesDataPtr->healthBoxesData[gActiveBattler].opponentDrawPartyStatusSummaryDelay = 0;
+                gBattleSpritesDataPtr->healthBoxesData[gActiveBattler].field_1_x1E = 0;
             }
         }
 

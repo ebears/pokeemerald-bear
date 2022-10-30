@@ -570,7 +570,7 @@ void BattleTv_SetDataBasedOnString(u16 stringId)
 
     moveSlot = GetBattlerMoveSlotId(gBattlerAttacker, gBattleMsgDataPtr->currentMove);
 
-    if (moveSlot >= MAX_MON_MOVES && IsNotSpecialBattleString(stringId) && stringId > BATTLESTRINGS_TABLE_START)
+    if (moveSlot >= MAX_MON_MOVES && IsNotSpecialBattleString(stringId) && stringId > BATTLESTRINGS_ID_ADDER)
     {
         tvPtr->side[atkSide].faintCause = FNT_OTHER;
         return;
@@ -1435,7 +1435,7 @@ static void TrySetBattleSeminarShow(void)
         return;
     else if (gBattleTypeFlags & (BATTLE_TYPE_PALACE | BATTLE_TYPE_PIKE | BATTLE_TYPE_PYRAMID))
         return;
-    else if (IS_MOVE_STATUS(gBattleMons[gBattlerAttacker].moves[gMoveSelectionCursor[gBattlerAttacker]]))
+    else if (gBattleMoves[gBattleMons[gBattlerAttacker].moves[gMoveSelectionCursor[gBattlerAttacker]]].power == 0)
         return;
 
     i = 0;
@@ -1496,7 +1496,7 @@ static void TrySetBattleSeminarShow(void)
 
 static bool8 ShouldCalculateDamage(u16 moveId, s32 *dmg, u16 *powerOverride)
 {
-    if (IS_MOVE_STATUS(moveId))
+    if (gBattleMoves[moveId].power == 0)
     {
         *dmg = 0;
         return FALSE;

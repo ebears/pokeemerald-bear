@@ -66,6 +66,8 @@ static void AnimPainSplitProjectile(struct Sprite *);
 static void AnimFlatterConfetti(struct Sprite *);
 static void AnimFlatterConfetti_Step(struct Sprite *);
 static void AnimFlatterSpotlight(struct Sprite *);
+static void AnimFlatterSpotlight_Step(struct Sprite *);
+static void AnimReversalOrb(struct Sprite *);
 static void AnimReversalOrb_Step(struct Sprite *);
 static void AnimYawnCloud(struct Sprite *);
 static void AnimYawnCloud_Step(struct Sprite *);
@@ -74,6 +76,7 @@ static void AnimFacadeSweatDrop(struct Sprite *);
 static void AnimRoarNoiseLine(struct Sprite *);
 static void AnimRoarNoiseLine_Step(struct Sprite *);
 static void AnimGlareEyeDot(struct Sprite *);
+static void AnimAssistPawprint(struct Sprite *);
 static void AnimSmellingSaltsHand(struct Sprite *);
 static void AnimSmellingSaltsHand_Step(struct Sprite *);
 static void AnimSmellingSaltExclamation(struct Sprite *);
@@ -1239,6 +1242,17 @@ const struct SpriteTemplate gOmegaStoneSpriteTemplate =
     .callback = AnimSpriteOnMonPos,
 };
 
+const struct SpriteTemplate gPrimalParticlesSpriteTemplate =
+{
+    .tileTag = ANIM_TAG_PRIMAL_PARTICLES,
+    .paletteTag = ANIM_TAG_PRIMAL_PARTICLES,
+    .oam = &gOamData_AffineNormal_ObjBlend_16x16,
+    .anims = gPowerAbsorptionOrbAnimTable,
+    .images = NULL,
+    .affineAnims = gPowerAbsorptionOrbAffineAnimTable,
+    .callback = AnimPowerAbsorptionOrb,
+};
+
 const struct SpriteTemplate gAlphaSymbolSpriteTemplate =
 {
     .tileTag = ANIM_TAG_ALPHA_SYMBOL,
@@ -1295,7 +1309,7 @@ void AnimTask_SmokescreenImpact(u8 taskId)
     SmokescreenImpact(
         GetBattlerSpriteCoord(gBattleAnimTarget, BATTLER_COORD_X_2) + 8,
         GetBattlerSpriteCoord(gBattleAnimTarget, BATTLER_COORD_Y_PIC_OFFSET) + 8,
-        FALSE);
+        0);
     DestroyAnimVisualTask(taskId);
 }
 
@@ -1728,7 +1742,7 @@ static void AnimClappingHand_Step(struct Sprite *sprite)
             sprite->data[2]++;
             if (sprite->data[3] == 0)
             {
-                PlaySE1WithPanning(SE_M_ENCORE, BattleAnimAdjustPanning(SOUND_PAN_ATTACKER));
+                PlaySE1WithPanning(SE_M_ENCORE, BattleAnimAdjustPanning(-64));
             }
         }
     }
@@ -2012,7 +2026,7 @@ static void TormentAttacker_Step(u8 taskId)
 
         y = task->data[3] + task->data[5];
         spriteId = CreateSprite(&gThoughtBubbleSpriteTemplate, x, y, 6 - task->data[1]);
-        PlaySE12WithPanning(SE_M_METRONOME, BattleAnimAdjustPanning(SOUND_PAN_ATTACKER));
+        PlaySE12WithPanning(SE_M_METRONOME, BattleAnimAdjustPanning(-64));
 
         if (spriteId != MAX_SPRITES)
         {
@@ -2189,7 +2203,7 @@ static void AnimWishStar(struct Sprite *sprite)
     if (GetBattlerSide(gBattleAnimAttacker) != B_SIDE_PLAYER)
         sprite->x = -16;
     else
-        sprite->x = DISPLAY_WIDTH + 16;
+        sprite->x = 256;
 
     sprite->y = 0;
     sprite->callback = AnimWishStar_Step;
@@ -2218,7 +2232,7 @@ static void AnimWishStar_Step(struct Sprite *sprite)
     }
 
     newX = sprite->x + sprite->x2 + 32;
-    if (newX > DISPLAY_WIDTH + 64)
+    if (newX > 304)
         DestroyAnimSprite(sprite);
 }
 
@@ -2493,7 +2507,7 @@ void AnimTask_MorningSunLightBeam(u8 taskId)
         gTasks[taskId].data[11] = gBattle_BG1_Y;
 
         gTasks[taskId].data[0]++;
-        PlaySE12WithPanning(SE_M_MORNING_SUN, BattleAnimAdjustPanning(SOUND_PAN_ATTACKER));
+        PlaySE12WithPanning(SE_M_MORNING_SUN, BattleAnimAdjustPanning(-64));
         break;
     case 1:
         if (gTasks[taskId].data[4]++ > 0)
@@ -2528,7 +2542,7 @@ void AnimTask_MorningSunLightBeam(u8 taskId)
         {
             gTasks[taskId].data[3] = 0;
             gTasks[taskId].data[0] = 1;
-            PlaySE12WithPanning(SE_M_MORNING_SUN, BattleAnimAdjustPanning(SOUND_PAN_ATTACKER));
+            PlaySE12WithPanning(SE_M_MORNING_SUN, BattleAnimAdjustPanning(-64));
         }
         break;
     case 4:
@@ -2759,7 +2773,7 @@ static void AnimWeakFrustrationAngerMark(struct Sprite *sprite)
 {
     if (sprite->data[0] == 0)
     {
-        InitSpritePosToAnimAttacker(sprite, FALSE);
+        InitSpritePosToAnimAttacker(sprite, 0);
         sprite->data[0]++;
     }
     else if (sprite->data[0]++ > 20)
@@ -3186,7 +3200,7 @@ static void AnimFlatterSpotlight(struct Sprite *sprite)
     sprite->callback = AnimFlatterSpotlight_Step;
 }
 
-void AnimFlatterSpotlight_Step(struct Sprite *sprite)
+static void AnimFlatterSpotlight_Step(struct Sprite *sprite)
 {
     switch (sprite->data[1])
     {
@@ -3220,7 +3234,7 @@ void AnimFlatterSpotlight_Step(struct Sprite *sprite)
 // Spins an orb around the attacking mon, while its path radius grows and shrinks.
 // arg 0: duration
 // arg 1: initial wave offset
-void AnimReversalOrb(struct Sprite *sprite)
+static void AnimReversalOrb(struct Sprite *sprite)
 {
     sprite->x = GetBattlerSpriteCoord(gBattleAnimAttacker, BATTLER_COORD_X_2);
     sprite->y = GetBattlerSpriteCoord(gBattleAnimAttacker, BATTLER_COORD_Y_PIC_OFFSET);
@@ -3265,7 +3279,7 @@ static void AnimReversalOrb_Step(struct Sprite *sprite)
 // Copies the target mon's sprite, and makes a white silhouette that shrinks away.
 void AnimTask_RolePlaySilhouette(u8 taskId)
 {
-    bool8 isBackPic;
+    u8 isBackPic;
     u32 personality;
     u32 otId;
     u16 species;
@@ -3288,7 +3302,7 @@ void AnimTask_RolePlaySilhouette(u8 taskId)
     {
         if (GetBattlerSide(gBattleAnimAttacker) != B_SIDE_PLAYER)
         {
-            isBackPic = FALSE;
+            isBackPic = 0;
             personality = GetMonData(&gPlayerParty[gBattlerPartyIndexes[gBattleAnimTarget]], MON_DATA_PERSONALITY);
             otId = GetMonData(&gPlayerParty[gBattlerPartyIndexes[gBattleAnimTarget]], MON_DATA_OT_ID);
             if (gBattleSpritesDataPtr->battlerData[gBattleAnimTarget].transformSpecies == SPECIES_NONE)
@@ -3308,7 +3322,7 @@ void AnimTask_RolePlaySilhouette(u8 taskId)
         }
         else
         {
-            isBackPic = TRUE;
+            isBackPic = 1;
             personality = GetMonData(&gEnemyParty[gBattlerPartyIndexes[gBattleAnimTarget]], MON_DATA_PERSONALITY);
             otId = GetMonData(&gEnemyParty[gBattlerPartyIndexes[gBattleAnimTarget]], MON_DATA_OT_ID);
             if (gBattleSpritesDataPtr->battlerData[gBattleAnimTarget].transformSpecies == SPECIES_NONE)
@@ -3799,26 +3813,6 @@ void AnimTask_SlideMonForFocusBand(u8 taskId)
     gTasks[taskId].func = AnimTask_SlideMonForFocusBand_Step1;
 }
 
-#define IDX_ACTIVE_SPRITES 2  // Used by the sprite callback to modify the number of active sprites
-
-// Task data for AnimTask_SquishAndSweatDroplets
-#define tState           data[0]
-#define tTimer           data[1]
-#define tActiveSprites   data[IDX_ACTIVE_SPRITES]
-#define tNumSquishes     data[3]
-#define tBaseX           data[4]
-#define tBaseY           data[5]
-#define tSubpriority     data[6]
-// data[7]-data[15] used by PrepareAffineAnimInTaskData
-#define tBattlerSpriteId data[15]
-
-// Sprite data for AnimFacadeSweatDrop
-#define sTimer            data[0]
-#define sVelocX           data[1]
-#define sVelocY           data[2]
-#define sTaskId           data[3]
-#define sActiveSpritesIdx data[4]
-
 // Squishes the mon vertically and emits sweat droplets a few times.
 // arg 0: battler
 // arg 1: num squishes
@@ -3830,20 +3824,20 @@ void AnimTask_SquishAndSweatDroplets(u8 taskId)
     if (!gBattleAnimArgs[1])
         DestroyAnimVisualTask(taskId);
 
-    task->tState = 0;
-    task->tTimer = 0;
-    task->tActiveSprites = 0;
-    task->tNumSquishes = gBattleAnimArgs[1];
+    task->data[0] = 0;
+    task->data[1] = 0;
+    task->data[2] = 0;
+    task->data[3] = gBattleAnimArgs[1];
     if (gBattleAnimArgs[0] == ANIM_ATTACKER)
         battler = gBattleAnimAttacker;
     else
         battler = gBattleAnimTarget;
 
-    task->tBaseX = GetBattlerSpriteCoord(battler, BATTLER_COORD_X);
-    task->tBaseY = GetBattlerSpriteCoord(battler, BATTLER_COORD_Y);
-    task->tSubpriority = GetBattlerSpriteSubpriority(battler);
-    task->tBattlerSpriteId = GetAnimBattlerSpriteId(gBattleAnimArgs[0]);
-    PrepareAffineAnimInTaskData(task, task->tBattlerSpriteId, gFacadeSquishAffineAnimCmds);
+    task->data[4] = GetBattlerSpriteCoord(battler, BATTLER_COORD_X);
+    task->data[5] = GetBattlerSpriteCoord(battler, BATTLER_COORD_Y);
+    task->data[6] = GetBattlerSpriteSubpriority(battler);
+    task->data[15] = GetAnimBattlerSpriteId(gBattleAnimArgs[0]);
+    PrepareAffineAnimInTaskData(task, task->data[15], gFacadeSquishAffineAnimCmds);
     task->func = AnimTask_SquishAndSweatDroplets_Step;
 }
 
@@ -3851,40 +3845,37 @@ static void AnimTask_SquishAndSweatDroplets_Step(u8 taskId)
 {
     struct Task *task = &gTasks[taskId];
 
-    switch (task->tState)
+    switch (task->data[0])
     {
     case 0:
-        task->tTimer++;
-        if (task->tTimer == 6)
+        task->data[1]++;
+        if (task->data[1] == 6)
             CreateSweatDroplets(taskId, TRUE);
 
-        if (task->tTimer == 18)
+        if (task->data[1] == 18)
             CreateSweatDroplets(taskId, FALSE);
 
         if (!RunAffineAnimFromTaskData(task))
         {
-            if (--task->tNumSquishes == 0)
+            if (--task->data[3] == 0)
             {
-                // Animation is finished
-                task->tState++;
+                task->data[0]++;
             }
             else
             {
-                // Animation continues, more droplet sprites to create
-                task->tTimer = 0;
-                PrepareAffineAnimInTaskData(task, task->tBattlerSpriteId, gFacadeSquishAffineAnimCmds);
+                task->data[1] = 0;
+                PrepareAffineAnimInTaskData(task, task->data[15], gFacadeSquishAffineAnimCmds);
             }
         }
         break;
     case 1:
-        // Wait for sprites to be destroyed before ending task
-        if (task->tActiveSprites == 0)
+        if (task->data[2] == 0)
             DestroyAnimVisualTask(taskId);
         break;
     }
 }
 
-static void CreateSweatDroplets(u8 taskId, bool8 lowerDroplets)
+static void CreateSweatDroplets(u8 taskId, bool8 arg1)
 {
     u8 i;
     s8 xOffset, yOffset;
@@ -3893,7 +3884,7 @@ static void CreateSweatDroplets(u8 taskId, bool8 lowerDroplets)
     s16 yCoords[2];
 
     task = &gTasks[taskId];
-    if (!lowerDroplets)
+    if (!arg1)
     {
         xOffset = 18;
         yOffset = -20;
@@ -3904,53 +3895,38 @@ static void CreateSweatDroplets(u8 taskId, bool8 lowerDroplets)
         yOffset = 20;
     }
 
-    xCoords[0] = task->tBaseX - xOffset;
-    xCoords[1] = task->tBaseX - xOffset - 4;
-    xCoords[2] = task->tBaseX + xOffset;
-    xCoords[3] = task->tBaseX + xOffset + 4;
-    yCoords[0] = task->tBaseY + yOffset;
-    yCoords[1] = task->tBaseY + yOffset + 6;
+    xCoords[0] = task->data[4] - xOffset;
+    xCoords[1] = task->data[4] - xOffset - 4;
+    xCoords[2] = task->data[4] + xOffset;
+    xCoords[3] = task->data[4] + xOffset + 4;
+    yCoords[0] = task->data[5] + yOffset;
+    yCoords[1] = task->data[5] + yOffset + 6;
 
     for (i = 0; i < 4; i++)
     {
-        u8 spriteId = CreateSprite(&gFacadeSweatDropSpriteTemplate, xCoords[i], yCoords[i & 1], task->tSubpriority - 5);
+        u8 spriteId = CreateSprite(&gFacadeSweatDropSpriteTemplate, xCoords[i], yCoords[i & 1], task->data[6] - 5);
         if (spriteId != MAX_SPRITES)
         {
-            gSprites[spriteId].sTimer = 0;
-            gSprites[spriteId].sVelocX = i < 2 ? -2 : 2; // First two travel left, remaining travel right
-            gSprites[spriteId].sVelocY = -1;
-            gSprites[spriteId].sTaskId = taskId;
-            gSprites[spriteId].sActiveSpritesIdx = IDX_ACTIVE_SPRITES;
-            task->tActiveSprites++;
+            gSprites[spriteId].data[0] = 0;
+            gSprites[spriteId].data[1] = i < 2 ? -2 : 2;
+            gSprites[spriteId].data[2] = -1;
+            gSprites[spriteId].data[3] = taskId;
+            gSprites[spriteId].data[4] = 2;
+            task->data[2]++;
         }
     }
 }
 
 static void AnimFacadeSweatDrop(struct Sprite *sprite)
 {
-    sprite->x += sprite->sVelocX;
-    sprite->y += sprite->sVelocY;
-    if (++sprite->sTimer > 6)
+    sprite->x += sprite->data[1];
+    sprite->y += sprite->data[2];
+    if (++sprite->data[0] > 6)
     {
-        gTasks[sprite->sTaskId].data[sprite->sActiveSpritesIdx]--;
+        gTasks[sprite->data[3]].data[sprite->data[4]]--;
         DestroySprite(sprite);
     }
 }
-
-#undef IDX_ACTIVE_SPRITES
-#undef tState
-#undef tTimer
-#undef tActiveSprites
-#undef tNumSquishes
-#undef tBaseX
-#undef tBaseY
-#undef tSubpriority
-#undef tBattlerSpriteId
-#undef sTimer
-#undef sVelocX
-#undef sVelocY
-#undef sTaskId
-#undef sActiveSpritesIdx
 
 // Blends the mon sprite's color with a rotating set of colors.
 // arg 0: battler
@@ -4047,26 +4023,6 @@ static void AnimRoarNoiseLine_Step(struct Sprite *sprite)
         DestroyAnimSprite(sprite);
 }
 
-#define IDX_ACTIVE_SPRITES 10  // Used by the sprite callback to modify the number of active sprites
-
-// Task data for AnimTask_GlareEyeDots
-#define tState         data[0]
-#define tTimer         data[1]
-#define tPairNum       data[2]
-#define tPairMax       data[5]
-#define tDotOffset     data[6]
-#define tIsContest     data[7]
-#define tActiveSprites data[IDX_ACTIVE_SPRITES]
-#define tStartX        data[11]
-#define tStartY        data[12]
-#define tEndX          data[13]
-#define tEndY          data[14]
-
-// Sprite data for AnimGlareEyeDot
-#define sTimer            data[0]
-#define sTaskId           data[1]
-#define sActiveSpritesIdx data[2]
-
 // Makes a series of dots in a trail from the attacker to the target.
 // arg 0: unused
 void AnimTask_GlareEyeDots(u8 taskId)
@@ -4075,25 +4031,25 @@ void AnimTask_GlareEyeDots(u8 taskId)
 
     if (IsContest())
     {
-        task->tPairMax = 8;
-        task->tDotOffset = 3;
-        task->tIsContest = TRUE;
+        task->data[5] = 8;
+        task->data[6] = 3;
+        task->data[7] = 1;
     }
     else
     {
-        task->tPairMax = 12;
-        task->tDotOffset = 3;
-        task->tIsContest = FALSE;
+        task->data[5] = 12;
+        task->data[6] = 3;
+        task->data[7] = 0;
     }
 
     if (GetBattlerSide(gBattleAnimAttacker) == B_SIDE_PLAYER)
-        task->tStartX = GetBattlerSpriteCoord(gBattleAnimAttacker, BATTLER_COORD_X_2) + GetBattlerSpriteCoordAttr(gBattleAnimAttacker, BATTLER_COORD_ATTR_HEIGHT) / 4;
+        task->data[11] = GetBattlerSpriteCoord(gBattleAnimAttacker, BATTLER_COORD_X_2) + GetBattlerSpriteCoordAttr(gBattleAnimAttacker, BATTLER_COORD_ATTR_HEIGHT) / 4;
     else
-        task->tStartX = GetBattlerSpriteCoord(gBattleAnimAttacker, BATTLER_COORD_X_2) - GetBattlerSpriteCoordAttr(gBattleAnimAttacker, BATTLER_COORD_ATTR_HEIGHT) / 4;
+        task->data[11] = GetBattlerSpriteCoord(gBattleAnimAttacker, BATTLER_COORD_X_2) - GetBattlerSpriteCoordAttr(gBattleAnimAttacker, BATTLER_COORD_ATTR_HEIGHT) / 4;
 
-    task->tStartY = GetBattlerSpriteCoord(gBattleAnimAttacker, BATTLER_COORD_Y_PIC_OFFSET) - GetBattlerSpriteCoordAttr(gBattleAnimAttacker, BATTLER_COORD_ATTR_HEIGHT) / 4;
-    task->tEndX = GetBattlerSpriteCoord(gBattleAnimTarget, BATTLER_COORD_X_2);
-    task->tEndY = GetBattlerSpriteCoord(gBattleAnimTarget, BATTLER_COORD_Y_PIC_OFFSET);
+    task->data[12] = GetBattlerSpriteCoord(gBattleAnimAttacker, BATTLER_COORD_Y_PIC_OFFSET) - GetBattlerSpriteCoordAttr(gBattleAnimAttacker, BATTLER_COORD_ATTR_HEIGHT) / 4;
+    task->data[13] = GetBattlerSpriteCoord(gBattleAnimTarget, BATTLER_COORD_X_2);
+    task->data[14] = GetBattlerSpriteCoord(gBattleAnimTarget, BATTLER_COORD_Y_PIC_OFFSET);
     task->func = AnimTask_GlareEyeDots_Step;
 }
 
@@ -4103,121 +4059,102 @@ static void AnimTask_GlareEyeDots_Step(u8 taskId)
     s16 x, y;
     struct Task *task = &gTasks[taskId];
 
-    switch (task->tState)
+    switch (task->data[0])
     {
     case 0:
-        // Wait to create next pair of dots
-        if (++task->tTimer > 3)
+        if (++task->data[1] > 3)
         {
-            task->tTimer = 0;
+            task->data[1] = 0;
             GetGlareEyeDotCoords(
-                task->tStartX,
-                task->tStartY,
-                task->tEndX,
-                task->tEndY,
-                task->tPairMax,
-                task->tPairNum,
+                task->data[11],
+                task->data[12],
+                task->data[13],
+                task->data[14],
+                task->data[5],
+                task->data[2],
                 &x,
                 &y);
 
-            // Create dot pair
             for (i = 0; i < 2; i++)
             {
                 u8 spriteId = CreateSprite(&gGlareEyeDotSpriteTemplate, x, y, 35);
                 if (spriteId != MAX_SPRITES)
                 {
-                    if (!task->tIsContest)
+                    if (task->data[7] == 0)
                     {
                         if (i == 0)
-                            gSprites[spriteId].x2 = gSprites[spriteId].y2 = -task->tDotOffset;
+                            gSprites[spriteId].x2 = gSprites[spriteId].y2 = -task->data[6];
                         else
-                            gSprites[spriteId].x2 = gSprites[spriteId].y2 = task->tDotOffset;
+                            gSprites[spriteId].x2 = gSprites[spriteId].y2 = task->data[6];
                     }
                     else
                     {
                         if (i == 0)
                         {
-                            gSprites[spriteId].x2 = -task->tDotOffset;
-                            gSprites[spriteId].y2 = task->tDotOffset;
+                            gSprites[spriteId].x2 = -task->data[6];
+                            gSprites[spriteId].y2 = task->data[6];
                         }
                         else
                         {
-                            gSprites[spriteId].x2 = task->tDotOffset;
-                            gSprites[spriteId].y2 = -task->tDotOffset;
+                            gSprites[spriteId].x2 = task->data[6];
+                            gSprites[spriteId].y2 = -task->data[6];
                         }
                     }
 
-                    gSprites[spriteId].sTimer = 0;
-                    gSprites[spriteId].sTaskId = taskId;
-                    gSprites[spriteId].sActiveSpritesIdx = IDX_ACTIVE_SPRITES;
-                    task->tActiveSprites++;
+                    gSprites[spriteId].data[0] = 0;
+                    gSprites[spriteId].data[1] = taskId;
+                    gSprites[spriteId].data[2] = 10;
+                    task->data[10]++;
                 }
             }
 
-            if (task->tPairNum == task->tPairMax)
-                task->tState++;
+            if (task->data[2] == task->data[5])
+                task->data[0]++;
 
-            task->tPairNum++;
+            task->data[2]++;
         }
         break;
     case 1:
-        // Wait for sprites to be destroyed before ending task
-        if (task->tActiveSprites == 0)
+        if (task->data[10] == 0)
             DestroyAnimVisualTask(taskId);
         break;
     }
 }
 
-static void GetGlareEyeDotCoords(s16 startX, s16 startY, s16 endX, s16 endY, u8 pairMax, u8 pairNum, s16 *x, s16 *y)
+static void GetGlareEyeDotCoords(s16 arg0, s16 arg1, s16 arg2, s16 arg3, u8 arg4, u8 arg5, s16 *x, s16 *y)
 {
     int x2;
     int y2;
 
-    if (pairNum == 0)
+    if (arg5 == 0)
     {
-        *x = startX;
-        *y = startY;
+        *x = arg0;
+        *y = arg1;
         return;
     }
 
-    if (pairNum >= pairMax)
+    if (arg5 >= arg4)
     {
-        *x = endX;
-        *y = endY;
+        *x = arg2;
+        *y = arg3;
         return;
     }
 
-    pairMax--;
-    x2 = (startX << 8) + pairNum * (((endX - startX) << 8) / pairMax);
-    y2 = (startY << 8) + pairNum * (((endY - startY) << 8) / pairMax);
+    arg4--;
+    x2 = (arg0 << 8) + arg5 * (((arg2 - arg0) << 8) / arg4);
+    y2 = (arg1 << 8) + arg5 * (((arg3 - arg1) << 8) / arg4);
     *x = x2 >> 8;
     *y = y2 >> 8;
 }
 
 static void AnimGlareEyeDot(struct Sprite *sprite)
 {
-    if (++sprite->sTimer > 36)
+    if (++sprite->data[0] > 36)
     {
-        gTasks[sprite->sTaskId].data[sprite->sActiveSpritesIdx]--;
+        gTasks[sprite->data[1]].data[sprite->data[2]]--;
         DestroySprite(sprite);
     }
 }
-
-#undef IDX_ACTIVE_SPRITES
-#undef tState
-#undef tTimer
-#undef tPairNum
-#undef tPairMax
-#undef tDotOffset
-#undef tIsContest
-#undef tActiveSprites
-#undef tStartX
-#undef tStartY
-#undef tEndX
-#undef tEndY
-#undef sTimer
-#undef sTaskId
-#undef sActiveSpritesIdx
 
 // Moves a pawprint in a straight line.
 // arg 0: initial x position
@@ -4225,7 +4162,7 @@ static void AnimGlareEyeDot(struct Sprite *sprite)
 // arg 2: destination x position
 // arg 3: destination y position
 // arg 4: duration
-void AnimAssistPawprint(struct Sprite *sprite)
+static void AnimAssistPawprint(struct Sprite *sprite)
 {
     sprite->x = gBattleAnimArgs[0];
     sprite->y = gBattleAnimArgs[1];
@@ -4900,7 +4837,7 @@ void AnimTask_MonToSubstitute(u8 taskId)
     }
     else
     {
-        LoadBattleMonGfxAndAnimate(gBattleAnimAttacker, FALSE, spriteId);
+        LoadBattleMonGfxAndAnimate(gBattleAnimAttacker, 0, spriteId);
         if (IsContest())
         {
             gSprites[gBattlerSpriteIds[gBattleAnimAttacker]].affineAnims = gAffineAnims_BattleSpriteContest;
@@ -4938,7 +4875,7 @@ static void AnimTask_MonToSubstituteDoll(u8 taskId)
 
         if (gSprites[spriteId].y2 == 0)
         {
-            PlaySE12WithPanning(SE_M_BUBBLE2, BattleAnimAdjustPanning(SOUND_PAN_ATTACKER));
+            PlaySE12WithPanning(SE_M_BUBBLE2, BattleAnimAdjustPanning(-64));
             gTasks[taskId].data[10] -= 0x800;
             gTasks[taskId].data[0]++;
         }
@@ -4960,7 +4897,7 @@ static void AnimTask_MonToSubstituteDoll(u8 taskId)
 
         if (gSprites[spriteId].y2 == 0)
         {
-            PlaySE12WithPanning(SE_M_BUBBLE2, BattleAnimAdjustPanning(SOUND_PAN_ATTACKER));
+            PlaySE12WithPanning(SE_M_BUBBLE2, BattleAnimAdjustPanning(-64));
             DestroyAnimVisualTask(taskId);
         }
         break;
@@ -4997,7 +4934,7 @@ static void AnimBlockX_Step(struct Sprite *sprite)
         sprite->y2 += 10;
         if (sprite->y2 >= 0)
         {
-            PlaySE12WithPanning(SE_M_SKETCH, BattleAnimAdjustPanning(SOUND_PAN_TARGET));
+            PlaySE12WithPanning(SE_M_SKETCH, BattleAnimAdjustPanning(63));
             sprite->y2 = 0;
             sprite->data[0]++;
         }
@@ -5007,7 +4944,7 @@ static void AnimBlockX_Step(struct Sprite *sprite)
         sprite->y2 = -(gSineTable[sprite->data[1]] >> 3);
         if (sprite->data[1] > 0x7F)
         {
-            PlaySE12WithPanning(SE_M_SKETCH, BattleAnimAdjustPanning(SOUND_PAN_TARGET));
+            PlaySE12WithPanning(SE_M_SKETCH, BattleAnimAdjustPanning(63));
             sprite->data[1] = 0;
             sprite->y2 = 0;
             sprite->data[0]++;
@@ -5026,7 +4963,7 @@ static void AnimBlockX_Step(struct Sprite *sprite)
     case 3:
         if (++sprite->data[1] > 8)
         {
-            PlaySE12WithPanning(SE_M_LEER, BattleAnimAdjustPanning(SOUND_PAN_TARGET));
+            PlaySE12WithPanning(SE_M_LEER, BattleAnimAdjustPanning(63));
             sprite->data[1] = 0;
             sprite->data[0]++;
         }
@@ -5190,7 +5127,7 @@ void AnimTask_SnatchOpposingMonMove(u8 taskId)
 
         gTasks[taskId].data[1] &= 0xFF;
         x = gSprites[spriteId].x + gSprites[spriteId].x2;
-        if (x < -32 || x > DISPLAY_WIDTH + 32)
+        if ((u16)(x + 32) > 304)
         {
             gTasks[taskId].data[1] = 0;
             gTasks[taskId].data[0]++;
@@ -5273,7 +5210,7 @@ void AnimTask_SnatchOpposingMonMove(u8 taskId)
             }
         }
 
-        if (x < -32 || x > DISPLAY_WIDTH + 32)
+        if ((u16)(x + 32) > 304)
         {
             gTasks[taskId].data[1] = 0;
             gTasks[taskId].data[0]++;
@@ -5320,7 +5257,7 @@ static void AnimUnusedItemBagSteal(struct Sprite *sprite)
     case 0:
         if (gBattleAnimArgs[7] == -1)
         {
-            PlaySE12WithPanning(SE_M_VITAL_THROW, BattleAnimAdjustPanning(SOUND_PAN_TARGET));
+            PlaySE12WithPanning(SE_M_VITAL_THROW, BattleAnimAdjustPanning(63));
             sprite->y = GetBattlerSpriteCoord(gBattleAnimTarget, BATTLER_COORD_Y) + 16;
             sprite->data[0] = -32;
             sprite->data[7]++;

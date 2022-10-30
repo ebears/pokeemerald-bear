@@ -1,43 +1,92 @@
-# pokeemerald Expansion
+# Pokémon Emerald: bear Edition
 
-## What is the pokeemerald Expansion?
+Just my project aimed at improving Pokemon Emerald. This is based on - and wouldn't be made possible without - the [pokeemerald](https://github.com/pret/pokeemerald) disassembly by PRET.
 
-The Pokeemerald Expansion is a collection of feature branches that can be integrated into existing [pokeemerald](https://github.com/pret/pokeemerald) projects.
+All Pokemon up to Gen. 4 will be obtainable.
 
-## What features are included?
-- Upgraded battle engine.
-    - Fairy Type.
-    - Physical/Special/Status Category Split.
-    - New moves and abilities up to SwSh.
-    - Options to change behaviors and data by generation.
-    - Mega Evolution and Primal Reversion
-    - Z-Moves
-- Pokémon Species from newer Generations (with the option to disable them if needed).
-    - Updates Hoenn's Regional Dex to match ORAS'.
-    - Updates National Dex incorporating all the new species.
-    - Option to change base stats by generation.
-    - New evolution methods.
-    - Hidden Abilities data (How to make them available is up to the user).
-- Items from newer Generations and updated item effects for battle and field use.
+The battle engine balance is completely changed from Gen. 3 - expect a feel more like Gen. 4 or 5.
 
-Certain mechanics, moves, abilities and species sprites are missing. For more information, see [the project's milestones](https://github.com/rh-hideout/pokeemerald-expansion/milestones).
+This is inspired, of course, by the many hacks of [Drayano60](https://twitter.com/drayano60). It is also influenced by [Altered Emerald](https://www.pokecommunity.com/showthread.php?t=386229) and it's interesting expansions to the land of Hoenn.
 
-### [Documentation on features can be found here](https://github.com/rh-hideout/pokeemerald-expansion/wiki)
+## Information
 
-## Who maintains the project?
+### Notable Features
 
-The project was originally started by DizzyEgg alongside other contributors.
+[Battle Engine Upgrade](https://www.pokecommunity.com/showthread.php?t=417820) - *Physical / Special Split* | *Moves, Abilities, Pokémon and Items from new gens* | *Updated Learnsets* | *Fairy Typing* | *Ability pop-ups* | *Exp points on catching* | *Faster battle intro* | *Mega Evolutions* | *Mid-battle Trainer messages* | and more...\
+[Day & Night Cycle](https://github.com/Xhyzi/pokeemerald/tree/day-and-night)\
+and [Morning/Day/Evening/Night encounters](https://www.pokecommunity.com/showpost.php?p=10450677)\
+[Following Pokemon (except Shellos, Gastrodon and Porygon-Z -- WIP)](https://github.com/W1serV1ser/pokeemerald/tree/FollowingPokemon)\
+[Unbound Quest Menu](https://www.pokecommunity.com/showthread.php?p=10528414#post10528414)
 
-The project has now gotten larger and DizzyEgg is now maintaining the project as part of the ROM Hacking Hideout community. Some members of this community are taking on larger roles to help maintain the project.
+### Other Features
 
-### Please consider crediting the entire [list of contributors](https://github.com/rh-hideout/pokeemerald-expansion/wiki/Credits) in your project, as they have all worked hard to develop this project :)
+[Most Gen 1-3 Pokemon as Surf Sprites](https://github.com/surskitty/pokeemerald/wiki#surfable)\
+[Soft Level Scaling on Wild Pokemon](https://www.pokecommunity.com/showpost.php?p=10356613)\
+[DP/Pt-Style Pokemon Summary Screen](https://github.com/citrusbolt/pokeemerald/tree/summary_screen)\
+[Decapitzalized Text and Dialogue](https://github.com/ProfLeonDias/pokeemerald/tree/decapitalization)\
+[FR/LG Object Textcolor Commands](https://github.com/pret/pokeemerald/wiki/Implementing-the-%E2%80%9Ctextcolor%E2%80%9D-script-command-from-FRLG-and-give-object-events-their-own-text-colour)\
+[Additional Bag Sounds from FR/LG](https://www.pokecommunity.com/showpost.php?p=10205757)\
+[Expanded Options Menu](https://www.pokecommunity.com/showpost.php?p=10275248)\
+[Unlimited TM Usage](https://github.com/pret/pokeemerald/wiki/Infinite-TM-usage)\
+[HMs are Forgettable](https://www.pokecommunity.com/showpost.php?p=10182839&postcount=119)\
+[Physical Special Split Icons In Battle](https://www.pokecommunity.com/showthread.php?p=10527471#post10527471)\
+[RHH Intro Credits](https://github.com/Xhyzi/pokeemerald/tree/rhh-intro-credits)\
+[HG/SS-Style Overworld Shadows](https://github.com/aarant/pokeemerald/commit/12e3b4efadafdef43bba26ca1ce897135808779c)\
+[Faster Text Speed Options](https://www.pokecommunity.com/showthread.php?p=10400198#post10400198)\
+[Newer Gen. Poke Mart Premier Balls](https://github.com/pret/pokeemerald/wiki/LGPE-Style-Bonus-Premier-Balls)\
+[Move Pokemon as First Pokemon Storage Option](https://www.pokecommunity.com/showpost.php?p=10065761)\
+[Togglable 2-in-1 Bike by Pressing R (Use the Acro Bike)](https://www.pokecommunity.com/showpost.php?p=10217718&postcount=172)
 
-## Can I contribute even if I'm not a member of ROM Hacking Hideout?
+### Engine Fixes
 
-Yes! Contributions are welcome via Pull Requests and they will be reviewed by maintainers. Don't feel discouraged if we take a bit to review your PR, we'll get to it.
+[Improved WaitForVBlank Functioning (improving battery/performance)](https://github.com/pret/pokeemerald/wiki/Improving-the-WaitForVBlank-function)\
+[Faster HP Drain](https://github.com/pret/pokeemerald/wiki/Faster-HP-Drain)\
+[More Optimized Summary Screen](https://github.com/pret/pokeemerald/wiki/Make-space-for-EWRAM-Data-for-Summary-screen)\
+[Removed Functionally Redundant Move Grammar Tables](https://github.com/pret/pokeemerald/wiki/Remove-the-functionally-redundant-move-grammar-tables)
 
-## What is ROM Hacking Hideout?
+### Dev Features
 
-A Discord-based ROM hacking community that has many members who hack using the disassembly and decompilation projects for Pokémon. Quite a few contributors to the original feature branches by DizzyEgg were members of ROM Hacking Hideout. You can call it RHH for short!
+~~[Debug Menu (requires game to be built as 'make DDEBUGGING=1')](https://github.com/pret/pokeemerald/wiki/Add-a-debug-menu)~~ Once again a WIP
 
-[Click here to join the RHH Discord Server!](https://discord.gg/6CzjAG6GZk)
+## Bugs
+
+Following Pokemon don't have shadows.
+
+Very large following Pokemon sprites (Regigigas) sometimes clip through tiles.
+
+Nighttime lights in Oldale Town turn 'off' when entering town connection.
+
+~~Spawns a duplicate of the player when it should be their starter follower, but only in Prof. Birch's lab. Likely caused by commit [2353c2a52563eee98be762666c09a14cc7156e42](https://github.com/ebears/emerald-dx/commit/2353c2a52563eee98be762666c09a14cc7156e42).~~
+
+- ~~Commit [ffd4e9cc79dd7e45042dcf48ffb5022afbc17cd7](https://github.com/ebears/emerald-dx/commit/ffd4e9cc79dd7e45042dcf48ffb5022afbc17cd7) seems to have remedied this problem, now the following Pokemon appears correctly but makes half the player sprite invisible for a half second.~~
+
+    - ~~Commit [2230a49602f6ac2090c01436ff2dc033861488fb](https://github.com/ebears/emerald-dx/commit/2230a49602f6ac2090c01436ff2dc033861488fb) reintroduced the original bug.~~
+
+
+## Credits
+
+Everyone from [PRET](https://github.com/pret)\
+Everyone from [rh-hideout](https://github.com/rh-hideout)\
+[huderlem](https://github.com/huderlem)\
+[GriffinRichards](https://github.com/GriffinRichards)\
+[DizzyEgg](https://github.com/DizzyEggg)\
+[Avara](https://www.pokecommunity.com/member.php?u=294199)\
+[LOuroboros](https://github.com/LOuroboros)\
+[AsparagusEduardo](https://github.com/AsparagusEduardo)\
+[NotToDisturb](https://github.com/NotToDisturb)\
+[Skeli789](https://github.com/Skeli789)\
+[ghoulslash](https://github.com/ghoulslash)\
+[SamuRH/Xhizy](https://github.com/Xhyzi)\
+[ProfLeonDias](https://github.com/ProfLeonDias)\
+[Anon822](https://www.pokecommunity.com/member.php?u=699429)\
+[W1serV1ser](https://github.com/W1serV1ser)\
+[PokemonSanFran](https://github.com/PokemonSanFran)\
+[ellabrella](https://www.pokecommunity.com/member.php?u=751712)\
+[aarant](https://github.com/aarant)\
+[Syreldar](https://www.pokecommunity.com/member.php?u=766687)\
+[TheXaman](https://www.pokecommunity.com/member.php?u=743189)\
+[surskitty](https://www.pokecommunity.com/member.php?u=922491)\
+JaizuFangaming#2172\
+Citrus Bolt#4642
+
+...and everyone else in the Pokémon decompilation community. Thank you.

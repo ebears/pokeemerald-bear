@@ -47,15 +47,15 @@ EventScript_CancelCut::
 
 Text_WantToCut:
 	.string "This tree looks like it can be\n"
-	.string "CUT down!\p"
-	.string "Would you like to CUT it?$"
+	.string "Cut down!\p"
+	.string "Would you like to Cut it?$"
 
 Text_MonUsedFieldMove:
 	.string "{STR_VAR_1} used {STR_VAR_2}!$"
 
 Text_CantCut:
 	.string "This tree looks like it can be\n"
-	.string "CUT down!$"
+	.string "Cut down!$"
 
 @ Interact with smashable rock
 EventScript_RockSmash::
@@ -115,10 +115,10 @@ EventScript_CancelSmash::
 
 Text_WantToSmash:
 	.string "This rock appears to be breakable.\n"
-	.string "Would you like to use ROCK SMASH?$"
+	.string "Would you like to use Rock Smash?$"
 
 Text_CantSmash:
-	.string "It's a rugged rock, but a POKéMON\n"
+	.string "It's a rugged rock, but a Pokémon\n"
 	.string "may be able to smash it.$"
 
 EventScript_StrengthBoulder::
@@ -165,21 +165,21 @@ EventScript_CancelStrength::
 	end
 
 Text_WantToStrength:
-	.string "It's a big boulder, but a POKéMON\n"
+	.string "It's a big boulder, but a Pokémon\n"
 	.string "may be able to push it aside.\p"
-	.string "Would you like to use STRENGTH?$"
+	.string "Would you like to use Strength?$"
 
 Text_MonUsedStrength:
-	.string "{STR_VAR_1} used STRENGTH!\p"
-	.string "{STR_VAR_1}'s STRENGTH made it\n"
+	.string "{STR_VAR_1} used Strength!\p"
+	.string "{STR_VAR_1}'s Strength made it\n"
 	.string "possible to move boulders around!$"
 
 Text_CantStrength:
-	.string "It's a big boulder, but a POKéMON\n"
+	.string "It's a big boulder, but a Pokémon\n"
 	.string "may be able to push it aside.$"
 
 Text_StrengthActivated:
-	.string "STRENGTH made it possible to move\n"
+	.string "Strength made it possible to move\n"
 	.string "boulders around.$"
 
 EventScript_UseWaterfall::
@@ -210,10 +210,10 @@ Text_CantWaterfall:
 
 Text_WantToWaterfall:
 	.string "It's a large waterfall.\n"
-	.string "Would you like to use WATERFALL?$"
+	.string "Would you like to use Waterfall?$"
 
 Text_MonUsedWaterfall:
-	.string "{STR_VAR_1} used WATERFALL.$"
+	.string "{STR_VAR_1} used Waterfall.$"
 
 EventScript_UseDive::
 	lockall
@@ -263,23 +263,23 @@ EventScript_EndSurface::
 	end
 
 Text_CantDive:
-	.string "The sea is deep here. A POKéMON\n"
+	.string "The sea is deep here. A Pokémon\n"
 	.string "may be able to go underwater.$"
 
 Text_WantToDive:
 	.string "The sea is deep here.\n"
-	.string "Would you like to use DIVE?$"
+	.string "Would you like to use Dive?$"
 
 Text_MonUsedDive:
-	.string "{STR_VAR_1} used DIVE.$"
+	.string "{STR_VAR_1} used Dive.$"
 
 Text_CantSurface:
 	.string "Light is filtering down from above.\n"
-	.string "A POKéMON may be able to surface.$"
+	.string "A Pokémon may be able to surface.$"
 
 Text_WantToSurface:
 	.string "Light is filtering down from above.\n"
-	.string "Would you like to use DIVE?$"
+	.string "Would you like to use Dive?$"
 
 EventScript_FailSweetScent::
 	msgbox Text_FailSweetScent, MSGBOX_SIGN
@@ -287,3 +287,69 @@ EventScript_FailSweetScent::
 
 Text_FailSweetScent:
 	.string "Looks like there's nothing here…$"
+
+FollowerPositionFixScript::
+	setvar 0x8000 0x0
+	callnative FollowerTrainerSightingPositionFix
+	compare VAR_RESULT 0xFFFF
+	goto_if_eq FollowerPositionFixScriptReturn
+	call WalkCall
+	setvar 0x8000 0x1
+	callnative FollowerTrainerSightingPositionFix
+FollowerPositionFixScriptReturn:
+	return
+    
+FollowerIntoPlayerScript::
+	setvar 0x8000 0x0
+	callnative FollowerIntoPlayer
+	compare VAR_RESULT 0xFFFF
+	goto_if_eq FollowerPositionFixScriptReturn
+	setvar 0x8005 0xFE  @ follower
+	call WalkCall
+	setvar 0x8000 0x1
+	callnative FollowerIntoPlayer
+	return
+    
+WalkCall:
+	compare VAR_RESULT 0x0
+	call_if_eq WalkDownCall
+	compare VAR_RESULT 0x1
+	call_if_eq WalkUpCall
+	compare VAR_RESULT 0x2
+	call_if_eq WalkLeftCall
+	compare VAR_RESULT 0x3
+	call_if_eq WalkRightCall
+	waitmovement 0x8005
+	return
+	
+WalkDownCall:
+	applymovement 0x8005 WalkDown
+	return
+
+WalkUpCall:
+	applymovement 0x8005 WalkUp
+	return
+
+WalkLeftCall:
+	applymovement 0x8005 WalkLeft
+	return
+
+WalkRightCall:
+	applymovement 0x8005 WalkRight
+	return
+    
+WalkDown:
+    walk_down
+    step_end 
+
+WalkUp:
+    walk_up
+    step_end
+
+WalkLeft:
+    walk_left
+    step_end
+
+WalkRight:
+    walk_right
+    step_end

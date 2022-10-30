@@ -15,7 +15,7 @@
                               || itemId == ITEM_RETRO_MAIL))
 
 // mail.h
-void ReadMail(struct Mail *mail, void (*exitCallback)(void), bool8 hasText);
+void ReadMail(struct Mail *mail, void (*callback)(void), bool8 flag);
 
 // mail_data.h
 void ClearAllMail(void);

@@ -276,8 +276,8 @@
 	.2byte SPECIAL_\function
 	.endm
 
-	@ Blocks script execution until a command or C code manually unblocks it. Generally used with specific
-	@ commands and specials. Calling ScriptContext_Enable for instance will allow execution to continue.
+	@ Blocks script execution until a command or C code manually unblocks it. Generally used with specific 
+	@ commands and specials. Calling EnableBothScriptContexts for instance will allow execution to continue.
 	.macro waitstate
 	.byte 0x27
 	.endm
@@ -604,8 +604,9 @@
 	.endm
 
 	@ Blocks script execution until the movements being applied to the specified (localId) object finish.
-	@ If localId is 0, then the id of the last-moved object will be used instead. If the specified object
-	@ is not currently being manipulated with applymovement, then this command does nothing.
+	@ If the specified object is 0, then the command will block script execution until all objects
+	@ affected by applymovement finish their movements. If the specified object is not currently being
+	@ manipulated with applymovement, then this command does nothing.
 	@ If no map is specified, then the current map is used.
 	.macro waitmovement localId:req, map
 		.ifb \map
@@ -828,10 +829,10 @@
 	.endm
 
 	@ Sets the movement type (MOVEMENT_TYPE_*) for an object's template.
-	.macro setobjectmovementtype localId:req, movementType:req
+	.macro setobjectmovementtype word:req, byte:req
 	.byte 0x65
-	.2byte \localId
-	.byte \movementType
+	.2byte \word
+	.byte \byte
 	.endm
 
 	@ If a standard message box (or its text) is being drawn on-screen, this command blocks script execution until the
@@ -985,8 +986,8 @@
 	.endm
 
 	@ Gives the player a Pokémon of the specified species and level, holding the specified item. The trailing 0s are unused parameters.
-	@ VAR_RESULT will be set to MON_GIVEN_TO_PARTY, MON_GIVEN_TO_PC, or MON_CANT_GIVE depending on the outcome.
-	.macro givemon species:req, level:req, item=ITEM_NONE
+	@ VAR_RESULT will be set to MON_GIVEN_TO_PARTY, MON_GIVEN_TO_PC, or MON_CANT_GIVE depending on the outcome. 
+	.macro givemon species:req, level:req, item:req
 	.byte 0x79
 	.2byte \species
 	.byte \level
@@ -997,7 +998,7 @@
 	.endm
 
 	@ Gives the player an Egg of the specified species.
-	@ VAR_RESULT will be set to MON_GIVEN_TO_PARTY, MON_GIVEN_TO_PC, or MON_CANT_GIVE depending on the outcome.
+	@ VAR_RESULT will be set to MON_GIVEN_TO_PARTY, MON_GIVEN_TO_PC, or MON_CANT_GIVE depending on the outcome. 
 	.macro giveegg species:req
 	.byte 0x7a
 	.2byte \species
@@ -1415,7 +1416,7 @@
 	.2byte \out
 	.endm
 
-	@ Gives 'count' coins to the player, up to a total of MAX_COINS.
+	@ Gives 'count' coins to the player, up to a total of MAX_COINS. 
 	@ If the player already has MAX_COINS then VAR_RESULT is set to TRUE, otherwise it is set to FALSE.
 	.macro addcoins count:req
 	.byte 0xb4
@@ -1435,7 +1436,7 @@
 	@ that is also against 'species2' at 'level2' holding 'item2'.
 	@ Running this command will not affect normal wild battles. You start the prepared battle with dowildbattle.
 	@ If the player only has one Pokemon, a scripted double battle will be buggy.
-	.macro setwildbattle species:req, level:req, item=ITEM_NONE, species2=SPECIES_NONE, level2=0, item2=ITEM_NONE
+	.macro setwildbattle species:req, level:req, item:req, species2=SPECIES_NONE, level2=0, item2=ITEM_NONE
 	.byte 0xb6
 	.2byte \species
 	.byte \level
@@ -1457,48 +1458,48 @@
 	.endm
 
 	@ Equivalent to goto using the relative address set by setvaddress.
-	.macro vgoto destination:req
+	.macro vgoto pointer:req
 	.byte 0xb9
-	.4byte \destination
+	.4byte \pointer
 	.endm
 
 	@ Equivalent to call using the relative address set by setvaddress.
-	.macro vcall destination:req
+	.macro vcall pointer:req
 	.byte 0xba
-	.4byte \destination
+	.4byte \pointer
 	.endm
 
 	@ Equivalent to goto_if using the relative address set by setvaddress.
-	.macro vgoto_if condition:req, destination:req
+	.macro vgoto_if byte:req, pointer:req
 	.byte 0xbb
-	.byte \condition
-	.4byte \destination
+	.byte \byte
+	.4byte \pointer
 	.endm
 
 	@ Equivalent to call_if using the relative address set by setvaddress.
-	.macro vcall_if condition:req, destination:req
+	.macro vcall_if byte:req, pointer:req
 	.byte 0xbc
-	.byte \condition
-	.4byte \destination
+	.byte \byte
+	.4byte \pointer
 	.endm
 
 	@ Equivalent to message using the relative address set by setvaddress.
-	.macro vmessage text:req
+	.macro vmessage pointer:req
 	.byte 0xbd
-	.4byte \text
+	.4byte \pointer
 	.endm
 
 	@ Expands the given text at the pointer (- the relative address set by setvaddress) into gStringVar4
-	.macro vbuffermessage text:req
+	.macro vbuffermessage ptr:req
 	.byte 0xbe
-	.4byte \text
+	.4byte \ptr
 	.endm
 
 	@ Equivalent to bufferstring using the relative address set by setvaddress.
-	.macro vbufferstring stringVarIndex:req, text:req
+	.macro vbufferstring stringVarIndex:req, pointer:req
 	.byte 0xbf
 	stringvar \stringVarIndex
-	.4byte \text
+	.4byte \pointer
 	.endm
 
 	@ Create a window showing how many Coins the player has.
@@ -1548,16 +1549,16 @@
 	.2byte \box
 	.endm
 
-	@ Used only in FireRed/LeafGreen, does nothing in Emerald.
+	@ Used only in FireRed/LeafGreen, does nothing in Emerald || NOTE - Actually does something now
 	.macro textcolor color:req
 	.byte 0xc7
 	.byte \color
 	.endm
 
 	@ Used only in FireRed/LeafGreen, does nothing in Emerald.
-	.macro loadhelp text:req
+	.macro loadhelp pointer:req
 	.byte 0xc8
-	.4byte \text
+	.4byte \pointer
 	.endm
 
 	@ Used only in FireRed/LeafGreen, does nothing in Emerald.
@@ -1734,7 +1735,180 @@
 	.2byte \item
 	.2byte \quantity
 	.endm
+	
+	@ sets an NPC up to follow the player
+	.macro setfollower localId:req, flags:req
+	.byte 0xe3
+	.byte \localId
+	.2byte \flags
+	.endm
+	
+	@ remove the following NPC (assumes there will only ever be one)
+	.macro destroyfollower
+	.byte 0xe4
+	.endm
+	
+	@ makes the player and follower face one another
+	.macro facefollower
+	.byte 0xe5
+	.endm
+	
+	@ checks if you have a follower. returns the result to VAR_RESULT
+	.macro checkfollower
+	.byte 0xe6
+	.endm
 
+    .macro questmenu case:req, questId:req
+    .byte 0xe7
+    .byte \case
+    .byte \questId
+    .endm
+
+    .macro subquestmenu case:req, parentId:req, childId:req
+    .byte 0xe8
+    .byte \case
+    .2byte \parentId
+    .2byte \childId
+    .endm
+
+    @ Check the quest state and return a number associated with quest state
+    .macro returnqueststate questId:req
+    .byte 0xe9
+    .byte \questId
+    .endm
+    
+    .macro openquestmenu
+    questmenu 0 0
+    .endm
+
+    @ Starts the specified quest.
+	.macro startquest quest:req
+	closemessage
+	delay 30
+	questmenu QUEST_MENU_SET_ACTIVE, \quest
+	questmenu QUEST_MENU_BUFFER_QUEST_NAME \quest
+    bufferstring 1 gText_QuestActive
+	playfanfare MUS_LEVEL_UP 
+	msgbox gText_QuestAnnounce, MSGBOX_SIGN
+	waitfanfare
+	.endm
+
+    @ Completes the specified quest.
+	.macro completequest quest:req
+	closemessage
+	delay 30
+	questmenu QUEST_MENU_COMPLETE_QUEST, \quest
+	questmenu QUEST_MENU_BUFFER_QUEST_NAME \quest
+    bufferstring 1 gText_QuestComplete
+	playfanfare MUS_LEVEL_UP 
+	msgbox gText_QuestAnnounce, MSGBOX_SIGN
+	waitfanfare
+	.endm
+
+	.macro goto_if_quest_inactive quest:req, dest:req
+	questmenu QUEST_MENU_CHECK_INACTIVE \quest
+	goto_if_eq VAR_RESULT, TRUE, \dest
+	.endm
+
+	.macro goto_if_quest_active quest:req, dest:req
+	questmenu QUEST_MENU_CHECK_ACTIVE \quest
+	goto_if_eq VAR_RESULT, TRUE, \dest
+	.endm
+
+	.macro goto_if_quest_reward quest:req, dest:req
+	questmenu QUEST_MENU_CHECK_REWARD \quest
+	goto_if_eq VAR_RESULT, TRUE, \dest
+	.endm
+
+	.macro goto_if_quest_complete quest:req, dest:req
+	questmenu QUEST_MENU_CHECK_COMPLETE \quest
+	goto_if_eq VAR_RESULT, TRUE, \dest
+	.endm
+
+    .macro goto_if_quest_not_inactive quest:req, dest:req
+    questmenu QUEST_MENU_CHECK_INACTIVE \quest
+    goto_if_eq VAR_RESULT, FALSE, \dest
+    .endm
+
+    .macro goto_if_quest_not_active quest:req, dest:req
+    questmenu QUEST_MENU_CHECK_ACTIVE \quest
+    goto_if_eq VAR_RESULT, FALSE, \dest
+    .endm
+
+    .macro goto_if_quest_not_reward quest:req, dest:req
+    questmenu QUEST_MENU_CHECK_REWARD \quest
+    goto_if_eq VAR_RESULT, FALSE, \dest
+    .endm
+
+    .macro goto_if_quest_not_complete quest:req, dest:req
+    questmenu QUEST_MENU_CHECK_COMPLETE \quest
+    goto_if_eq VAR_RESULT, FALSE, \dest
+    .endm
+
+    .macro call_if_quest_inactive quest:req, dest:req
+    questmenu QUEST_MENU_CHECK_INACTIVE \quest
+    call_if_eq VAR_RESULT, TRUE, \dest
+    .endm
+
+    .macro call_if_quest_active quest:req, dest:req
+    questmenu QUEST_MENU_CHECK_ACTIVE \quest
+    call_if_eq VAR_RESULT, TRUE, \dest
+    .endm
+
+    .macro call_if_quest_reward quest:req, dest:req
+    questmenu QUEST_MENU_CHECK_REWARD \quest
+    call_if_eq VAR_RESULT, TRUE, \dest
+    .endm
+
+    .macro call_if_quest_complete quest:req, dest:req
+    questmenu QUEST_MENU_CHECK_COMPLETE \quest
+    call_if_eq VAR_RESULT, TRUE, \dest
+    .endm
+
+    .macro call_if_quest_not_inactive quest:req, dest:req
+    questmenu QUEST_MENU_CHECK_INACTIVE \quest
+    call_if_eq VAR_RESULT, FALSE, \dest
+    .endm
+
+    .macro call_if_quest_not_active quest:req, dest:req
+    questmenu QUEST_MENU_CHECK_ACTIVE \quest
+    call_if_eq VAR_RESULT, FALSE, \dest
+    .endm
+
+    .macro call_if_quest_not_reward quest:req, dest:req
+    questmenu QUEST_MENU_CHECK_REWARD \quest
+    call_if_eq VAR_RESULT, FALSE, \dest
+    .endm
+
+    .macro call_if_quest_not_complete quest:req, dest:req
+    questmenu QUEST_MENU_CHECK_COMPLETE \quest
+    call_if_eq VAR_RESULT, FALSE, \dest
+    .endm
+
+	.macro completesubquest quest:req, subquest:req
+	closemessage
+	subquestmenu QUEST_MENU_COMPLETE_QUEST, \quest, \subquest
+	.endm
+
+    .macro goto_if_subquest_complete parent:req,child:req, dest:req
+    subquestmenu QUEST_MENU_CHECK_COMPLETE \parent \child
+    goto_if_eq VAR_RESULT, TRUE, \dest
+    .endm
+
+    .macro call_if_subquest_complete parent:req,child:req, dest:req
+    subquestmenu QUEST_MENU_CHECK_COMPLETE \parent \child
+    call_if_eq VAR_RESULT, TRUE, \dest
+    .endm
+
+    .macro goto_if_subquest_not_complete parent:req,child:req, dest:req
+    subquestmenu QUEST_MENU_CHECK_COMPLETE \parent \child
+    goto_if_eq VAR_RESULT, FALSE, \dest
+    .endm
+
+    .macro call_if_subquest_not_complete parent:req,child:req, dest:req
+    subquestmenu QUEST_MENU_CHECK_COMPLETE \parent \child
+    call_if_eq VAR_RESULT, FALSE, \dest
+    .endm
 
 @ Supplementary
 
@@ -1893,7 +2067,7 @@
 
 	@ Gives 'amount' of the specified 'item' to the player and prints a message with fanfare.
 	@ If the player doesn't have space for all the items then as many are added as possible, the
-	@ message indicates there is no room, and VAR_RESULT is set to FALSE.
+	@ message indicates there is no room, and VAR_RESULT is set to FALSE. 
 	@ Otherwise VAR_RESULT is set to TRUE, and the message indicates they have received the item(s).
 	.macro giveitem item:req, amount=1
 	setorcopyvar VAR_0x8000, \item
@@ -1936,14 +2110,6 @@
 	braillemessage \text
 	waitbuttonpress
 	closebraillemessage
-	.endm
-
-	@ Creates an "event legal" Pokémon for an encounter
-	.macro seteventmon species:req, level:req, item=ITEM_NONE
-	setvar VAR_0x8004, \species
-	setvar VAR_0x8005, \level
-	setvar VAR_0x8006, \item
-	special CreateEventLegalEnemyMon
 	.endm
 
 	@ Set up a totem boost for the next battle.
@@ -2007,14 +2173,36 @@
 	settotemboost \battler, 0, 0, 0, 0, 0, 0, 2
 	.endm
 
-	@ Attempts to trigger a special evolution method in the overworld.
-	@ There may be other conditions required which are coded for in GetEvolutionTargetSpecies.
-	@ EX: tryspecialevo EVO_WATER_SCROLL, FALSE, FALSE triggers Kubfu's EVO_WATER_SCROLL evolution
-	@ 	  method, cannot be cancelled in the evolution scene, and will only evolve one Kubfu if there
-	@	  are multiple in the player's party.
-	.macro tryspecialevo evoMethod:req, canStopEvo=TRUE, tryMultiple=TRUE
-	setvar VAR_0x8000, \evoMethod
-	setvar VAR_0x8001, \canStopEvo
-	setvar VAR_0x8002, \tryMultiple
-	special TrySpecialOverworldEvo
+	.macro pokemonfaceplayer objectId=254
+	setvar VAR_FOLLOW_MON_FLAG_DUMMY, \objectId
+	callnative ScrCmd_pokemonfaceplayer
+	.endm
+
+	.macro updatefollowerpokemongraphic
+	setvar VAR_FOLLOW_MON_FLAG_DUMMY, 1
+	callnative UpdateFollowerPokemonGraphic
+	.endm
+
+	.macro hidefollower
+	callnative HideFollower
+	.endm
+
+	.macro showfollower
+	callnative ShowFollower
+	.endm
+    
+	.macro followerintopokeball
+	setvar VAR_FOLLOW_MON_FLAG_DUMMY, 0
+	callnative FollowerIntoPokeball
+	.endm
+
+	@ Adds unit system string to the respective stringvar.
+	@ texttype values:
+	@ UNIT_TEXT_LENGTH_SMALL_SINGLE,  UNIT_TEXT_LENGTH_SMALL_PLURAL,  UNIT_TEXT_LENGTH_SMALL_SYMBOL.
+	@ UNIT_TEXT_LENGTH_MEDIUM_SINGLE, UNIT_TEXT_LENGTH_MEDIUM_PLURAL, UNIT_TEXT_LENGTH_MEDIUM_SYMBOL.
+	@ UNIT_TEXT_WEIGHT_SINGLE,        UNIT_TEXT_WEIGHT_PLURAL,        UNIT_TEXT_WEIGHT_SYMBOL.
+	.macro bufferunitsystemtext texttype:req, stringvarnumber=1
+	setvar VAR_0x8000, \texttype
+	setvar VAR_0x8001, \stringvarnumber
+	special BufferUnitSystemText
 	.endm

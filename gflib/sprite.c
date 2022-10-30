@@ -2,6 +2,8 @@
 #include "sprite.h"
 #include "main.h"
 #include "palette.h"
+#include "global.fieldmap.h"
+#include "constants/event_objects.h"
 
 #define MAX_SPRITE_COPY_REQUESTS 64
 
@@ -57,7 +59,6 @@ static u8 CreateSpriteAt(u8 index, const struct SpriteTemplate *template, s16 x,
 static void ResetOamMatrices(void);
 static void ResetSprite(struct Sprite *sprite);
 static s16 AllocSpriteTiles(u16 tileCount);
-static void RequestSpriteFrameImageCopy(u16 index, u16 tileNum, const struct SpriteFrameImage *images);
 static void ResetAllSprites(void);
 static void BeginAnim(struct Sprite *sprite);
 static void ContinueAnim(struct Sprite *sprite);
@@ -94,7 +95,7 @@ static void ApplyAffineAnimFrame(u8 matrixNum, struct AffineAnimFrameCmd *frameC
 static u8 IndexOfSpriteTileTag(u16 tag);
 static void AllocSpriteTileRange(u16 tag, u16 start, u16 count);
 static void DoLoadSpritePalette(const u16 *src, u16 paletteOffset);
-static void UpdateSpriteMatrixAnchorPos(struct Sprite *, s32, s32);
+static void UpdateSpriteMatrixAnchorPos(struct Sprite* sprite, s32 a1, s32 a2);
 
 typedef void (*AnimFunc)(struct Sprite *);
 typedef void (*AnimCmdFunc)(struct Sprite *);
@@ -103,9 +104,9 @@ typedef void (*AffineAnimCmdFunc)(u8 matrixNum, struct Sprite *);
 #define DUMMY_OAM_DATA                      \
 {                                           \
     .y = DISPLAY_HEIGHT,                    \
-    .affineMode = ST_OAM_AFFINE_OFF,        \
+    .affineMode = 0,                        \
     .objMode = 0,                           \
-    .mosaic = FALSE,                        \
+    .mosaic = 0,                            \
     .bpp = 0,                               \
     .shape = SPRITE_SHAPE(8x8),             \
     .x = DISPLAY_WIDTH + 64,                \
@@ -632,11 +633,14 @@ void DestroySprite(struct Sprite *sprite)
     }
 }
 
-void ResetOamRange(u8 start, u8 end)
+void ResetOamRange(u8 a, u8 b)
 {
     u8 i;
-    for (i = start; i < end; i++)
+
+    for (i = a; i < b; i++)
+    {
         gMain.oamBuffer[i] = *(struct OamData *)&gDummyOamData;
+    }
 }
 
 void LoadOam(void)
@@ -967,6 +971,61 @@ void ContinueAnim(struct Sprite *sprite)
     }
 }
 
+bool8 IsFlyingPokemonGraphic(u16 graphicsId)
+{
+    switch(graphicsId)
+    {
+        case OBJ_EVENT_GFX_BUTTERFREE:
+        case OBJ_EVENT_GFX_BEEDRILL:
+        case OBJ_EVENT_GFX_PIDGEOTTO:
+        case OBJ_EVENT_GFX_PIDGEOT:
+        case OBJ_EVENT_GFX_FEAROW:
+        case OBJ_EVENT_GFX_ZUBAT:
+        case OBJ_EVENT_GFX_GOLBAT:
+        case OBJ_EVENT_GFX_VENOMOTH:
+        case OBJ_EVENT_GFX_AERODACTYL:
+        case OBJ_EVENT_GFX_ARTICUNO:
+        case OBJ_EVENT_GFX_ZAPDOS:
+        case OBJ_EVENT_GFX_MOLTRES:
+        case OBJ_EVENT_GFX_DRAGONITE:
+        case OBJ_EVENT_GFX_NOCTOWL:
+        case OBJ_EVENT_GFX_LEDYBA:
+        case OBJ_EVENT_GFX_LEDIAN:
+        case OBJ_EVENT_GFX_CROBAT:
+        case OBJ_EVENT_GFX_TOGETIC:
+        case OBJ_EVENT_GFX_HOPPIP:
+        case OBJ_EVENT_GFX_SKIPLOOM:
+        case OBJ_EVENT_GFX_JUMPLUFF:
+        case OBJ_EVENT_GFX_YANMA:
+        case OBJ_EVENT_GFX_MANTINE:
+        case OBJ_EVENT_GFX_SKARMORY:
+        case OBJ_EVENT_GFX_LUGIA_FOLLOWER:
+        case OBJ_EVENT_GFX_HOOH_FOLLOWER:
+        case OBJ_EVENT_GFX_CELEBI:
+        case OBJ_EVENT_GFX_BEAUTIFLY:
+        case OBJ_EVENT_GFX_DUSTOX:
+        case OBJ_EVENT_GFX_SWELLOW:
+        case OBJ_EVENT_GFX_WINGULL_FOLLOWER:
+        case OBJ_EVENT_GFX_PELIPPER:
+        case OBJ_EVENT_GFX_MASQUERAIN:
+        case OBJ_EVENT_GFX_FLYGON:
+        case OBJ_EVENT_GFX_SWABLU:
+        case OBJ_EVENT_GFX_ALTARIA:
+        case OBJ_EVENT_GFX_VOLBEAT:
+        case OBJ_EVENT_GFX_ILLUMISE:
+        case OBJ_EVENT_GFX_KYOGRE:
+        case OBJ_EVENT_GFX_LATIAS_FOLLOWER:
+        case OBJ_EVENT_GFX_LATIOS_FOLLOWER:
+        case OBJ_EVENT_GFX_STARAVIA:
+        case OBJ_EVENT_GFX_STARAPTOR:
+        case OBJ_EVENT_GFX_MOTHIM:
+        case OBJ_EVENT_GFX_TOGEKISS:
+            return TRUE;
+        default:
+            return FALSE;
+    }
+}
+
 void AnimCmd_frame(struct Sprite *sprite)
 {
     s16 imageValue;
@@ -983,6 +1042,15 @@ void AnimCmd_frame(struct Sprite *sprite)
         duration--;
 
     sprite->animDelayCounter = duration;
+
+    if(sprite == &gSprites[gObjectEvents[gSaveBlock2Ptr->follower.objId].spriteId] && gSaveBlock2Ptr->follower.inProgress && sprite->y2 >= -1
+    && !IsFlyingPokemonGraphic(gObjectEvents[gSaveBlock2Ptr->follower.objId].graphicsId) && !sprite->oam.affineMode)
+    {
+        if(sprite->animCmdIndex % 2 == 1)
+            sprite->y2 = 0;
+        else
+            sprite->y2 = -1;
+    }
 
     if (!(sprite->oam.affineMode & ST_OAM_AFFINE_ON_MASK))
         SetSpriteOamFlipBits(sprite, hFlip, vFlip);
@@ -1017,6 +1085,15 @@ void AnimCmd_jump(struct Sprite *sprite)
         duration--;
 
     sprite->animDelayCounter = duration;
+
+    if(sprite == &gSprites[gObjectEvents[gSaveBlock2Ptr->follower.objId].spriteId] && gSaveBlock2Ptr->follower.inProgress && sprite->y2 >= -1
+    && !IsFlyingPokemonGraphic(gObjectEvents[gSaveBlock2Ptr->follower.objId].graphicsId) && !sprite->oam.affineMode)
+    {
+        if(sprite->animCmdIndex % 2 == 1)
+            sprite->y2 = 0;
+        else
+            sprite->y2 = -1;
+    }
 
     if (!(sprite->oam.affineMode & ST_OAM_AFFINE_ON_MASK))
         SetSpriteOamFlipBits(sprite, hFlip, vFlip);
@@ -1201,7 +1278,7 @@ u8 GetSpriteMatrixNum(struct Sprite *sprite)
 
 // Used to shift a sprite's position as it scales.
 // Only used by the minigame countdown, so that for instance the numbers don't slide up as they squish down before jumping.
-void SetSpriteMatrixAnchor(struct Sprite *sprite, s16 x, s16 y)
+void SetSpriteMatrixAnchor(struct Sprite* sprite, s16 x, s16 y)
 {
     sprite->sAnchorX = x;
     sprite->sAnchorY = y;
@@ -1495,6 +1572,21 @@ u16 LoadSpriteSheet(const struct SpriteSheet *sheet)
         CpuCopy16(sheet->data, (u8 *)OBJ_VRAM0 + TILE_SIZE_4BPP * tileStart, sheet->size);
         return (u16)tileStart;
     }
+}
+
+// Like LoadSpriteSheet, but checks if already, and uses template image frames
+u16 LoadSpriteSheetByTemplate(const struct SpriteTemplate *template, u8 frame) {
+    u16 tileStart;
+    struct SpriteSheet tempSheet;
+    // error if template is null or tile tag or images not set
+    if (!template || template->tileTag == TAG_NONE || !template->images)
+        return 0xFFFF;
+    if ((tileStart = GetSpriteTileStartByTag(template->tileTag)) != 0xFFFF) // return if already loaded
+        return tileStart;
+    tempSheet.data = template->images[frame].data;
+    tempSheet.size = template->images[frame].size;
+    tempSheet.tag = template->tileTag;
+    return LoadSpriteSheet(&tempSheet);
 }
 
 void LoadSpriteSheets(const struct SpriteSheet *sheets)

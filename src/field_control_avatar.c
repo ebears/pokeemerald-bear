@@ -3,7 +3,6 @@
 #include "bike.h"
 #include "coord_event_weather.h"
 #include "daycare.h"
-#include "debug.h"
 #include "faraway_island.h"
 #include "event_data.h"
 #include "event_object_movement.h"
@@ -29,6 +28,7 @@
 #include "trainer_see.h"
 #include "trainer_hill.h"
 #include "wild_encounter.h"
+#include "follow_me.h"
 #include "constants/event_bg.h"
 #include "constants/event_objects.h"
 #include "constants/field_poison.h"
@@ -44,8 +44,8 @@ u8 gSelectedObjectEvent;
 static void GetPlayerPosition(struct MapPosition *);
 static void GetInFrontOfPlayerPosition(struct MapPosition *);
 static u16 GetPlayerCurMetatileBehavior(int);
-static bool8 TryStartInteractionScript(struct MapPosition *, u16, u8);
-static const u8 *GetInteractionScript(struct MapPosition *, u8, u8);
+static bool8 TryStartInteractionScript(struct MapPosition*, u16, u8);
+static const u8 *GetInteractionScript(struct MapPosition*, u8, u8);
 static const u8 *GetInteractedObjectEventScript(struct MapPosition *, u8, u8);
 static const u8 *GetInteractedBackgroundEventScript(struct MapPosition *, u8, u8);
 static const u8 *GetInteractedMetatileScript(struct MapPosition *, u8, u8);
@@ -80,6 +80,7 @@ void FieldClearPlayerInput(struct FieldInput *input)
     input->heldDirection2 = FALSE;
     input->tookStep = FALSE;
     input->pressedBButton = FALSE;
+    input->pressedRButton = FALSE;
     input->input_field_1_0 = FALSE;
     input->input_field_1_1 = FALSE;
     input->input_field_1_2 = FALSE;
@@ -95,7 +96,7 @@ void FieldGetPlayerInput(struct FieldInput *input, u16 newKeys, u16 heldKeys)
 
     if ((tileTransitionState == T_TILE_CENTER && forcedMove == FALSE) || tileTransitionState == T_NOT_MOVING)
     {
-        if (GetPlayerSpeed() != PLAYER_SPEED_FASTEST)
+        if (GetPlayerSpeed() != 4)
         {
             if (newKeys & START_BUTTON)
                 input->pressedStartButton = TRUE;
@@ -112,6 +113,9 @@ void FieldGetPlayerInput(struct FieldInput *input, u16 newKeys, u16 heldKeys)
             input->heldDirection = TRUE;
             input->heldDirection2 = TRUE;
         }
+
+        if (newKeys & R_BUTTON)
+            input->pressedRButton = TRUE;
     }
 
     if (forcedMove == FALSE)
@@ -130,14 +134,6 @@ void FieldGetPlayerInput(struct FieldInput *input, u16 newKeys, u16 heldKeys)
         input->dpadDirection = DIR_WEST;
     else if (heldKeys & DPAD_RIGHT)
         input->dpadDirection = DIR_EAST;
-
-#if DEBUG_SYSTEM_ENABLE == TRUE && DEBUG_SYSTEM_IN_MENU == FALSE
-    if ((heldKeys & DEBUG_SYSTEM_HELD_KEYS) && input->DEBUG_SYSTEM_TRIGGER_EVENT)
-    {
-        input->input_field_1_2 = TRUE;
-        input->DEBUG_SYSTEM_TRIGGER_EVENT = FALSE;
-    }
-#endif
 }
 
 int ProcessPlayerFieldInput(struct FieldInput *input)
@@ -148,6 +144,8 @@ int ProcessPlayerFieldInput(struct FieldInput *input)
 
     gSpecialVar_LastTalked = 0;
     gSelectedObjectEvent = 0;
+
+    gSpecialVar_TextColor = 0xFF;
 
     playerDirection = GetPlayerFacingDirection();
     GetPlayerPosition(&position);
@@ -165,9 +163,16 @@ int ProcessPlayerFieldInput(struct FieldInput *input)
     {
         IncrementGameStat(GAME_STAT_STEPS);
         IncrementBirthIslandRockStepCount();
+
         if (TryStartStepBasedScript(&position, metatileBehavior, playerDirection) == TRUE)
             return TRUE;
     }
+    else if(gSaveBlock2Ptr->follower.inProgress)
+    {
+        ObjectEventClearHeldMovementIfFinished(&gObjectEvents[gSaveBlock2Ptr->follower.objId]);
+        ObjectEventSetHeldMovement(&gObjectEvents[gSaveBlock2Ptr->follower.objId], 0x9E);
+    }
+
     if (input->checkStandardWildEncounter && CheckStandardWildEncounter(metatileBehavior) == TRUE)
         return TRUE;
     if (input->heldDirection && input->dpadDirection == playerDirection)
@@ -197,23 +202,13 @@ int ProcessPlayerFieldInput(struct FieldInput *input)
     if (input->pressedSelectButton && UseRegisteredKeyItemOnField() == TRUE)
         return TRUE;
 
-#if DEBUG_SYSTEM_ENABLE == TRUE && DEBUG_SYSTEM_IN_MENU == FALSE
-    if (input->input_field_1_2)
-    {
-        PlaySE(SE_WIN_OPEN);
-        FreezeObjectEvents();
-        Debug_ShowMainMenu();
-        return TRUE;
-    }
-#endif
-
     return FALSE;
 }
 
 static void GetPlayerPosition(struct MapPosition *position)
 {
     PlayerGetDestCoords(&position->x, &position->y);
-    position->elevation = PlayerGetElevation();
+    position->height = PlayerGetZCoord();
 }
 
 static void GetInFrontOfPlayerPosition(struct MapPosition *position)
@@ -222,10 +217,10 @@ static void GetInFrontOfPlayerPosition(struct MapPosition *position)
 
     GetXYCoordsOneStepInFrontOfPlayer(&position->x, &position->y);
     PlayerGetDestCoords(&x, &y);
-    if (MapGridGetElevationAt(x, y) != 0)
-        position->elevation = PlayerGetElevation();
+    if (MapGridGetZCoordAt(x, y) != 0)
+        position->height = PlayerGetZCoord();
     else
-        position->elevation = 0;
+        position->height = 0;
 }
 
 static u16 GetPlayerCurMetatileBehavior(int runningState)
@@ -252,7 +247,7 @@ static bool8 TryStartInteractionScript(struct MapPosition *position, u16 metatil
      && script != EventScript_PC)
         PlaySE(SE_SELECT);
 
-    ScriptContext_SetupScript(script);
+    ScriptContext1_SetupScript(script);
     return TRUE;
 }
 
@@ -283,9 +278,9 @@ const u8 *GetInteractedLinkPlayerScript(struct MapPosition *position, u8 metatil
     s32 i;
 
     if (!MetatileBehavior_IsCounter(MapGridGetMetatileBehaviorAt(position->x, position->y)))
-        objectEventId = GetObjectEventIdByPosition(position->x, position->y, position->elevation);
+        objectEventId = GetObjectEventIdByXYZ(position->x, position->y, position->height);
     else
-        objectEventId = GetObjectEventIdByPosition(position->x + gDirectionToVectors[direction].x, position->y + gDirectionToVectors[direction].y, position->elevation);
+        objectEventId = GetObjectEventIdByXYZ(position->x + gDirectionToVectors[direction].x, position->y + gDirectionToVectors[direction].y, position->height);
 
     if (objectEventId == OBJECT_EVENTS_COUNT || gObjectEvents[objectEventId].localId == OBJ_EVENT_ID_PLAYER)
         return NULL;
@@ -307,14 +302,14 @@ static const u8 *GetInteractedObjectEventScript(struct MapPosition *position, u8
     u8 objectEventId;
     const u8 *script;
 
-    objectEventId = GetObjectEventIdByPosition(position->x, position->y, position->elevation);
+    objectEventId = GetObjectEventIdByXYZ(position->x, position->y, position->height);
     if (objectEventId == OBJECT_EVENTS_COUNT || gObjectEvents[objectEventId].localId == OBJ_EVENT_ID_PLAYER)
     {
         if (MetatileBehavior_IsCounter(metatileBehavior) != TRUE)
             return NULL;
 
         // Look for an object event on the other side of the counter.
-        objectEventId = GetObjectEventIdByPosition(position->x + gDirectionToVectors[direction].x, position->y + gDirectionToVectors[direction].y, position->elevation);
+        objectEventId = GetObjectEventIdByXYZ(position->x + gDirectionToVectors[direction].x, position->y + gDirectionToVectors[direction].y, position->height);
         if (objectEventId == OBJECT_EVENTS_COUNT || gObjectEvents[objectEventId].localId == OBJ_EVENT_ID_PLAYER)
             return NULL;
     }
@@ -325,6 +320,13 @@ static const u8 *GetInteractedObjectEventScript(struct MapPosition *position, u8
 
     if (InTrainerHill() == TRUE)
         script = GetTrainerHillTrainerScript();
+    else if (objectEventId == GetFollowerObjectId())//(gObjectEvents[objectEventId].localId == OBJ_EVENT_ID_FOLLOWER)
+    {
+        if(gObjectEvents[objectEventId].invisible == FALSE)
+            script = GetFollowerScriptPointer();
+        else
+            return NULL;
+    }
     else
         script = GetObjectEventScriptPointerByObjectEventId(objectEventId);
 
@@ -334,7 +336,7 @@ static const u8 *GetInteractedObjectEventScript(struct MapPosition *position, u8
 
 static const u8 *GetInteractedBackgroundEventScript(struct MapPosition *position, u8 metatileBehavior, u8 direction)
 {
-    struct BgEvent *bgEvent = GetBackgroundEventAtPosition(&gMapHeader, position->x - MAP_OFFSET, position->y - MAP_OFFSET, position->elevation);
+    struct BgEvent *bgEvent = GetBackgroundEventAtPosition(&gMapHeader, position->x - MAP_OFFSET, position->y - MAP_OFFSET, position->height);
 
     if (bgEvent == NULL)
         return NULL;
@@ -385,7 +387,7 @@ static const u8 *GetInteractedBackgroundEventScript(struct MapPosition *position
 
 static const u8 *GetInteractedMetatileScript(struct MapPosition *position, u8 metatileBehavior, u8 direction)
 {
-    s8 elevation;
+    s8 height;
 
     if (MetatileBehavior_IsPlayerFacingTVScreen(metatileBehavior, direction) == TRUE)
         return EventScript_TV;
@@ -428,8 +430,8 @@ static const u8 *GetInteractedMetatileScript(struct MapPosition *position, u8 me
     if (MetatileBehavior_IsTrainerHillTimer(metatileBehavior) == TRUE)
         return EventScript_TrainerHillTimer;
 
-    elevation = position->elevation;
-    if (elevation == MapGridGetElevationAt(position->x, position->y))
+    height = position->height;
+    if (height == MapGridGetZCoordAt(position->x, position->y))
     {
         if (MetatileBehavior_IsSecretBasePC(metatileBehavior) == TRUE)
             return SecretBase_EventScript_PC;
@@ -483,7 +485,7 @@ static bool32 TrySetupDiveDownScript(void)
 {
     if (FlagGet(FLAG_BADGE07_GET) && TrySetDiveWarp() == 2)
     {
-        ScriptContext_SetupScript(EventScript_UseDive);
+        ScriptContext1_SetupScript(EventScript_UseDive);
         return TRUE;
     }
     return FALSE;
@@ -493,7 +495,7 @@ static bool32 TrySetupDiveEmergeScript(void)
 {
     if (FlagGet(FLAG_BADGE07_GET) && gMapHeader.mapType == MAP_TYPE_UNDERWATER && TrySetDiveWarp() == 1)
     {
-        ScriptContext_SetupScript(EventScript_UseDiveUnderwater);
+        ScriptContext1_SetupScript(EventScript_UseDiveUnderwater);
         return TRUE;
     }
     return FALSE;
@@ -516,11 +518,11 @@ static bool8 TryStartStepBasedScript(struct MapPosition *position, u16 metatileB
 
 static bool8 TryStartCoordEventScript(struct MapPosition *position)
 {
-    u8 *script = GetCoordEventScriptAtPosition(&gMapHeader, position->x - MAP_OFFSET, position->y - MAP_OFFSET, position->elevation);
+    u8 *script = GetCoordEventScriptAtPosition(&gMapHeader, position->x - MAP_OFFSET, position->y - MAP_OFFSET, position->height);
 
     if (script == NULL)
         return FALSE;
-    ScriptContext_SetupScript(script);
+    ScriptContext1_SetupScript(script);
     return TRUE;
 }
 
@@ -530,12 +532,12 @@ static bool8 TryStartMiscWalkingScripts(u16 metatileBehavior)
 
     if (MetatileBehavior_IsCrackedFloorHole(metatileBehavior))
     {
-        ScriptContext_SetupScript(EventScript_FallDownHole);
+        ScriptContext1_SetupScript(EventScript_FallDownHole);
         return TRUE;
     }
     else if (MetatileBehavior_IsBattlePyramidWarp(metatileBehavior))
     {
-        ScriptContext_SetupScript(BattlePyramid_WarpToNextFloor);
+        ScriptContext1_SetupScript(BattlePyramid_WarpToNextFloor);
         return TRUE;
     }
     else if (MetatileBehavior_IsSecretBaseGlitterMat(metatileBehavior) == TRUE)
@@ -567,48 +569,48 @@ static bool8 TryStartStepCountScript(u16 metatileBehavior)
     {
         if (UpdatePoisonStepCounter() == TRUE)
         {
-            ScriptContext_SetupScript(EventScript_FieldPoison);
+            ScriptContext1_SetupScript(EventScript_FieldPoison);
             return TRUE;
         }
         if (ShouldEggHatch())
         {
             IncrementGameStat(GAME_STAT_HATCHED_EGGS);
-            ScriptContext_SetupScript(EventScript_EggHatch);
+            ScriptContext1_SetupScript(EventScript_EggHatch);
             return TRUE;
         }
         if (AbnormalWeatherHasExpired() == TRUE)
         {
-            ScriptContext_SetupScript(AbnormalWeather_EventScript_EndEventAndCleanup_1);
+            ScriptContext1_SetupScript(AbnormalWeather_EventScript_EndEventAndCleanup_1);
             return TRUE;
         }
         if (ShouldDoBrailleRegicePuzzle() == TRUE)
         {
-            ScriptContext_SetupScript(IslandCave_EventScript_OpenRegiEntrance);
+            ScriptContext1_SetupScript(IslandCave_EventScript_OpenRegiEntrance);
             return TRUE;
         }
         if (ShouldDoWallyCall() == TRUE)
         {
-            ScriptContext_SetupScript(MauvilleCity_EventScript_RegisterWallyCall);
+            ScriptContext1_SetupScript(MauvilleCity_EventScript_RegisterWallyCall);
             return TRUE;
         }
         if (ShouldDoScottFortreeCall() == TRUE)
         {
-            ScriptContext_SetupScript(Route119_EventScript_ScottWonAtFortreeGymCall);
+            ScriptContext1_SetupScript(Route119_EventScript_ScottWonAtFortreeGymCall);
             return TRUE;
         }
         if (ShouldDoScottBattleFrontierCall() == TRUE)
         {
-            ScriptContext_SetupScript(LittlerootTown_ProfessorBirchsLab_EventScript_ScottAboardSSTidalCall);
+            ScriptContext1_SetupScript(LittlerootTown_ProfessorBirchsLab_EventScript_ScottAboardSSTidalCall);
             return TRUE;
         }
         if (ShouldDoRoxanneCall() == TRUE)
         {
-            ScriptContext_SetupScript(RustboroCity_Gym_EventScript_RegisterRoxanne);
+            ScriptContext1_SetupScript(RustboroCity_Gym_EventScript_RegisterRoxanne);
             return TRUE;
         }
         if (ShouldDoRivalRayquazaCall() == TRUE)
         {
-            ScriptContext_SetupScript(MossdeepCity_SpaceCenter_2F_EventScript_RivalRayquazaCall);
+            ScriptContext1_SetupScript(MossdeepCity_SpaceCenter_2F_EventScript_RivalRayquazaCall);
             return TRUE;
         }
     }
@@ -617,7 +619,7 @@ static bool8 TryStartStepCountScript(u16 metatileBehavior)
         return TRUE;
     if (CountSSTidalStep(1) == TRUE)
     {
-        ScriptContext_SetupScript(SSTidalCorridor_EventScript_ReachedStepCount);
+        ScriptContext1_SetupScript(SSTidalCorridor_EventScript_ReachedStepCount);
         return TRUE;
     }
     if (TryStartMatchCall())
@@ -687,9 +689,6 @@ void RestartWildEncounterImmunitySteps(void)
 
 static bool8 CheckStandardWildEncounter(u16 metatileBehavior)
 {
-    if (FlagGet(OW_FLAG_NO_ENCOUNTER))
-        return FALSE;
-
     if (sWildEncounterImmunitySteps < 4)
     {
         sWildEncounterImmunitySteps++;
@@ -757,7 +756,7 @@ static bool8 TryStartWarpEventScript(struct MapPosition *position, u16 metatileB
         }
         if (MetatileBehavior_IsMtPyreHole(metatileBehavior) == TRUE)
         {
-            ScriptContext_SetupScript(EventScript_FallDownHoleMtPyre);
+            ScriptContext1_SetupScript(EventScript_FallDownHoleMtPyre);
             return TRUE;
         }
         if (MetatileBehavior_IsMossdeepGymWarp(metatileBehavior) == TRUE)
@@ -805,7 +804,7 @@ static bool8 IsArrowWarpMetatileBehavior(u16 metatileBehavior, u8 direction)
 
 static s8 GetWarpEventAtMapPosition(struct MapHeader *mapHeader, struct MapPosition *position)
 {
-    return GetWarpEventAtPosition(mapHeader, position->x - MAP_OFFSET, position->y - MAP_OFFSET, position->elevation);
+    return GetWarpEventAtPosition(mapHeader, position->x - MAP_OFFSET, position->y - MAP_OFFSET, position->height);
 }
 
 static void SetupWarp(struct MapHeader *unused, s8 warpEventId, struct MapPosition *position)
@@ -908,7 +907,7 @@ static u8 *TryRunCoordEventScript(struct CoordEvent *coordEvent)
         }
         if (coordEvent->trigger == 0)
         {
-            RunScriptImmediately(coordEvent->script);
+            ScriptContext2_RunNewScript(coordEvent->script);
             return NULL;
         }
         if (VarGet(coordEvent->trigger) == (u8)coordEvent->index)
@@ -940,7 +939,7 @@ static u8 *GetCoordEventScriptAtPosition(struct MapHeader *mapHeader, u16 x, u16
 
 u8 *GetCoordEventScriptAtMapPosition(struct MapPosition *position)
 {
-    return GetCoordEventScriptAtPosition(&gMapHeader, position->x - MAP_OFFSET, position->y - MAP_OFFSET, position->elevation);
+    return GetCoordEventScriptAtPosition(&gMapHeader, position->x - MAP_OFFSET, position->y - MAP_OFFSET, position->height);
 }
 
 static struct BgEvent *GetBackgroundEventAtPosition(struct MapHeader *mapHeader, u16 x, u16 y, u8 elevation)

@@ -676,7 +676,7 @@
 	.byte 0x77
 	.endm
 
-	.macro tryexplosion
+	.macro faintifabilitynotdamp
 	.byte 0x78
 	.endm
 
@@ -1044,7 +1044,7 @@
 	.byte 0xc8
 	.endm
 
-	.macro trymemento ptr:req
+	.macro jumpifattackandspecialattackcannotfall ptr:req
 	.byte 0xc9
 	.4byte \ptr
 	.endm
@@ -1186,11 +1186,11 @@
 	.byte 0xe5
 	.endm
 
-	.macro doweatherformchangeanimation
+	.macro docastformchangeanimation
 	.byte 0xe6
 	.endm
 
-	.macro tryweatherformdatachange
+	.macro trycastformdatachange
 	.byte 0xe7
 	.endm
 
@@ -1785,10 +1785,6 @@
 	various \battler, VARIOUS_TRY_ACTIVATE_GRIM_NEIGH
 	.endm
 
-	.macro setzeffect
-	various BS_ATTACKER, VARIOUS_SET_Z_EFFECT
-	.endm
-
 	.macro consumeberry battler:req, restoreItem=FALSE
 	various \battler, VARIOUS_CONSUME_BERRY
 	.byte \restoreItem
@@ -1928,64 +1924,12 @@
 	.4byte \ptr
 	.endm
 
-	.macro photongeysercheck battler:req
-	various \battler, VARIOUS_PHOTON_GEYSER_CHECK
+	.macro photongeysercheck
+	various BS_ATTACKER, VARIOUS_PHOTON_GEYSER_CHECK
 	.endm
 
 	.macro shellsidearmcheck
 	various BS_ATTACKER, VARIOUS_SHELL_SIDE_ARM_CHECK
-	.endm
-
-	.macro jumpifcantfling battler:req, ptr:req
-	various \battler, VARIOUS_JUMP_IF_CANT_FLING
-	.4byte \ptr
-	.endm
-
-	.macro curecertainstatuses battler:req
-	various \battler, VARIOUS_CURE_CERTAIN_STATUSES
-	.endm
-
-	.macro tryresetnegativestatstages battler:req
-	various \battler, VARIOUS_TRY_RESET_NEGATIVE_STAT_STAGES
-	.endm
-
-	.macro jumpiflastuseditemberry ptr:req
-	various BS_ATTACKER, VARIOUS_JUMP_IF_LAST_USED_ITEM_BERRY
-	.4byte \ptr
-	.endm
-
-	.macro jumpiflastuseditemholdeffect battler:req, holdEffect:req, ptr:req
-	various \battler, VARIOUS_JUMP_IF_LAST_USED_ITEM_HOLD_EFFECT
-	.byte \holdEffect
-	.4byte \ptr
-	.endm
-
-	.macro savebattleritem battler:req
-	various \battler, VARIOUS_SAVE_BATTLER_ITEM
-	.endm
-
-	.macro restorebattleritem battler:req
-	various \battler, VARIOUS_RESTORE_BATTLER_ITEM
-	.endm
-
-	.macro battleritemtolastuseditem battler:req
-	various \battler, VARIOUS_BATTLER_ITEM_TO_LAST_USED_ITEM
-	.endm
-
-	.macro setbeakblast battler:req
-	various \battler, VARIOUS_SET_BEAK_BLAST
-	.endm
-
-	.macro swapsidestatuses
-	various BS_ATTACKER, VARIOUS_SWAP_SIDE_STATUSES
-	.endm
-
-	.macro canteleport battler:req
-	various \battler, VARIOUS_CAN_TELEPORT
-	.endm
-
-	.macro getbattlerside battler:req
-	various \battler, VARIOUS_GET_BATTLER_SIDE
 	.endm
 
 @ helpful macros
@@ -2116,32 +2060,4 @@
 	jumpifability BS_ATTACKER, ABILITY_INFILTRATOR, 1f
 	jumpifsideaffecting BS_TARGET, SIDE_STATUS_SAFEGUARD, \jumpptr
 	1:
-	.endm
-
-	@ Will jump to script pointer if the target weighs less than 200 kg, or 441 lbs.
-	.macro jumpifunder200 battler:req, ptr:req
-	various \battler, VARIOUS_JUMP_IF_UNDER_200
-	.4byte \ptr
-	.endm
-
-	@ Sets the sky drop status and does all other necessary operations
-	.macro setskydrop
-	various 0, VARIOUS_SET_SKY_DROP
-	.endm
-
-	@ Clears the sky drop status and does all other necessary operations.
-	@ If the target fainted in before this script is called, it goes to the given script.
-	.macro clearskydrop ptr:req
-	various 0, VARIOUS_CLEAR_SKY_DROP
-	.4byte \ptr
-	.endm
-
-	@ Accounts for if the target of Sky Drop was in confuse_lock when the attacker falls asleep due to Yawn.
-	.macro skydropyawn
-	various 0, VARIOUS_SKY_DROP_YAWN
-	.endm
-
-	@ Used by effects that may proc Symbiosis but do not call removeitem.
-	.macro trysymbiosis
-	various BS_ATTACKER, VARIOUS_TRY_SYMBIOSIS
 	.endm

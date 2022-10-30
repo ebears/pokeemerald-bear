@@ -48,7 +48,7 @@ SkyPillar_Top_EventScript_Rayquaza::
 	playmoncry SPECIES_RAYQUAZA, CRY_MODE_ENCOUNTER
 	delay 40
 	waitmoncry
-	setwildbattle SPECIES_RAYQUAZA, 70
+	setwildbattle SPECIES_RAYQUAZA, 70, ITEM_NONE
 	setflag FLAG_SYS_CTRL_OBJ_DELETE
 	special BattleSetup_StartLegendaryBattle
 	waitstate
@@ -128,7 +128,7 @@ SkyPillar_Top_EventScript_AwakenRayquaza::
 	special RemoveCameraObject
 	setvar VAR_SOOTOPOLIS_CITY_STATE, 5
 	setvar VAR_SKY_PILLAR_STATE, 1
-	setvar VAR_SKY_PILLAR_RAYQUAZA_CRY_DONE, 1
+	setvar VAR_SKY_PILLAR_RAQUAZA_CRY_DONE, 1
 	releaseall
 	end
 
@@ -181,5 +181,5 @@ SkyPillar_Top_Movement_CameraPanDown:
 	step_end
 
 SkyPillar_Top_Text_RayquazaFlewOff:
-	.string "The awakened RAYQUAZA flew off…$"
+	.string "The awakened Rayquaza flew off…$"
 

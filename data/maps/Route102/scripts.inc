@@ -1,5 +1,55 @@
 Route102_MapScripts::
+	map_script MAP_SCRIPT_ON_TRANSITION, Route102_OnTransition
+	map_script MAP_SCRIPT_ON_RESUME, Route102_OnResume
 	.byte 0
+
+Route102_OnTransition:
+	special GetEncounterTime
+	goto_if_eq VAR_RESULT, 3, Route102_OnTransition_Night
+	goto_if_eq VAR_RESULT, 2, Route102_OnTransition_Evening
+	goto_if_eq VAR_RESULT, 1, Route102_OnTransition_Day
+	goto_if_eq VAR_RESULT, 0, Route102_OnTransition_Morning
+	end
+
+Route102_OnTransition_Morning:
+	setvar VAR_DAYNIGHT, 0
+	end
+
+Route102_OnTransition_Day:
+	setvar VAR_DAYNIGHT, 1
+	end
+
+Route102_OnTransition_Evening:
+	setvar VAR_DAYNIGHT, 2
+	end
+
+Route102_OnTransition_Night:
+	setvar VAR_DAYNIGHT, 3
+	end
+
+Route102_OnResume:
+	special GetEncounterTime
+	goto_if_eq VAR_RESULT, 3, Route102_OnResume_Night
+	goto_if_eq VAR_RESULT, 2, Route102_OnResume_Evening
+	goto_if_eq VAR_RESULT, 1, Route102_OnResume_Day
+	goto_if_eq VAR_RESULT, 0, Route102_OnResume_Morning
+	end
+
+Route102_OnResume_Night:
+	setvar VAR_DAYNIGHT, 3
+	end
+	
+Route102_OnResume_Evening:
+	setvar VAR_DAYNIGHT, 2
+	end
+
+Route102_OnResume_Day:
+	setvar VAR_DAYNIGHT, 1
+	end
+	
+Route102_OnResume_Morning:
+	setvar VAR_DAYNIGHT, 0
+	end
 
 Route102_EventScript_LittleBoy::
 	msgbox Route102_Text_ImNotVeryTall, MSGBOX_NPC
@@ -74,20 +124,20 @@ Route102_EventScript_Allen::
 	end
 
 Route102_Text_WatchMeCatchPokemon:
-	.string "WALLY: {PLAYER}…\n"
-	.string "POKéMON hide in tall grass like this,\l"
+	.string "Wally: {PLAYER}…\n"
+	.string "Pokémon hide in tall grass like this,\l"
 	.string "don't they?\p"
 	.string "Please watch me and see if I can\n"
 	.string "catch one properly.\p"
 	.string "…Whoa!$"
 
 Route102_Text_WallyIDidIt:
-	.string "WALLY: I did it… It's my…\n"
-	.string "My POKéMON!$"
+	.string "Wally: I did it… It's my…\n"
+	.string "My Pokémon!$"
 
 Route102_Text_LetsGoBack:
 	.string "{PLAYER}, thank you!\n"
-	.string "Let's go back to the GYM!$"
+	.string "Let's go back to the Gym!$"
 
 Route102_Text_ImNotVeryTall:
 	.string "I'm…not very tall, so I sink right\n"
@@ -98,12 +148,13 @@ Route102_Text_ImNotVeryTall:
 
 Route102_Text_CatchWholeBunchOfPokemon:
 	.string "I'm going to catch a whole bunch of\n"
-	.string "POKéMON!$"
+	.string "Pokémon!$"
 
 Route102_Text_RouteSignOldale:
-	.string "ROUTE 102\n"
-	.string "{RIGHT_ARROW} OLDALE TOWN$"
+	.string "Route 102\n"
+	.string "{RIGHT_ARROW} Oldale Town$"
 
 Route102_Text_RouteSignPetalburg:
-	.string "ROUTE 102\n"
-	.string "{LEFT_ARROW} PETALBURG CITY$"
+	.string "Route 102\n"
+	.string "{LEFT_ARROW} Petalburg City$"
+

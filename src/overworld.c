@@ -12,6 +12,7 @@
 #include "field_camera.h"
 #include "field_control_avatar.h"
 #include "field_effect.h"
+#include "field_effect_helpers.h"
 #include "field_message_box.h"
 #include "field_player_avatar.h"
 #include "field_screen_effect.h"
@@ -49,6 +50,7 @@
 #include "script_pokemon_util.h"
 #include "secret_base.h"
 #include "sound.h"
+#include "sprite.h"
 #include "start_menu.h"
 #include "task.h"
 #include "tileset_anims.h"
@@ -59,6 +61,8 @@
 #include "scanline_effect.h"
 #include "wild_encounter.h"
 #include "frontier_util.h"
+#include "dns.h"
+#include "follow_me.h"
 #include "constants/abilities.h"
 #include "constants/layouts.h"
 #include "constants/map_types.h"
@@ -66,6 +70,9 @@
 #include "constants/songs.h"
 #include "constants/trainer_hill.h"
 #include "constants/weather.h"
+#include "constants/event_object_movement.h"
+#include "constants/event_objects.h"
+#include "constants/items.h"
 
 struct CableClubPlayer
 {
@@ -127,9 +134,9 @@ static void CreateLinkPlayerSprites(void);
 static void ClearAllPlayerKeys(void);
 static void ResetAllPlayerLinkStates(void);
 static void UpdateHeldKeyCode(u16);
-static void UpdateAllLinkPlayers(u16 *, s32);
+static void UpdateAllLinkPlayers(u16*, s32);
 static u8 FlipVerticalAndClearForced(u8, u8);
-static u8 LinkPlayerGetCollision(u8, u8, s16, s16);
+static u8 LinkPlayerDetectCollision(u8, u8, s16, s16);
 static void CreateLinkPlayerSprite(u8, u8);
 static void GetLinkPlayerCoords(u8, u16 *, u16 *);
 static u8 GetLinkPlayerFacingDirection(u8);
@@ -183,9 +190,9 @@ static u16 (*sPlayerKeyInterceptCallback)(u32);
 static bool8 sReceivingFromLink;
 static u8 sRfuKeepAliveTimer;
 
-u16 *gOverworldTilemapBuffer_Bg2;
-u16 *gOverworldTilemapBuffer_Bg1;
-u16 *gOverworldTilemapBuffer_Bg3;
+u16 *gBGTilemapBuffers1;
+u16 *gBGTilemapBuffers2;
+u16 *gBGTilemapBuffers3;
 u16 gHeldKeyCodeToSend;
 void (*gFieldCallback)(void);
 bool8 (*gFieldCallback2)(void);
@@ -202,6 +209,629 @@ EWRAM_DATA static struct InitialPlayerAvatarState sInitialPlayerAvatarState = {0
 EWRAM_DATA static u16 sAmbientCrySpecies = 0;
 EWRAM_DATA static bool8 sIsAmbientCryWaterMon = FALSE;
 EWRAM_DATA struct LinkPlayerObjectEvent gLinkPlayerObjectEvents[4] = {0};
+
+static const u8 FollowerSparkleCoords[][6] =
+{
+    {15, 9, 15, 9, 11, 9}, // Bulbasaur
+    {15, 11, 15, 9, 10, 9}, // Ivysaur
+    {16, 13, 16, 12, 13, 13}, // Venusaur
+    {16, 9, 16, 10, 11, 9}, // Charmander
+    {15, 12, 15, 10, 10, 11}, // Charmeleon
+    {16, 13, 16, 13, 16, 13}, // Charizard
+    {15, 9, 15, 9, 7, 9}, // Squirtle
+    {16, 10, 15, 9, 9, 11}, // Wartortle
+    {16, 13, 16, 13, 14, 12}, // Blastoise
+    {15, 10, 15, 9, 9, 10}, // Caterpie
+    {16, 10, 16, 11, 8, 10}, // Metapod
+    {16, 13, 16, 13, 12, 12}, // Butterfree
+    {16, 10, 16, 10, 8, 9}, // Weedle
+    {15, 10, 15, 10, 8, 10}, // Kakuna
+    {15, 13, 15, 15, 9, 13}, // Beedrill
+    {15, 8, 15, 8, 7, 8}, // Pidgey
+    {15, 16, 15, 15, 11, 14}, // Pidgeotto
+    {16, 17, 16, 17, 15, 16}, // Pidgeot
+    {16, 11, 16, 9, 9, 8}, // Rattata
+    {16, 12, 16, 9, 11, 8}, // Raticate
+    {16, 8, 16, 8, 10, 8}, // Spearow
+    {16, 15, 16, 16, 15, 19}, // Fearow
+    {16, 10, 13, 11, 9, 10}, // Ekans
+    {15, 12, 14, 13, 13, 12}, // Arbok
+    {16, 10, 16, 9, 8, 10}, // Pikachu
+    {13, 12, 20, 12, 14, 11}, // Raichu
+    {16, 9, 16, 9, 9, 9}, // Sandshrew
+    {15, 11, 15, 11, 10, 11}, // Sandslash
+    {16, 9, 16, 9, 7, 9}, // Nidoran_F
+    {15, 10, 15, 10, 11, 10}, // Nidorina
+    {16, 12, 16, 12, 13, 12}, // Nidoqueen
+    {16, 9, 16, 9, 8, 8}, // Nidoran_M
+    {16, 10, 16, 11, 11, 9}, // Nidorino
+    {16, 12, 16, 12, 14, 12}, // Nidoking
+    {15, 9, 16, 9, 7, 9}, // Clefairy
+    {16, 11, 16, 11, 9, 11}, // Clefable
+    {15, 11, 15, 11, 12, 9}, // Vulpix
+    {15, 13, 15, 14, 13, 11}, // Ninetales
+    {15, 9, 15, 9, 7, 9}, // Jigglypuff
+    {15, 11, 15, 11, 8, 11}, // Wigglytuff
+    {15, 12, 15, 13, 10, 11}, // Zubat
+    {16, 12, 16, 12, 12, 12}, // Golbat
+    {15, 8, 15, 8, 7, 8}, // Oddish
+    {16, 10, 16, 10, 9, 11}, // Gloom
+    {16, 10, 16, 10, 11, 10}, // Vileplume
+    {16, 9, 16, 8, 9, 9}, // Paras
+    {15, 13, 16, 12, 12, 12}, // Parasect
+    {16, 10, 16, 10, 11, 10}, // Venonat
+    {15, 14, 15, 14, 13, 14}, // Venomoth
+    {15, 7, 16, 7, 7, 7}, // Diglett
+    {16, 11, 16, 11, 11, 11}, // Dugtrio
+    {16, 13, 15, 11, 11, 9}, // Meowth
+    {15, 14, 15, 12, 13, 9}, // Persian
+    {15, 10, 15, 10, 7, 10}, // Psyduck
+    {15, 12, 15, 12, 8, 11}, // Golduck
+    {15, 9, 15, 9, 9, 9}, // Mankey
+    {15, 11, 15, 11, 9, 12}, // Primeape
+    {16, 11, 16, 11, 9, 10}, // Growlithe
+    {15, 15, 15, 15, 16, 12}, // Arcanine
+    {16, 9, 16, 9, 9, 9}, // Poliwag
+    {16, 9, 16, 9, 7, 10}, // Poliwhirl
+    {15, 11, 15, 11, 10, 11}, // Poliwrath
+    {15, 11, 15, 11, 11, 12}, // Abra
+    {15, 11, 16, 11, 12, 11}, // Kadabra
+    {16, 12, 16, 13, 11, 13}, // Alakazam
+    {15, 9, 15, 9, 8, 10}, // Machop
+    {15, 12, 15, 12, 8, 12}, // Machoke
+    {16, 13, 16, 13, 12, 12}, // Machamp
+    {15, 11, 15, 11, 7, 10}, // Bellsprout
+    {15, 11, 15, 10, 7, 11}, // Weepinbell
+    {15, 14, 15, 14, 14, 13}, // Victreebel
+    {16, 10, 16, 10, 9, 10}, // Tentacool
+    {15, 13, 15, 13, 13, 12}, // Tentacruel
+    {15, 10, 15, 10, 7, 11}, // Geodude
+    {15, 9, 15, 9, 10, 11}, // Graveler
+    {15, 11, 15, 11, 12, 11}, // Golem
+    {15, 12, 15, 12, 11, 11}, // Ponyta
+    {15, 15, 15, 14, 15, 13}, // Rapidash
+    {15, 11, 15, 9, 12, 8}, // Slowpoke
+    {16, 11, 16, 11, 14, 11}, // Slowbro
+    {15, 10, 15, 10, 8, 11}, // Magnemite
+    {15, 15, 15, 15, 10, 15}, // Magneton
+    {16, 11, 16, 11, 8, 11}, // Farfetch'd
+    {15, 11, 15, 11, 9, 12}, // Doduo
+    {16, 16, 15, 16, 15, 15}, // Dodrio
+    {15, 11, 15, 11, 13, 10}, // Seel
+    {15, 13, 15, 12, 15, 12}, // Dewgong
+    {16, 9, 16, 9, 9, 10}, // Grimer
+    {15, 11, 15, 11, 11, 11}, // Muk
+    {15, 9, 15, 8, 7, 9}, // Shellder
+    {15, 13, 15, 13, 13, 14}, // Cloyster
+    {15, 15, 16, 15, 10, 14}, // Gastly
+    {16, 13, 16, 13, 10, 14}, // Haunter
+    {15, 11, 15, 11, 9, 11}, // Gengar
+    {16, 15, 15, 16, 13, 16}, // Onix
+    {16, 10, 16, 10, 10, 11}, // Drowzee
+    {16, 12, 16, 12, 10, 12}, // Hypno
+    {16, 9, 16, 9, 13, 7}, // Krabby
+    {16, 13, 16, 12, 16, 13}, // Kingler
+    {15, 9, 15, 9, 7, 9}, // Voltorb
+    {16, 12, 16, 12, 13, 12}, // Electrode
+    {16, 13, 16, 11, 14, 12}, // Exeggcute
+    {16, 15, 16, 14, 12, 14}, // Exeggutor
+    {14, 10, 16, 10, 9, 11}, // Cubone
+    {14, 11, 16, 11, 10, 12}, // Marowak
+    {15, 11, 15, 11, 9, 11}, // Hitmonlee
+    {16, 12, 16, 11, 9, 11}, // Hitmonchan
+    {15, 11, 15, 11, 12, 10}, // Lickitung
+    {17, 13, 17, 13, 12, 12}, // Koffing
+    {15, 14, 16, 14, 13, 13}, // Weezing
+    {15, 12, 15, 11, 14, 9}, // Rhyhorn
+    {16, 12, 16, 12, 16, 12}, // Rhydon
+    {15, 10, 15, 10, 10, 10}, // Chansey
+    {16, 11, 16, 11, 10, 10}, // Tangela
+    {16, 12, 16, 12, 12, 13}, // Kangaskhan
+    {15, 9, 15, 9, 9, 9}, // Horsea
+    {15, 13, 15, 13, 11, 12}, // Seadra
+    {15, 11, 15, 10, 12, 9}, // Goldeen
+    {15, 13, 15, 11, 14, 13}, // Seaking
+    {16, 10, 16, 10, 8, 10}, // Staryu
+    {16, 12, 16, 12, 9, 13}, // Starmie
+    {16, 11, 16, 10, 10, 12}, // Mr. Mime
+    {15, 13, 15, 13, 12, 13}, // Scyther
+    {16, 13, 16, 12, 11, 13}, // Jynx
+    {16, 12, 16, 12, 12, 12}, // Electabuzz
+    {15, 13, 15, 13, 12, 12}, // Magmar
+    {15, 12, 15, 12, 11, 12}, // Pinsir
+    {15, 15, 16, 12, 15, 11}, // Tauros
+    {16, 10, 16, 11, 12, 10}, // Magikarp
+    {16, 16, 16, 16, 15, 16}, // Gyarados
+    {16, 12, 16, 13, 14, 13}, // Lapras
+    {16, 8, 16, 8, 9, 7}, // Ditto
+    {15, 9, 15, 9, 11, 9}, // Eevee
+    {15, 15, 15, 12, 15, 11}, // Vaporeon
+    {15, 12, 15, 11, 14, 10}, // Jolteon
+    {15, 13, 15, 12, 14, 11}, // Flareon
+    {15, 10, 15, 10, 12, 9}, // Porygon
+    {15, 10, 15, 10, 10, 9}, // Omanyte
+    {15, 12, 15, 12, 12, 11}, // Omastar
+    {15, 8, 15, 8, 9, 8}, // Kabuto
+    {16, 11, 15, 11, 11, 12}, // Kabutops
+    {15, 16, 15, 16, 16, 15}, // Aerodactyl
+    {16, 14, 16, 14, 12, 15}, // Snorlax
+    {15, 17, 15, 16, 14, 17}, // Articuno
+    {15, 18, 15, 17, 14, 15}, // Zapdos
+    {15, 16, 15, 17, 15, 17}, // Moltres
+    {17, 12, 14, 11, 12, 11}, // Dratini
+    {18, 15, 14, 15, 14, 14}, // Dragonair
+    {15, 16, 15, 16, 13, 15}, // Dragonite
+    {15, 15, 15, 14, 13, 14}, // Mewtwo
+    {16, 13, 16, 11, 13, 13}, // Mew
+    {16, 10, 15, 10, 9, 10}, // Chikorita
+    {16, 13, 15, 14, 13, 13}, // Bayleef
+    {15, 14, 15, 15, 14, 15}, // Meganium
+    {16, 11, 16, 10, 12, 9}, // Cyndaquil
+    {15, 13, 15, 14, 15, 10}, // Quilava
+    {15, 14, 15, 14, 14, 13}, // Typhlosion
+    {16, 10, 16, 10, 10, 10}, // Totodile
+    {15, 13, 15, 14, 13, 13}, // Croconaw
+    {15, 15, 15, 15, 15, 15}, // Feraligatr
+    {15, 10, 15, 10, 12, 9}, // Sentret
+    {15, 14, 15, 13, 15, 11}, // Furret
+    {16, 10, 16, 10, 10, 10}, // Hoothoot
+    {15, 13, 15, 14, 14, 16}, // Noctowl
+    {15, 14, 15, 12, 13, 12}, // Ledyba
+    {16, 12, 16, 13, 13, 16}, // Ledian
+    {15, 9, 15, 9, 11, 7}, // Spinarak
+    {15, 13, 15, 12, 15, 13}, // Ariados
+    {15, 13, 15, 13, 12, 15}, // Crobat
+    {16, 8, 16, 8, 10, 8}, // Chinchou
+    {16, 14, 16, 13, 15, 11}, // Lanturn
+    {15, 9, 15, 9, 9, 9}, // Pichu
+    {16, 8, 16, 8, 9, 8}, // Cleffa
+    {15, 9, 15, 9, 8, 9}, // Igglybuff
+    {16, 9, 16, 9, 9, 9}, // Togepi
+    {15, 14, 15, 15, 10, 13}, // Togetic
+    {16, 8, 16, 8, 9, 9}, // Natu
+    {16, 12, 16, 12, 12, 12}, // Xatu
+    {16, 11, 15, 10, 12, 10}, // Mareep
+    {18, 12, 15, 11, 12, 11}, // Flaaffy
+    {16, 13, 16, 13, 13, 13}, // Ampharos
+    {15, 10, 15, 10, 8, 10}, // Bellossom
+    {19, 8, 12, 8, 12, 9}, // Marill
+    {18, 10, 13, 10, 12, 11}, // Azumarill
+    {16, 12, 16, 12, 10, 12}, // Sudowoodo
+    {15, 12, 15, 12, 9, 12}, // Politoed
+    {16, 12, 16, 12, 9, 12}, // Hoppip
+    {15, 10, 15, 10, 9, 13}, // Skiploom
+    {16, 14, 16, 14, 9, 13}, // Jumpluff
+    {16, 12, 16, 11, 13, 11}, // Aipom
+    {16, 8, 16, 8, 7, 9}, // Sunkern
+    {15, 11, 15, 11, 7, 11}, // Sunflora
+    {16, 15, 16, 15, 15, 13}, // Yanma
+    {16, 8, 16, 8, 8, 8}, // Wooper
+    {17, 11, 15, 11, 12, 11}, // Quagsire
+    {15, 14, 15, 12, 13, 12}, // Espeon
+    {15, 13, 15, 12, 14, 11}, // Umbreon
+    {15, 10, 15, 10, 9, 10}, // Murkrow
+    {16, 14, 16, 14, 10, 13}, // Slowking
+    {16, 14, 16, 13, 11, 13}, // Misdreavus
+    {15, 10, 15, 10, 7, 11}, // Unown (A)
+    {16, 11, 16, 11, 10, 11}, // Wobbuffet
+    {16, 13, 16, 13, 15, 13}, // Girafarig
+    {16, 9, 16, 9, 8, 9}, // Pineco
+    {16, 10, 16, 10, 11, 10}, // Forretress
+    {15, 13, 15, 9, 13, 8}, // Dunsparce
+    {15, 12, 15, 12, 11, 13}, // Gligar
+    {33, 17, 32, 19, 36, 17}, // Steelix
+    {16, 10, 16, 10, 10, 10}, // Snubbull
+    {16, 12, 16, 12, 10, 13}, // Granbull
+    {16, 12, 16, 10, 14, 9}, // Qwilfish
+    {16, 13, 16, 12, 12, 13}, // Scizor
+    {16, 10, 16, 11, 11, 10}, // Shuckle
+    {15, 13, 15, 13, 12, 14}, // Heracross
+    {17, 10, 15, 10, 9, 10}, // Sneasel
+    {15, 10, 15, 10, 9, 10}, // Teddiursa
+    {16, 13, 16, 13, 11, 14}, // Ursaring
+    {15, 11, 16, 11, 11, 10}, // Slugma
+    {16, 13, 14, 12, 15, 11}, // Magcargo
+    {15, 8, 15, 8, 11, 8}, // Swinub
+    {15, 11, 15, 12, 12, 11}, // Piloswine
+    {16, 9, 16, 9, 10, 10}, // Corsola
+    {16, 10, 16, 10, 13, 7}, // Remoraid
+    {15, 11, 15, 12, 11, 11}, // Ocitllery
+    {16, 10, 15, 10, 9, 11}, // Delibird
+    {16, 15, 16, 15, 16, 16}, // Mantine
+    {15, 13, 15, 16, 15, 16}, // Skarmory
+    {16, 9, 16, 10, 11, 10}, // Houndour
+    {15, 12, 15, 13, 14, 12}, // Houndoom
+    {16, 14, 16, 14, 14, 13}, // Kingdra
+    {16, 9, 16, 9, 11, 9}, // Phanpy
+    {16, 11, 16, 11, 15, 12}, // Donphan
+    {16, 11, 16, 12, 13, 12}, // Porygon2
+    {16, 14, 15, 14, 12, 15}, // Stantler
+    {14, 11, 18, 11, 9, 11}, // Smeargle
+    {15, 10, 15, 10, 8, 10}, // Tyrogue
+    {15, 12, 15, 12, 9, 11}, // Hitmontop
+    {15, 10, 15, 10, 9, 10}, // Smoochum
+    {15, 10, 15, 10, 8, 10}, // Elekid
+    {16, 10, 16, 10, 8, 10}, // Magby
+    {16, 11, 16, 11, 12, 11}, // Miltank
+    {16, 11, 16, 11, 11, 12}, // Blissey
+    {15, 15, 15, 13, 15, 13}, // Raikou
+    {15, 15, 15, 13, 15, 12}, // Entei 
+    {15, 15, 15, 13, 16, 12}, // Suicune
+    {15, 10, 15, 10, 10, 10}, // Larvitar
+    {15, 11, 15, 11, 8, 11}, // Pupitar
+    {15, 14, 15, 14, 14, 13}, // Tyranitar
+    {32, 21, 32, 23, 40, 21}, // Lugia
+    {32, 22, 31, 22, 38, 24}, // Ho-oh
+    {16, 14, 16, 14, 9, 14}, // Celebi
+    {15, 9, 15, 9, 9, 9}, // Treecko
+    {16, 11, 16, 11, 11, 11}, // Grovyle
+    {15, 13, 15, 13, 15, 14}, // Sceptile
+    {15, 10, 15, 10, 8, 10}, // Torchic
+    {15, 11, 15, 11, 8, 11}, // Combusken
+    {16, 13, 16, 13, 12, 13}, // Blaziken
+    {15, 9, 15, 9, 10, 9}, // Mudkip
+    {15, 10, 15, 10, 9, 10}, // Marshtomp
+    {15, 13, 15, 13, 15, 13}, // Swampert
+    {15, 10, 15, 10, 12, 10}, // Poochyena
+    {16, 14, 16, 12, 15, 12}, // Mightyena
+    {16, 12, 16, 10, 14, 9}, // Zigzagoon
+    {16, 13, 14, 10, 15, 8}, // Linoone
+    {15, 10, 15, 11, 11, 9}, // Wurmple
+    {16, 8, 16, 8, 10, 8}, // Silcoon
+    {16, 13, 16, 13, 13, 12}, // Beautifly
+    {16, 8, 16, 8, 10, 8}, // Cascoon
+    {15, 11, 15, 11, 12, 15}, // Dustox
+    {15, 9, 15, 9, 10, 9}, // Lotad
+    {15, 12, 15, 12, 10, 11}, // Lombre
+    {16, 14, 16, 14, 13, 14}, // Ludicolo
+    {15, 9, 15, 9, 8, 9}, // Seedot
+    {15, 12, 15, 12, 9, 12}, // Nuzleaf
+    {16, 12, 16, 12, 13, 12}, // Shiftry
+#ifndef POKEMON_EXPANSION
+    {15, 9, 15, 8, 12, 8}, // Nincada
+    {15, 12, 15, 12, 12, 12}, // Ninjask
+    {16, 13, 16, 14, 12, 13}, // Shedinja
+    {15, 9, 15, 9, 10, 8}, // Taillow
+    {15, 13, 15, 12, 16, 15}, // Swellow
+    {15, 9, 15, 9, 10, 9}, // Shroomish
+    {16, 12, 16, 12, 12, 12}, // Breloom
+    {16, 10, 16, 10, 9, 11}, // Spinda
+    {15, 11, 15, 10, 12, 13}, // Wingull
+    {16, 14, 16, 14, 14, 13}, // Pelipper
+    {15, 9, 15, 9, 10, 9}, // Surskit
+    {16, 14, 16, 15, 10, 14}, // Masquerain
+    {16, 11, 16, 11, 13, 11}, // Wailmer
+    {32, 19, 32, 18, 38, 12}, // Wailord
+    {15, 10, 15, 9, 12, 9}, // Skitty
+    {16, 13, 16, 12, 13, 12}, // Delcatty
+    {16, 11, 16, 11, 10, 11}, // Kecleon
+    {16, 11, 16, 11, 7, 11}, // Baltoy
+    {16, 14, 16, 14, 11, 13}, // Claydol
+    {15, 11, 15, 11, 11, 11}, // Nosepass
+    {16, 10, 16, 11, 15, 10}, // Torkoal
+    {16, 9, 16, 9, 9, 10}, // Sableye
+    {15, 9, 16, 9, 9, 11}, // Barboach
+    {15, 10, 15, 11, 14, 9}, // Whiscash
+    {16, 9, 16, 9, 8, 9}, // Luvdisc
+    {15, 10, 15, 11, 11, 10}, // Corphish
+    {16, 13, 16, 13, 13, 12}, // Crawdaunt
+    {16, 9, 16, 9, 10, 9}, // Feebas
+    {19, 13, 11, 12, 14, 13}, // Milotic
+    {15, 12, 15, 12, 11, 11}, // Carvanha
+    {16, 14, 16, 12, 13, 14}, // Sharpedo
+    {16, 8, 16, 8, 10, 8}, // Trapinch
+    {16, 13, 16, 11, 15, 14}, // Vibrava
+    {16, 17, 16, 17, 15, 14}, // Flygon
+    {16, 10, 16, 10, 9, 11}, // Makuhita
+    {14, 14, 14, 13, 14, 13}, // Hariyama
+    {15, 11, 15, 9, 13, 8}, // Electrike
+    {15, 13, 15, 13, 14, 13}, // Manectric
+    {15, 12, 15, 12, 15, 12}, // Numel
+    {15, 14, 15, 14, 17, 12}, // Camerupt
+    {15, 9, 15, 9, 11, 9}, // Spheal
+    {15, 12, 15, 13, 15, 12}, // Sealeo
+    {15, 13, 15, 14, 16, 14}, // Walrein
+    {15, 9, 15, 9, 8, 9}, // Cacnea
+    {15, 12, 15, 12, 11, 12}, // Cacturne
+    {15, 9, 15, 9, 9, 9}, // Snorunt
+    {16, 12, 16, 12, 11, 14}, // Glalie
+    {16, 11, 16, 11, 10, 11}, // Lunatone
+    {16, 13, 16, 13, 8, 13}, // Solrock
+    {17, 9, 14, 8, 13, 7}, // Azurill
+    {15, 11, 15, 11, 8, 10}, // Spoink
+    {15, 11, 15, 11, 11, 11}, // Grumpig
+    {15, 9, 15, 9, 9, 9}, // Plusle
+    {15, 9, 15, 9, 9, 9}, // Minun
+    {17, 11, 14, 11, 13, 11}, // Mawile
+    {15, 12, 15, 11, 8, 11}, // Meditite
+    {15, 13, 15, 13, 8, 13}, // Medicham
+    {16, 12, 16, 11, 11, 10}, // Swablu
+    {16, 16, 16, 16, 14, 15}, // Altaria
+    {16, 10, 16, 10, 10, 9}, // Wynaut
+    {16, 12, 16, 11, 9, 12}, // Duskull
+    {15, 13, 15, 13, 13, 13}, // Dusclops
+    {15, 10, 15, 10, 8, 10}, // Roselia
+    {15, 9, 15, 9, 12, 8}, // Slakoth
+    {16, 11, 16, 11, 14, 11}, // Vigoroth
+    {16, 15, 16, 14, 14, 14}, // Slaking
+    {16, 9, 16, 9, 10, 9}, // Gulpin
+    {16, 14, 16, 14, 14, 14}, // Swalot
+    {16, 13, 16, 13, 16, 13}, // Tropius
+    {16, 8, 16, 8, 8, 8}, // Whismur
+    {16, 11, 16, 11, 9, 12}, // Loudred
+    {16, 14, 16, 14, 17, 15}, // Exploud
+    {15, 8, 15, 8, 8, 9}, // Clamperl
+    {18, 15, 11, 14, 14, 14}, // Huntail
+    {17, 16, 12, 14, 15, 11}, // Gorebyss
+    {14, 14, 16, 14, 15, 13}, // Absol
+    {15, 11, 15, 11, 8, 11}, // Shuppet
+    {17, 10, 16, 10, 9, 10}, // Banette
+    {18, 14, 14, 14, 16, 10}, // Seviper
+    {15, 12, 15, 12, 13, 12}, // Zangoose
+    {15, 13, 15, 12, 14, 10}, // Relicanth
+    {16, 8, 16, 8, 9, 8}, // Aron
+    {15, 13, 15, 12, 16, 10}, // Lairon
+    {15, 15, 15, 14, 16, 14}, // Aggron
+    {15, 11, 15, 10, 7, 10}, // Castform
+    {15, 14, 15, 14, 12, 12}, // Volbeat
+    {16, 13, 16, 13, 11, 12}, // Illumise
+    {16, 11, 16, 12, 10, 11}, // Lileep
+    {16, 15, 16, 15, 12, 15}, // Cradily
+    {16, 11, 16, 10, 14, 9}, // Anorith
+    {15, 13, 15, 12, 13, 13}, // Armaldo
+    {15, 9, 15, 9, 9, 9}, // Ralts
+    {15, 11, 15, 11, 9, 11}, // Kirlia
+    {16, 12, 16, 13, 10, 12}, // Gardevoir
+    {16, 11, 16, 11, 10, 10}, // Bagon
+    {16, 10, 16, 10, 11, 10}, // Shelgon
+    {16, 14, 16, 13, 16, 13}, // Salamence
+    {15, 13, 15, 12, 12, 12}, // Beldum
+    {16, 14, 16, 13, 15, 13}, // Metang
+    {16, 14, 16, 14, 13, 13}, // Metagross
+    {15, 14, 15, 14, 11, 14}, // Regirock
+    {15, 13, 15, 13, 12, 13}, // Regice
+    {16, 13, 16, 13, 10, 13}, // Registeel
+    {16, 17, 16, 15, 16, 14}, // Kyogre
+    {15, 16, 16, 16, 16, 16}, // Groudon
+    {16, 17, 16, 16, 16, 16}, // Rayquaza
+    {16, 15, 16, 14, 16, 15}, // Latias
+    {16, 15, 16, 14, 15, 15}, // Latios
+    {15, 13, 15, 13, 10, 12}, // Jirachi
+    {16, 14, 16, 14, 9, 13}, // Deoxys (Normal)
+    {16, 11, 16, 11, 7, 11}, // Chimecho
+#else
+    {15, 9, 15, 9, 10, 8}, // Taillow
+    {15, 13, 15, 12, 16, 15}, // Swellow
+    {15, 11, 15, 10, 12, 13}, // Wingull
+    {16, 14, 16, 14, 14, 13}, // Pelipper
+    {9, 15, 9, 9, 9}, // Ralts
+    {15, 11, 15, 11, 9, 11}, // Kirlia
+    {16, 12, 16, 13, 10, 12}, // Gardevoir
+    {15, 9, 15, 9, 10, 9}, // Surskit
+    {16, 14, 16, 15, 10, 14}, // Masquerain
+    {15, 9, 15, 9, 10, 9}, // Shroomish
+    {16, 12, 16, 12, 12, 12}, // Breloom
+    {15, 9, 15, 9, 12, 8}, // Slakoth
+    {16, 11, 16, 11, 14, 11}, // Vigoroth
+    {16, 15, 16, 14, 14, 14}, // Slaking
+    {15, 9, 15, 8, 12, 8}, // Nincada
+    {15, 12, 15, 12, 12, 12}, // Ninjask
+    {16, 13, 16, 14, 12, 13}, // Shedinja
+    {16, 8, 16, 8, 8, 8}, // Whismur
+    {16, 11, 16, 11, 9, 12}, // Loudred
+    {16, 14, 16, 14, 17, 15}, // Exploud
+    {16, 10, 16, 10, 9, 11}, // Makuhita
+    {14, 14, 14, 13, 14, 13}, // Hariyama
+    {17, 9, 14, 8, 13, 7}, // Azurill
+    {15, 11, 15, 11, 11, 11}, // Nosepass
+    {15, 10, 15, 9, 12, 9}, // Skitty
+    {16, 13, 16, 12, 13, 12}, // Delcatty
+    {16, 9, 16, 9, 9, 10}, // Sableye
+    {17, 11, 14, 11, 13, 11}, // Mawile
+    {16, 8, 16, 8, 9, 8}, // Aron
+    {15, 13, 15, 12, 16, 10}, // Lairon
+    {15, 15, 15, 14, 16, 14}, // Aggron
+    {15, 12, 15, 11, 8, 11}, // Meditite
+    {15, 13, 15, 13, 8, 13}, // Medicham
+    {15, 11, 15, 9, 13, 8}, // Electrike
+    {15, 13, 15, 13, 14, 13}, // Manectric
+    {15, 9, 15, 9, 9, 9}, // Plusle
+    {15, 9, 15, 9, 9, 9}, // Minun
+    {15, 14, 15, 14, 12, 12}, // Volbeat
+    {16, 13, 16, 13, 11, 12}, // Illumise
+    {15, 10, 15, 10, 8, 10}, // Roselia
+    {16, 9, 16, 9, 10, 9}, // Gulpin
+    {16, 14, 16, 14, 14, 14}, // Swalot
+    {15, 12, 15, 12, 11, 11}, // Carvanha
+    {16, 14, 16, 12, 13, 14}, // Sharpedo
+    {16, 11, 16, 11, 13, 11}, // Wailmer
+    {32, 19, 32, 18, 38, 12}, // Wailord
+    {15, 12, 15, 12, 15, 12}, // Numel
+    {15, 14, 15, 14, 17, 12}, // Camerupt
+    {16, 10, 16, 11, 15, 10}, // Torkoal
+    {15, 11, 15, 11, 8, 10}, // Spoink
+    {15, 11, 15, 11, 11, 11}, // Grumpig
+    {16, 10, 16, 10, 9, 11}, // Spinda
+    {16, 8, 16, 8, 10, 8}, // Trapinch
+    {16, 13, 16, 11, 15, 14}, // Vibrava
+    {16, 17, 16, 17, 15, 14}, // Flygon
+    {15, 9, 15, 9, 8, 9}, // Cacnea
+    {15, 12, 15, 12, 11, 12}, // Cacturne
+    {16, 12, 16, 11, 11, 10}, // Swablu
+    {16, 16, 16, 16, 14, 15}, // Altaria
+    {15, 12, 15, 12, 13, 12}, // Zangoose
+    {18, 14, 14, 14, 16, 10}, // Seviper
+    {16, 11, 16, 11, 10, 11}, // Lunatone
+    {16, 13, 16, 13, 8, 13}, // Solrock
+    {15, 9, 16, 9, 9, 11}, // Barboach
+    {15, 10, 15, 11, 14, 9}, // Whiscash
+    {15, 10, 15, 11, 11, 10}, // Corphish
+    {16, 13, 16, 13, 13, 12}, // Crawdaunt
+    {16, 11, 16, 11, 7, 11}, // Baltoy
+    {16, 14, 16, 14, 11, 13}, // Claydol
+    {16, 11, 16, 12, 10, 11}, // Lileep
+    {16, 15, 16, 15, 12, 15}, // Cradily
+    {16, 11, 16, 10, 14, 9}, // Anorith
+    {15, 13, 15, 12, 13, 13}, // Armaldo
+    {16, 9, 16, 9, 10, 9}, // Feebas
+    {19, 13, 11, 12, 14, 13}, // Milotic
+    {15, 11, 15, 10, 7, 10}, // Castform
+    {16, 11, 16, 11, 10, 11}, // Kecleon
+    {15, 11, 15, 11, 8, 11}, // Shuppet
+    {17, 10, 16, 10, 9, 10}, // Banette
+    {16, 12, 16, 11, 9, 12}, // Duskull
+    {15, 13, 15, 13, 13, 13}, // Dusclops
+    {16, 13, 16, 13, 16, 13}, // Tropius
+    {16, 11, 16, 11, 7, 11}, // Chimecho
+    {14, 14, 16, 14, 15, 13}, // Absol
+    {16, 10, 16, 10, 10, 9}, // Wynaut
+    {15, 9, 15, 9, 9, 9}, // Snorunt
+    {16, 12, 16, 12, 11, 14}, // Glalie
+    {15, 9, 15, 9, 11, 9}, // Spheal
+    {15, 12, 15, 13, 15, 12}, // Sealeo
+    {15, 13, 15, 14, 16, 14}, // Walrein
+    {15, 8, 15, 8, 8, 9}, // Clamperl
+    {18, 15, 11, 14, 14, 14}, // Huntail
+    {17, 16, 12, 14, 15, 11}, // Gorebyss
+    {15, 13, 15, 12, 14, 10}, // Relicanth
+    {16, 9, 16, 9, 8, 9}, // Luvdisc
+    {16, 11, 16, 11, 10, 10}, // Bagon
+    {16, 10, 16, 10, 11, 10}, // Shelgon
+    {16, 14, 16, 13, 16, 13}, // Salamence
+    {15, 13, 15, 12, 12, 12}, // Beldum
+    {16, 14, 16, 13, 15, 13}, // Metang
+    {16, 14, 16, 14, 13, 13}, // Metagross
+    {15, 14, 15, 14, 11, 14}, // Regirock
+    {15, 13, 15, 13, 12, 13}, // Regice
+    {16, 13, 16, 13, 10, 13}, // Registeel
+    {16, 15, 16, 14, 16, 15}, // Latias
+    {16, 15, 16, 14, 15, 15}, // Latios
+    {16, 17, 16, 15, 16, 14}, // Kyogre
+    {15, 16, 16, 16, 16, 16}, // Groudon
+    {16, 17, 16, 16, 16, 16}, // Rayquaza
+    {15, 13, 15, 13, 10, 12}, // Jirachi
+    {16, 14, 16, 14, 9, 13}, // Deoxys (Normal)
+#endif
+    {15, 10, 15, 10, 10, 10}, // Turtwig
+    {15, 10, 15, 10, 13, 10}, // Grotle
+    {16, 13, 16, 13, 15, 12}, // Torterra
+    {15, 11, 15, 11, 9, 11}, // Chimchar
+    {15, 12, 15, 12, 12, 12}, // Monferno
+    {16, 16, 16, 15, 12, 15}, // Infernape
+    {15, 9, 15, 9, 8, 9}, // Piplup
+    {15, 11, 15, 11, 9, 12}, // Prinplup
+    {15, 14, 15, 14, 11, 14}, // Empoleon
+    {15, 10, 15, 10, 10, 9}, // Starly
+    {15, 16, 15, 16, 14, 14}, // Staravia
+    {15, 15, 15, 15, 14, 15}, // Staraptor
+    {15, 9, 15, 9, 12, 8}, // Bidoof
+    {15, 13, 15, 11, 17, 10}, // Bibarel
+    {16, 9, 16, 9, 9, 10}, // Kricketot
+    {15, 13, 15, 13, 11, 13}, // Kricketune
+    {15, 11, 15, 9, 12, 8}, // Shinx
+    {15, 13, 15, 11, 14, 11}, // Luxio
+    {15, 16, 15, 13, 14, 12}, // Luxray
+    {15, 9, 15, 9, 7, 9}, // Budew
+    {16, 12, 16, 12, 10, 12}, // Roserade
+    {16, 10, 16, 10, 8, 10}, // Cranidos
+    {15, 14, 15, 14, 15, 14}, // Rampardos
+    {15, 9, 15, 9, 10, 9}, // Shieldon
+    {16, 12, 16, 12, 14, 12}, // Bastiodon
+    {16, 10, 16, 10, 9, 10}, // Burmy
+    {15, 13, 15, 13, 9, 13}, // Wormadam
+    {15, 14, 15, 14, 12, 12}, // Mothim
+    {16, 9, 16, 9, 7, 9}, // Combee
+    {16, 15, 16, 13, 11, 14}, // Vespiquen
+    {15, 10, 15, 9, 11, 9}, // Pachirisu
+    {16, 11, 16, 10, 15, 8}, // Buizel
+    {15, 14, 15, 14, 13, 14}, // Floatzel
+    {16, 9, 15, 9, 8, 10}, // Cherubi
+    {15, 10, 15, 10, 7, 10}, // Cherrim
+    {16, 15, 16, 13, 13, 14}, // Ambipom
+    {15, 12, 15, 12, 7, 12}, // Drifloon
+    {16, 14, 16, 14, 10, 14}, // Drifblim
+    {16, 10, 15, 10, 8, 11}, // Buneary
+    {15, 13, 15, 13, 10, 13}, // Lopunny
+    {15, 17, 15, 17, 13, 17}, // Mismagius
+    {15, 11, 15, 11, 13, 11}, // Honchkrow
+    {16, 13, 16, 9, 11, 9}, // Glameow
+    {15, 12, 15, 11, 12, 11}, // Purugly
+    {15, 10, 15, 9, 8, 10}, // Chingling
+    {15, 11, 15, 9, 12, 8}, // Stunky
+    {15, 12, 15, 12, 14, 10}, // Skuntank
+    {16, 10, 16, 10, 7, 10}, // Bronzor
+    {15, 14, 15, 14, 9, 14}, // Bronzong
+    {16, 10, 16, 10, 8, 10}, // Bonsly
+    {16, 11, 16, 11, 8, 11}, // Mime Jr.
+    {15, 11, 15, 10, 9, 11}, // Happiny
+    {15, 10, 15, 11, 11, 11}, // Chatot
+    {14, 12, 15, 12, 8, 13}, // Spiritomb
+    {15, 11, 15, 10, 10, 10}, // Gible
+    {16, 12, 16, 12, 12, 12}, // Gabite
+    {15, 15, 15, 14, 15, 16}, // Garchomp
+    {15, 10, 15, 10, 8, 11}, // Munchlax
+    {16, 11, 16, 11, 9, 11}, // Riolu
+    {16, 13, 16, 13, 11, 14}, // Lucario
+    {15, 11, 15, 10, 12, 9}, // Hippopotas
+    {15, 12, 15, 11, 17, 10}, // Hippowdon
+    {15, 11, 15, 9, 12, 9}, // Skorupi
+    {15, 14, 15, 11, 15, 11}, // Drapion
+    {16, 9, 16, 9, 8, 9}, // Croagunk
+    {15, 11, 15, 11, 9, 11}, // Toxicroak
+    {15, 14, 16, 13, 10, 14}, // Carnivine
+    {15, 10, 15, 9, 11, 8}, // Finneon
+    {16, 10, 16, 10, 12, 10}, // Lumineon
+    {15, 8, 16, 10, 11, 9}, // Mantyke
+    {16, 11, 16, 10, 10, 11}, // Snover
+    {15, 14, 15, 13, 13, 13}, // Abomasnow
+    {15, 11, 15, 11, 9, 11}, // Weavile
+    {15, 14, 15, 14, 14, 13}, // Magnezone
+    {15, 12, 16, 12, 13, 12}, // Lickilicky
+    {16, 12, 16, 12, 15, 12}, // Rhyperior
+    {16, 13, 16, 13, 12, 13}, // Tangrowth
+    {16, 13, 16, 13, 14, 13}, // Electivire
+    {15, 14, 15, 15, 12, 15}, // Magmortar
+    {15, 14, 15, 12, 12, 10}, // Togekiss
+    {16, 14, 16, 14, 16, 15}, // Yanmega
+    {15, 13, 15, 11, 14, 11}, // Leafeon
+    {15, 12, 15, 11, 13, 11}, // Glaceon
+    {15, 13, 15, 13, 11, 13}, // Gliscor
+    {15, 13, 15, 13, 16, 13}, // Mamoswine
+    {16, 14, 16, 14, 9, 14}, // Gallade
+    {15, 15, 15, 15, 14, 15}, // Probopass
+    {15, 15, 15, 15, 11, 15}, // Dusknoir
+    {16, 14, 16, 14, 9, 14}, // Froslass
+    {16, 12, 16, 12, 11, 12}, // Rotom
+    {15, 12, 15, 11, 13, 12}, // Uxie
+    {15, 12, 15, 11, 13, 11}, // Mesprit
+    {15, 13, 15, 12, 13, 11}, // Azelf
+    {31, 20, 31, 20, 37, 21}, // Dialga
+    {31, 20, 31, 20, 41, 18}, // Palkia
+    {15, 12, 15, 12, 15, 12}, // Heatran
+    {32, 19, 32, 19, 30, 19}, // Regigigas
+    {31, 20, 31, 20, 37, 20}, // Giratina
+    {15, 15, 15, 15, 13, 15}, // Cresselia
+    {15, 11, 15, 10, 12, 10}, // Phione
+    {16, 11, 14, 10, 11, 11}, // Manaphy
+    {15, 15, 15, 15, 13, 16}, // Darkrai
+    {15, 8, 15, 8, 10, 8}, // Shaymin (Land)
+    {32, 20, 32, 20, 32, 19}, // Arceus
+
+    {16, 15, 16, 15, 12, 13}, // Deoxys (Speed)
+    {16, 13, 16, 13, 10, 13}, // Deoxys (Defense)
+    {16, 14, 16, 14, 10, 14}, // Deoxys (Attack)
+    {16, 10, 16, 10, 9, 10}, // Burmy (Sand)
+    {16, 10, 16, 10, 9, 10}, // Burmy (Trash)
+    {15, 12, 15, 12, 9, 13}, // Wormadam (Sand)
+    {15, 12, 15, 12, 9, 13}, // Wormadam (Trash)
+    {15, 12, 15, 12, 13, 12}, // Rotom (Heat)
+    {17, 12, 14, 12, 14, 12}, // Rotom (Wash)
+    {15, 13, 15, 13, 12, 13}, // Rotom (Frost)
+    {15, 13, 15, 13, 14, 14}, // Rotom (Fan)
+    {17, 11, 14, 11, 14, 11}, // Rotom (Mow)
+    {31, 20, 31, 21, 37, 20}, // Giratina (Origin)
+    {16, 10, 16, 11, 10, 11}, // Shaymin (Sky)
+};
 
 static const struct WarpData sDummyWarpData =
 {
@@ -318,7 +948,7 @@ static u8 MovementEventModeCB_Normal(struct LinkPlayerObjectEvent *, struct Obje
 static u8 MovementEventModeCB_Ignored(struct LinkPlayerObjectEvent *, struct ObjectEvent *, u8);
 static u8 MovementEventModeCB_Scripted(struct LinkPlayerObjectEvent *, struct ObjectEvent *, u8);
 
-static u8 (*const sLinkPlayerMovementModes[])(struct LinkPlayerObjectEvent *, struct ObjectEvent *, u8) =
+static u8 (*const gLinkPlayerMovementModes[])(struct LinkPlayerObjectEvent *, struct ObjectEvent *, u8) =
 {
     [MOVEMENT_MODE_FREE]     = MovementEventModeCB_Normal,
     [MOVEMENT_MODE_FROZEN]   = MovementEventModeCB_Ignored,
@@ -330,7 +960,7 @@ static u8 FacingHandler_DpadMovement(struct LinkPlayerObjectEvent *, struct Obje
 static u8 FacingHandler_ForcedFacingChange(struct LinkPlayerObjectEvent *, struct ObjectEvent *, u8);
 
 // These handlers return TRUE if the movement was scripted and successful, and FALSE otherwise.
-static bool8 (*const sLinkPlayerFacingHandlers[])(struct LinkPlayerObjectEvent *, struct ObjectEvent *, u8) =
+static bool8 (*const gLinkPlayerFacingHandlers[])(struct LinkPlayerObjectEvent *, struct ObjectEvent *, u8) =
 {
     FacingHandler_DoNothing,
     FacingHandler_DpadMovement,
@@ -349,7 +979,7 @@ static void MovementStatusHandler_EnterFreeMode(struct LinkPlayerObjectEvent *, 
 static void MovementStatusHandler_TryAdvanceScript(struct LinkPlayerObjectEvent *, struct ObjectEvent *);
 
 // These handlers are run after an attempted movement.
-static void (*const sMovementStatusHandler[])(struct LinkPlayerObjectEvent *, struct ObjectEvent *) =
+static void (*const gMovementStatusHandler[])(struct LinkPlayerObjectEvent *, struct ObjectEvent *) =
 {
     // FALSE:
     MovementStatusHandler_EnterFreeMode,
@@ -360,13 +990,12 @@ static void (*const sMovementStatusHandler[])(struct LinkPlayerObjectEvent *, st
 // code
 void DoWhiteOut(void)
 {
-    RunScriptImmediately(EventScript_WhiteOut);
-    #if B_WHITEOUT_MONEY == GEN_3
+    ScriptContext2_RunNewScript(EventScript_WhiteOut);
     SetMoney(&gSaveBlock1Ptr->money, GetMoney(&gSaveBlock1Ptr->money) / 2);
-    #endif
     HealPlayerParty();
     Overworld_ResetStateAfterWhiteOut();
     SetWarpDestinationToLastHealLocation();
+    UpdateFollowerPokemonGraphic();
     WarpIntoMap();
 }
 
@@ -388,7 +1017,7 @@ void Overworld_ResetStateAfterTeleport(void)
     FlagClear(FLAG_SYS_SAFARI_MODE);
     FlagClear(FLAG_SYS_USE_STRENGTH);
     FlagClear(FLAG_SYS_USE_FLASH);
-    RunScriptImmediately(EventScript_ResetMrBriney);
+    ScriptContext2_RunNewScript(EventScript_ResetMrBriney);
 }
 
 void Overworld_ResetStateAfterDigEscRope(void)
@@ -409,9 +1038,9 @@ static void Overworld_ResetStateAfterWhiteOut(void)
     FlagClear(FLAG_SYS_SAFARI_MODE);
     FlagClear(FLAG_SYS_USE_STRENGTH);
     FlagClear(FLAG_SYS_USE_FLASH);
-#if VAR_TERRAIN != 0
-    VarSet(VAR_TERRAIN, 0);
-#endif
+    #if VAR_TERRAIN != 0
+        VarSet(VAR_TERRAIN, 0);
+    #endif
     // If you were defeated by Kyogre/Groudon and the step counter has
     // maxed out, end the abnormal weather.
     if (VarGet(VAR_SHOULD_END_ABNORMAL_WEATHER) == 1)
@@ -419,6 +1048,8 @@ static void Overworld_ResetStateAfterWhiteOut(void)
         VarSet(VAR_SHOULD_END_ABNORMAL_WEATHER, 0);
         VarSet(VAR_ABNORMAL_WEATHER_LOCATION, ABNORMAL_WEATHER_NONE);
     }
+
+    FollowMe_TryRemoveFollowerOnWhiteOut();
 }
 
 static void UpdateMiscOverworldStates(void)
@@ -1399,12 +2030,12 @@ static void InitOverworldBgs(void)
     SetBgAttribute(1, BG_ATTR_MOSAIC, 1);
     SetBgAttribute(2, BG_ATTR_MOSAIC, 1);
     SetBgAttribute(3, BG_ATTR_MOSAIC, 1);
-    gOverworldTilemapBuffer_Bg1 = AllocZeroed(BG_SCREEN_SIZE);
-    gOverworldTilemapBuffer_Bg2 = AllocZeroed(BG_SCREEN_SIZE);
-    gOverworldTilemapBuffer_Bg3 = AllocZeroed(BG_SCREEN_SIZE);
-    SetBgTilemapBuffer(1, gOverworldTilemapBuffer_Bg1);
-    SetBgTilemapBuffer(2, gOverworldTilemapBuffer_Bg2);
-    SetBgTilemapBuffer(3, gOverworldTilemapBuffer_Bg3);
+    gBGTilemapBuffers2 = AllocZeroed(BG_SCREEN_SIZE);
+    gBGTilemapBuffers1 = AllocZeroed(BG_SCREEN_SIZE);
+    gBGTilemapBuffers3 = AllocZeroed(BG_SCREEN_SIZE);
+    SetBgTilemapBuffer(1, gBGTilemapBuffers2);
+    SetBgTilemapBuffer(2, gBGTilemapBuffers1);
+    SetBgTilemapBuffer(3, gBGTilemapBuffers3);
     InitStandardTextBoxWindows();
 }
 
@@ -1412,9 +2043,12 @@ void CleanupOverworldWindowsAndTilemaps(void)
 {
     ClearMirageTowerPulseBlendEffect();
     FreeAllOverworldWindowBuffers();
-    TRY_FREE_AND_SET_NULL(gOverworldTilemapBuffer_Bg3);
-    TRY_FREE_AND_SET_NULL(gOverworldTilemapBuffer_Bg2);
-    TRY_FREE_AND_SET_NULL(gOverworldTilemapBuffer_Bg1);
+    if (gBGTilemapBuffers3)
+        FREE_AND_SET_NULL(gBGTilemapBuffers3);
+    if (gBGTilemapBuffers1)
+        FREE_AND_SET_NULL(gBGTilemapBuffers1);
+    if (gBGTilemapBuffers2)
+        FREE_AND_SET_NULL(gBGTilemapBuffers2);
 }
 
 static void ResetSafariZoneFlag_(void)
@@ -1437,11 +2071,11 @@ static void DoCB1_Overworld(u16 newKeys, u16 heldKeys)
     UpdatePlayerAvatarTransitionState();
     FieldClearPlayerInput(&inputStruct);
     FieldGetPlayerInput(&inputStruct, newKeys, heldKeys);
-    if (!ArePlayerFieldControlsLocked())
+    if (!ScriptContext2_IsEnabled())
     {
         if (ProcessPlayerFieldInput(&inputStruct) == 1)
         {
-            LockPlayerFieldControls();
+            ScriptContext2_Enable();
             HideMapNamePopUpWindow();
         }
         else
@@ -1449,6 +2083,9 @@ static void DoCB1_Overworld(u16 newKeys, u16 heldKeys)
             PlayerStep(inputStruct.dpadDirection, newKeys, heldKeys);
         }
     }
+    // if stop running but keep holding B -> fix follower frame
+    if (PlayerHasFollower() && IsPlayerOnFoot() && IsPlayerStandingStill())
+        ObjectEventSetHeldMovement(&gObjectEvents[GetFollowerObjectId()], GetFaceDirectionAnimNum(gObjectEvents[GetFollowerObjectId()].facingDirection));
 }
 
 void CB1_Overworld(void)
@@ -1459,7 +2096,8 @@ void CB1_Overworld(void)
 
 static void OverworldBasic(void)
 {
-    ScriptContext_RunScript();
+    DnsApplyFilters();
+    ScriptContext2_RunScript();
     RunTasks();
     AnimateSprites();
     CameraUpdate();
@@ -1484,6 +2122,20 @@ void CB2_Overworld(void)
     OverworldBasic();
     if (fading)
         SetFieldVBlankCallback();
+
+    // Make sure follower's sprite is properly positioned when map reloads.
+    if (gSaveBlock2Ptr->follower.inProgress)
+    {
+        switch(gObjectEvents[gSaveBlock2Ptr->follower.objId].facingDirection)
+        {
+            case DIR_EAST:
+                gSprites[gObjectEvents[gSaveBlock2Ptr->follower.objId].spriteId].x2 = -8;
+                break;
+            case DIR_WEST:
+                gSprites[gObjectEvents[gSaveBlock2Ptr->follower.objId].spriteId].x2 = 8;
+                break;
+        }
+    }
 }
 
 void SetMainCallback1(MainCallback cb)
@@ -1532,8 +2184,8 @@ void CB2_NewGame(void)
     NewGameInitData();
     ResetInitialPlayerAvatarState();
     PlayTimeCounter_Start();
-    ScriptContext_Init();
-    UnlockPlayerFieldControls();
+    ScriptContext1_Init();
+    ScriptContext2_Disable();
     gFieldCallback = ExecuteTruckSequence;
     gFieldCallback2 = NULL;
     DoMapLoadLoop(&gMain.state);
@@ -1553,8 +2205,8 @@ void CB2_WhiteOut(void)
         ResetSafariZoneFlag_();
         DoWhiteOut();
         ResetInitialPlayerAvatarState();
-        ScriptContext_Init();
-        UnlockPlayerFieldControls();
+        ScriptContext1_Init();
+        ScriptContext2_Disable();
         gFieldCallback = FieldCB_WarpExitFadeFromBlack;
         state = 0;
         DoMapLoadLoop(&state);
@@ -1567,8 +2219,8 @@ void CB2_WhiteOut(void)
 void CB2_LoadMap(void)
 {
     FieldClearVBlankHBlankCallbacks();
-    ScriptContext_Init();
-    UnlockPlayerFieldControls();
+    ScriptContext1_Init();
+    ScriptContext2_Disable();
     SetMainCallback1(NULL);
     SetMainCallback2(CB2_DoChangeMap);
     gMain.savedCallback = CB2_LoadMap2;
@@ -1587,8 +2239,8 @@ void CB2_ReturnToFieldContestHall(void)
     if (!gMain.state)
     {
         FieldClearVBlankHBlankCallbacks();
-        ScriptContext_Init();
-        UnlockPlayerFieldControls();
+        ScriptContext1_Init();
+        ScriptContext2_Disable();
         SetMainCallback1(NULL);
     }
     if (LoadMapInStepsLocal(&gMain.state, TRUE))
@@ -1657,8 +2309,8 @@ void CB2_ReturnToFieldFromMultiplayer(void)
     else
         gFieldCallback = FieldCB_ReturnToFieldCableLink;
 
-    ScriptContext_Init();
-    UnlockPlayerFieldControls();
+    ScriptContext1_Init();
+    ScriptContext2_Disable();
     CB2_ReturnToField();
 }
 
@@ -1666,6 +2318,7 @@ void CB2_ReturnToFieldWithOpenMenu(void)
 {
     FieldClearVBlankHBlankCallbacks();
     gFieldCallback2 = FieldCB_ReturnToFieldOpenStartMenu;
+    UpdateFollowerPokemonGraphic();
     CB2_ReturnToField();
 }
 
@@ -1728,8 +2381,8 @@ void CB2_ContinueSavedGame(void)
         InitMapFromSavedGame();
 
     PlayTimeCounter_Start();
-    ScriptContext_Init();
-    UnlockPlayerFieldControls();
+    ScriptContext1_Init();
+    ScriptContext2_Disable();
     InitMatchCallCounters();
     if (UseContinueGameWarp() == TRUE)
     {
@@ -1808,8 +2461,8 @@ static bool32 LoadMapInStepsLink(u8 *state)
     {
     case 0:
         InitOverworldBgs();
-        ScriptContext_Init();
-        UnlockPlayerFieldControls();
+        ScriptContext1_Init();
+        ScriptContext2_Disable();
         ResetMirageTowerAndSaveBlockPtrs();
         ResetScreenForMapLoad();
         (*state)++;
@@ -2132,10 +2785,7 @@ static void ResumeMap(bool32 a1)
     ResetAllPicSprites();
     ResetCameraUpdateInfo();
     InstallCameraPanAheadCallback();
-    if (!a1)
-        InitObjectEventPalettes(0);
-    else
-        InitObjectEventPalettes(1);
+    FreeAllSpritePalettes();
 
     FieldEffectActiveListClear();
     StartWeather();
@@ -2153,6 +2803,7 @@ static void InitObjectEventsLink(void)
     ResetObjectEvents();
     TrySpawnObjectEvents(0, 0);
     TryRunOnWarpIntoMapScript();
+    FollowMe_HandleSprite();
 }
 
 static void InitObjectEventsLocal(void)
@@ -2482,9 +3133,9 @@ static u16 KeyInterCB_ReadButtons(u32 key)
     return LINK_KEY_CODE_EMPTY;
 }
 
-static u16 GetDirectionForDpadKey(u16 key)
+static u16 GetDirectionForDpadKey(u16 a1)
 {
-    switch (key)
+    switch (a1)
     {
     case LINK_KEY_CODE_DPAD_RIGHT:
         return FACING_RIGHT;
@@ -2510,7 +3161,7 @@ static void ResetPlayerHeldKeys(u16 *keys)
 
 static u16 KeyInterCB_SelfIdle(u32 key)
 {
-    if (ArePlayerFieldControlsLocked() == TRUE)
+    if (ScriptContext2_IsEnabled() == TRUE)
         return LINK_KEY_CODE_EMPTY;
     if (GetLinkRecvQueueLength() > 4)
         return LINK_KEY_CODE_HANDLE_RECV_QUEUE;
@@ -2525,11 +3176,12 @@ static u16 KeyInterCB_Idle(u32 key)
     return LINK_KEY_CODE_EMPTY;
 }
 
-// Ignore the player's inputs as long as there is an event script being executed.
+// Ignore the player's inputs as long as there is an event script
+// in ScriptContext2.
 static u16 KeyInterCB_DeferToEventScript(u32 key)
 {
     u16 retVal;
-    if (ArePlayerFieldControlsLocked() == TRUE)
+    if (ScriptContext2_IsEnabled() == TRUE)
     {
         retVal = LINK_KEY_CODE_EMPTY;
     }
@@ -2552,7 +3204,7 @@ static u16 KeyInterCB_DeferToRecvQueue(u32 key)
     else
     {
         retVal = LINK_KEY_CODE_IDLE;
-        UnlockPlayerFieldControls();
+        ScriptContext2_Disable();
         SetKeyInterceptCallback(KeyInterCB_Idle);
     }
     return retVal;
@@ -2569,7 +3221,7 @@ static u16 KeyInterCB_DeferToSendQueue(u32 key)
     else
     {
         retVal = LINK_KEY_CODE_IDLE;
-        UnlockPlayerFieldControls();
+        ScriptContext2_Disable();
         SetKeyInterceptCallback(KeyInterCB_Idle);
     }
     return retVal;
@@ -2602,7 +3254,7 @@ static u16 KeyInterCB_Ready(u32 keyOrPlayerId)
     }
 }
 
-static u16 KeyInterCB_SetReady(u32 key)
+static u16 KeyInterCB_SetReady(u32 a1)
 {
     SetKeyInterceptCallback(KeyInterCB_Ready);
     return LINK_KEY_CODE_READY;
@@ -2622,7 +3274,7 @@ static u16 KeyInterCB_WaitForPlayersToExit(u32 keyOrPlayerId)
         CheckRfuKeepAliveTimer();
     if (AreAllPlayersInLinkState(PLAYER_LINK_STATE_EXITING_ROOM) == TRUE)
     {
-        ScriptContext_SetupScript(EventScript_DoLinkRoomExit);
+        ScriptContext1_SetupScript(EventScript_DoLinkRoomExit);
         SetKeyInterceptCallback(KeyInterCB_SendNothing);
     }
     return LINK_KEY_CODE_EMPTY;
@@ -2696,7 +3348,7 @@ static void LoadCableClubPlayer(s32 linkPlayerId, s32 myPlayerId, struct CableCl
     GetLinkPlayerCoords(linkPlayerId, &x, &y);
     trainer->pos.x = x;
     trainer->pos.y = y;
-    trainer->pos.elevation = GetLinkPlayerElevation(linkPlayerId);
+    trainer->pos.height = GetLinkPlayerElevation(linkPlayerId);
     trainer->metatileBehavior = MapGridGetMetatileBehaviorAt(x, y);
 }
 
@@ -2749,7 +3401,7 @@ static const u8 *TryInteractWithPlayer(struct CableClubPlayer *player)
     otherPlayerPos = player->pos;
     otherPlayerPos.x += gDirectionToVectors[player->facing].x;
     otherPlayerPos.y += gDirectionToVectors[player->facing].y;
-    otherPlayerPos.elevation = 0;
+    otherPlayerPos.height = 0;
     linkPlayerId = GetLinkPlayerIdAt(otherPlayerPos.x, otherPlayerPos.y);
 
     if (linkPlayerId != MAX_LINK_PLAYERS)
@@ -2801,41 +3453,41 @@ static u16 GetDirectionForEventScript(const u8 *script)
 
 static void InitLinkPlayerQueueScript(void)
 {
-    LockPlayerFieldControls();
+    ScriptContext2_Enable();
 }
 
 static void InitLinkRoomStartMenuScript(void)
 {
     PlaySE(SE_WIN_OPEN);
     ShowStartMenu();
-    LockPlayerFieldControls();
+    ScriptContext2_Enable();
 }
 
 static void RunInteractLocalPlayerScript(const u8 *script)
 {
     PlaySE(SE_SELECT);
-    ScriptContext_SetupScript(script);
-    LockPlayerFieldControls();
+    ScriptContext1_SetupScript(script);
+    ScriptContext2_Enable();
 }
 
 static void RunConfirmLeaveCableClubScript(void)
 {
     PlaySE(SE_WIN_OPEN);
-    ScriptContext_SetupScript(EventScript_ConfirmLeaveCableClubRoom);
-    LockPlayerFieldControls();
+    ScriptContext1_SetupScript(EventScript_ConfirmLeaveCableClubRoom);
+    ScriptContext2_Enable();
 }
 
 static void InitMenuBasedScript(const u8 *script)
 {
     PlaySE(SE_SELECT);
-    ScriptContext_SetupScript(script);
-    LockPlayerFieldControls();
+    ScriptContext1_SetupScript(script);
+    ScriptContext2_Enable();
 }
 
 static void RunTerminateLinkScript(void)
 {
-    ScriptContext_SetupScript(EventScript_TerminateLink);
-    LockPlayerFieldControls();
+    ScriptContext1_SetupScript(EventScript_TerminateLink);
+    ScriptContext2_Enable();
 }
 
 bool32 Overworld_IsRecvQueueAtMax(void)
@@ -2927,7 +3579,7 @@ static void ZeroObjectEvent(struct ObjectEvent *objEvent)
 // conflict with the usual Event Object struct, thus the definitions.
 #define linkGender(obj) obj->singleMovementActive
 // not even one can reference *byte* aligned bitfield members...
-#define linkDirection(obj) ((u8 *)obj)[offsetof(typeof(*obj), fieldEffectSpriteId) - 1] // -> rangeX
+#define linkDirection(obj) ((u8*)obj)[offsetof(typeof(*obj), fieldEffectSpriteId) - 1] // -> rangeX
 
 static void SpawnLinkPlayerObjectEvent(u8 linkPlayerId, s16 x, s16 y, u8 gender)
 {
@@ -2959,7 +3611,7 @@ static void InitLinkPlayerObjectEventPos(struct ObjectEvent *objEvent, s16 x, s1
     objEvent->previousCoords.y = y;
     SetSpritePosToMapCoords(x, y, &objEvent->initialCoords.x, &objEvent->initialCoords.y);
     objEvent->initialCoords.x += 8;
-    ObjectEventUpdateElevation(objEvent);
+    ObjectEventUpdateZCoord(objEvent);
 }
 
 static void SetLinkPlayerObjectRange(u8 linkPlayerId, u8 dir)
@@ -3052,9 +3704,9 @@ static void SetPlayerFacingDirection(u8 linkPlayerId, u8 facing)
         {
             // This is a hack to split this code onto two separate lines, without declaring a local variable.
             // C++ style inline variables would be nice here.
-            #define TEMP sLinkPlayerMovementModes[linkPlayerObjEvent->movementMode](linkPlayerObjEvent, objEvent, facing)
+            #define TEMP gLinkPlayerMovementModes[linkPlayerObjEvent->movementMode](linkPlayerObjEvent, objEvent, facing)
 
-            sMovementStatusHandler[TEMP](linkPlayerObjEvent, objEvent);
+            gMovementStatusHandler[TEMP](linkPlayerObjEvent, objEvent);
 
             // Clean up the hack.
             #undef TEMP
@@ -3065,7 +3717,7 @@ static void SetPlayerFacingDirection(u8 linkPlayerId, u8 facing)
 
 static u8 MovementEventModeCB_Normal(struct LinkPlayerObjectEvent *linkPlayerObjEvent, struct ObjectEvent *objEvent, u8 dir)
 {
-    return sLinkPlayerFacingHandlers[dir](linkPlayerObjEvent, objEvent, dir);
+    return gLinkPlayerFacingHandlers[dir](linkPlayerObjEvent, objEvent, dir);
 }
 
 static u8 MovementEventModeCB_Ignored(struct LinkPlayerObjectEvent *linkPlayerObjEvent, struct ObjectEvent *objEvent, u8 dir)
@@ -3076,7 +3728,7 @@ static u8 MovementEventModeCB_Ignored(struct LinkPlayerObjectEvent *linkPlayerOb
 // Identical to MovementEventModeCB_Normal
 static u8 MovementEventModeCB_Scripted(struct LinkPlayerObjectEvent *linkPlayerObjEvent, struct ObjectEvent *objEvent, u8 dir)
 {
-    return sLinkPlayerFacingHandlers[dir](linkPlayerObjEvent, objEvent, dir);
+    return gLinkPlayerFacingHandlers[dir](linkPlayerObjEvent, objEvent, dir);
 }
 
 static bool8 FacingHandler_DoNothing(struct LinkPlayerObjectEvent *linkPlayerObjEvent, struct ObjectEvent *objEvent, u8 dir)
@@ -3091,7 +3743,7 @@ static bool8 FacingHandler_DpadMovement(struct LinkPlayerObjectEvent *linkPlayer
     linkDirection(objEvent) = FlipVerticalAndClearForced(dir, linkDirection(objEvent));
     ObjectEventMoveDestCoords(objEvent, linkDirection(objEvent), &x, &y);
 
-    if (LinkPlayerGetCollision(linkPlayerObjEvent->objEventId, linkDirection(objEvent), x, y))
+    if (LinkPlayerDetectCollision(linkPlayerObjEvent->objEventId, linkDirection(objEvent), x, y))
     {
         return FALSE;
     }
@@ -3099,7 +3751,7 @@ static bool8 FacingHandler_DpadMovement(struct LinkPlayerObjectEvent *linkPlayer
     {
         objEvent->directionSequenceIndex = 16;
         ShiftObjectEventCoords(objEvent, x, y);
-        ObjectEventUpdateElevation(objEvent);
+        ObjectEventUpdateZCoord(objEvent);
         return TRUE;
     }
 }
@@ -3151,7 +3803,7 @@ static u8 FlipVerticalAndClearForced(u8 newFacing, u8 oldFacing)
     return oldFacing;
 }
 
-static u8 LinkPlayerGetCollision(u8 selfObjEventId, u8 direction, s16 x, s16 y)
+static bool8 LinkPlayerDetectCollision(u8 selfObjEventId, u8 direction, s16 x, s16 y)
 {
     u8 i;
     for (i = 0; i < OBJECT_EVENTS_COUNT; i++)
@@ -3161,11 +3813,11 @@ static u8 LinkPlayerGetCollision(u8 selfObjEventId, u8 direction, s16 x, s16 y)
             if ((gObjectEvents[i].currentCoords.x == x && gObjectEvents[i].currentCoords.y == y)
              || (gObjectEvents[i].previousCoords.x == x && gObjectEvents[i].previousCoords.y == y))
             {
-                return 1;
+                return TRUE;
             }
         }
     }
-    return MapGridGetCollisionAt(x, y);
+    return MapGridIsImpassableAt(x, y);
 }
 
 static void CreateLinkPlayerSprite(u8 linkPlayerId, u8 gameVersion)
@@ -3205,18 +3857,574 @@ static void SpriteCB_LinkPlayer(struct Sprite *sprite)
     struct ObjectEvent *objEvent = &gObjectEvents[linkPlayerObjEvent->objEventId];
     sprite->x = objEvent->initialCoords.x;
     sprite->y = objEvent->initialCoords.y;
-    SetObjectSubpriorityByElevation(objEvent->previousElevation, sprite, 1);
-    sprite->oam.priority = ElevationToPriority(objEvent->previousElevation);
+    SetObjectSubpriorityByZCoord(objEvent->previousElevation, sprite, 1);
+    sprite->oam.priority = ZCoordToPriority(objEvent->previousElevation);
 
     if (linkPlayerObjEvent->movementMode == MOVEMENT_MODE_FREE)
         StartSpriteAnim(sprite, GetFaceDirectionAnimNum(linkDirection(objEvent)));
     else
         StartSpriteAnimIfDifferent(sprite, GetMoveDirectionAnimNum(linkDirection(objEvent)));
 
-    UpdateObjectEventSpriteInvisibility(sprite, FALSE);
+    UpdateObjectEventSpriteInvisibility(sprite, 0);
     if (objEvent->triggerGroundEffectsOnMove)
     {
         sprite->invisible = ((sprite->data[7] & 4) >> 2);
         sprite->data[7]++;
+    }
+}
+
+void UpdateFollowerPokemonGraphic(void)
+{
+    // Loaded in case the player changed the species of the Pokemon in the lead of the party.
+    // If so, the following Pokemon needs to change.
+    u16 leadMonGraphicId = GetMonData(&gPlayerParty[GetLeadMonNotFaintedIndex()], MON_DATA_SPECIES, NULL) + OBJ_EVENT_GFX_BULBASAUR - 1;
+    struct ObjectEvent *follower = &gObjectEvents[gSaveBlock2Ptr->follower.objId];
+
+    if(gSaveBlock2Ptr->follower.inProgress && leadMonGraphicId != gSaveBlock2Ptr->follower.graphicsId)
+    {
+        // Sets the follower's graphic data to the proper following Pokemon graphic data
+        gSaveBlock2Ptr->follower.graphicsId = leadMonGraphicId;
+
+        // Sets the current follower object's graphic data to the proper data.
+        // Necessary because, without it, the follower's sprite won't change until entering a loading zone.
+        follower->graphicsId = leadMonGraphicId;
+
+        // Specifically for Pokemon Center, if lead Pokemon is revived, deletes old follower and creates new one
+        if(gSpecialVar_FollowMonFlagDummy == 1)
+        {
+            u8 newSpriteId;
+            struct ObjectEventTemplate clone;
+            struct ObjectEvent backupFollower = *follower;
+            backupFollower.graphicsId = gSaveBlock2Ptr->follower.graphicsId;
+            DestroySprite(&gSprites[gObjectEvents[gSaveBlock2Ptr->follower.objId].spriteId]);
+            RemoveObjectEvent(&gObjectEvents[gSaveBlock2Ptr->follower.objId]);
+
+            clone = *GetObjectEventTemplateByLocalIdAndMap(gSaveBlock2Ptr->follower.map.id, gSaveBlock2Ptr->follower.map.number, gSaveBlock2Ptr->follower.map.group);
+            clone.graphicsId = gSaveBlock2Ptr->follower.graphicsId;;
+            gSaveBlock2Ptr->follower.objId = TrySpawnObjectEventTemplate(&clone, gSaveBlock1Ptr->location.mapNum, gSaveBlock1Ptr->location.mapGroup, clone.x, clone.y);
+
+            follower = &gObjectEvents[gSaveBlock2Ptr->follower.objId];
+            newSpriteId = follower->spriteId;
+            *follower = backupFollower;
+            follower->spriteId = newSpriteId;
+            MoveObjectEventToMapCoords(follower, follower->currentCoords.x, follower->currentCoords.y);
+            ObjectEventTurn(follower, follower->facingDirection);
+            gSpecialVar_FollowMonFlagDummy = 0;
+        }
+    }
+}
+
+static void SparkleCallback(struct Sprite *sprite)
+{    
+    if (++sprite->data[0] >= 19)
+    {
+        FreeSpriteOamMatrix(sprite);
+        DestroySprite(sprite);
+    }
+}
+
+static void BigSparkleCallback(struct Sprite *sprite)
+{   
+    if (sprite->data[0] % 2 == 0)
+    {
+        switch(sprite->data[7])
+        {
+            // North Sparkle
+            case 0:
+                sprite->x++;
+                break;
+            // NorthEast Sparkle
+            case 1:
+                if (sprite->data[0] % 4 == 0)
+                    sprite->y++;
+                else
+                    sprite->x++;
+                break;
+            // East sparkle
+            case 2:
+                sprite->y++;
+                break;
+            // SouthEast Sparkle
+            case 3:
+                if (sprite->data[0] % 4 == 0)
+                    sprite->y++;
+                else
+                    sprite->x--;
+                break;
+            // South Sparkle
+            case 4:
+                sprite->x--;
+                break;
+            // SouthWest Sparkle
+            case 5:
+                if (sprite->data[0] % 4 == 0)
+                    sprite->y--;
+                else
+                    sprite->x--;
+                break;
+            // West Sparkle
+            case 6:
+                sprite->y--;
+                break;
+            // NorthWest Sparkle
+            case 7:
+                if (sprite->data[0] % 4 == 0)
+                    sprite->y--;
+                else
+                    sprite->x++;
+                break;
+        }
+    }
+
+    if (++sprite->data[0] >= 19)
+    {
+        FreeSpriteOamMatrix(sprite);
+        DestroySprite(sprite);
+    }
+}
+
+bool8 IsBigSprite(u16 graphicsId)
+{
+    switch(graphicsId)
+    {
+        case OBJ_EVENT_GFX_STEELIX:
+        case OBJ_EVENT_GFX_LUGIA_FOLLOWER:
+        case OBJ_EVENT_GFX_HOOH_FOLLOWER:
+        case OBJ_EVENT_GFX_WAILORD:
+        case OBJ_EVENT_GFX_DIALGA:
+        case OBJ_EVENT_GFX_PALKIA:
+        case OBJ_EVENT_GFX_REGIGIGAS:
+        case OBJ_EVENT_GFX_GIRATINA_NORMAL:
+        case OBJ_EVENT_GFX_ARCEUS_NORMAL:
+            return TRUE;
+        default:
+            return FALSE;
+    }
+}
+
+static void SparklePokeballCallback(struct Sprite *sprite)
+{    
+    sprite->data[0]++;
+
+    if (sprite->data[0] >= 10)
+    {
+        struct ObjectEvent *player = &gObjectEvents[gPlayerAvatar.objectEventId];
+        struct ObjectEvent *follower = &gObjectEvents[gSaveBlock2Ptr->follower.objId];
+        s16 x = gSprites[follower->spriteId].x;
+        s16 y = gSprites[follower->spriteId].y;
+        u8 spriteId;
+        u16 graphicsId;
+
+        DestroySprite(sprite);
+
+        gSprites[follower->spriteId].oam.priority = ZCoordToPriority(follower->previousElevation);
+        gSprites[gPlayerAvatar.spriteId].oam.priority = ZCoordToPriority(player->previousElevation);
+        player->fixedPriority = FALSE;
+
+        // Shift the location of the sparkle, depending on which way the follower will be facing
+        #ifndef POKEMON_EXPANSION
+        // Gen 3+ OBJ_EVENT_GFX constants are 25 too high due to OLD_UNOWN constants.
+        if (gSaveBlock2Ptr->follower.graphicsId > OBJ_EVENT_GFX_CELEBI)
+            graphicsId = gSaveBlock2Ptr->follower.graphicsId - OBJ_EVENT_GFX_BULBASAUR - 25;
+        else
+        #endif
+            graphicsId = gSaveBlock2Ptr->follower.graphicsId - OBJ_EVENT_GFX_BULBASAUR;
+
+        switch(gObjectEvents[gPlayerAvatar.objectEventId].facingDirection)
+        {
+            case DIR_SOUTH:
+                x -= 16 - FollowerSparkleCoords[graphicsId][0];
+                if (IsBigSprite(follower->graphicsId))
+                    x -= 16;
+
+                y += 16 - FollowerSparkleCoords[graphicsId][1];
+
+                break;
+            case DIR_NORTH:
+                x -= 16 - FollowerSparkleCoords[graphicsId][2];
+                if (IsBigSprite(follower->graphicsId))
+                    x -= 16;
+
+                y += 16 - FollowerSparkleCoords[graphicsId][3];
+
+                break;
+            case DIR_EAST:
+                x += 7 - FollowerSparkleCoords[graphicsId][4]; // 7 looks better than 8
+                if (IsBigSprite(follower->graphicsId))
+                    x += 16;
+
+                y += 16 - FollowerSparkleCoords[graphicsId][5];
+
+                break;
+            case DIR_WEST:
+                x -= 8 - FollowerSparkleCoords[graphicsId][4];
+                if (IsBigSprite(follower->graphicsId))
+                    x -= 16;
+
+                y += 16 - FollowerSparkleCoords[graphicsId][5];
+
+                break;
+        }
+
+        if (IsBigSprite(follower->graphicsId))
+        {
+            // North sparkle
+            spriteId = CreateObjectGraphicsSprite(OBJ_EVENT_GFX_EXPANDING_SPARKLE, &BigSparkleCallback, x, y, 0);
+            if (spriteId != MAX_SPRITES)
+            {
+                gSprites[spriteId].coordOffsetEnabled = TRUE;
+                gSprites[spriteId].oam.priority = 1;
+                gSprites[spriteId].data[0] = 0;
+                gSprites[spriteId].data[7] = 0;
+                gSprites[spriteId].oam.affineMode = ST_OAM_AFFINE_NORMAL;
+                InitSpriteAffineAnim(&gSprites[spriteId]);
+                StartSpriteAffineAnim(&gSprites[spriteId], 0);
+            }
+
+            // NorthEast sparkle
+            spriteId = CreateObjectGraphicsSprite(OBJ_EVENT_GFX_EXPANDING_SPARKLE, &BigSparkleCallback, x, y, 0);
+            if (spriteId != MAX_SPRITES)
+            {
+                gSprites[spriteId].coordOffsetEnabled = TRUE;
+                gSprites[spriteId].oam.priority = 1;
+                gSprites[spriteId].data[0] = 0;
+                gSprites[spriteId].data[7] = 1;
+                gSprites[spriteId].oam.affineMode = ST_OAM_AFFINE_NORMAL;
+                InitSpriteAffineAnim(&gSprites[spriteId]);
+                StartSpriteAffineAnim(&gSprites[spriteId], 1);
+            }
+
+            // East sparkle
+            spriteId = CreateObjectGraphicsSprite(OBJ_EVENT_GFX_EXPANDING_SPARKLE, &BigSparkleCallback, x, y, 0);
+            if (spriteId != MAX_SPRITES)
+            {
+                gSprites[spriteId].coordOffsetEnabled = TRUE;
+                gSprites[spriteId].oam.priority = 1;
+                gSprites[spriteId].data[0] = 0;
+                gSprites[spriteId].data[7] = 2;
+                gSprites[spriteId].oam.affineMode = ST_OAM_AFFINE_NORMAL;
+                InitSpriteAffineAnim(&gSprites[spriteId]);
+                StartSpriteAffineAnim(&gSprites[spriteId], 2);
+            }
+
+            // SouthEast sparkle
+            spriteId = CreateObjectGraphicsSprite(OBJ_EVENT_GFX_EXPANDING_SPARKLE, &BigSparkleCallback, x, y, 0);
+            if (spriteId != MAX_SPRITES)
+            {
+                gSprites[spriteId].coordOffsetEnabled = TRUE;
+                gSprites[spriteId].oam.priority = 1;
+                gSprites[spriteId].data[0] = 0;
+                gSprites[spriteId].data[7] = 3;
+                gSprites[spriteId].oam.affineMode = ST_OAM_AFFINE_NORMAL;
+                InitSpriteAffineAnim(&gSprites[spriteId]);
+                StartSpriteAffineAnim(&gSprites[spriteId], 3);
+            }
+
+            // South sparkle
+            spriteId = CreateObjectGraphicsSprite(OBJ_EVENT_GFX_EXPANDING_SPARKLE, &BigSparkleCallback, x, y, 0);
+            if (spriteId != MAX_SPRITES)
+            {
+                gSprites[spriteId].coordOffsetEnabled = TRUE;
+                gSprites[spriteId].oam.priority = 1;
+                gSprites[spriteId].data[0] = 0;
+                gSprites[spriteId].data[7] = 4;
+                gSprites[spriteId].oam.affineMode = ST_OAM_AFFINE_NORMAL;
+                InitSpriteAffineAnim(&gSprites[spriteId]);
+                StartSpriteAffineAnim(&gSprites[spriteId], 4);
+            }
+
+            // SouthWest sparkle
+            spriteId = CreateObjectGraphicsSprite(OBJ_EVENT_GFX_EXPANDING_SPARKLE, &BigSparkleCallback, x, y, 0);
+            if (spriteId != MAX_SPRITES)
+            {
+                gSprites[spriteId].coordOffsetEnabled = TRUE;
+                gSprites[spriteId].oam.priority = 1;
+                gSprites[spriteId].data[0] = 0;
+                gSprites[spriteId].data[7] = 5;
+                gSprites[spriteId].oam.affineMode = ST_OAM_AFFINE_NORMAL;
+                InitSpriteAffineAnim(&gSprites[spriteId]);
+                StartSpriteAffineAnim(&gSprites[spriteId], 5);
+            }
+
+            // West sparkle
+            spriteId = CreateObjectGraphicsSprite(OBJ_EVENT_GFX_EXPANDING_SPARKLE, &BigSparkleCallback, x, y, 0);
+            if (spriteId != MAX_SPRITES)
+            {
+                gSprites[spriteId].coordOffsetEnabled = TRUE;
+                gSprites[spriteId].oam.priority = 1;
+                gSprites[spriteId].data[0] = 0;
+                gSprites[spriteId].data[7] = 6;
+                gSprites[spriteId].oam.affineMode = ST_OAM_AFFINE_NORMAL;
+                InitSpriteAffineAnim(&gSprites[spriteId]);
+                StartSpriteAffineAnim(&gSprites[spriteId], 6);
+            }
+
+            // NorthWest sparkle
+            spriteId = CreateObjectGraphicsSprite(OBJ_EVENT_GFX_EXPANDING_SPARKLE, &BigSparkleCallback, x, y, 0);
+            if (spriteId != MAX_SPRITES)
+            {
+                gSprites[spriteId].coordOffsetEnabled = TRUE;
+                gSprites[spriteId].oam.priority = 1;
+                gSprites[spriteId].data[0] = 0;
+                gSprites[spriteId].data[7] = 7;
+                gSprites[spriteId].oam.affineMode = ST_OAM_AFFINE_NORMAL;
+                InitSpriteAffineAnim(&gSprites[spriteId]);
+                StartSpriteAffineAnim(&gSprites[spriteId], 7);
+            }
+        }
+        else
+        {
+            // North sparkle
+            spriteId = CreateObjectGraphicsSprite(OBJ_EVENT_GFX_EXPANDING_SPARKLE, &SparkleCallback, x, y, 0);
+            if (spriteId != MAX_SPRITES)
+            {
+                gSprites[spriteId].coordOffsetEnabled = TRUE;
+                gSprites[spriteId].oam.priority = 1;
+                gSprites[spriteId].data[0] = 0;
+                gSprites[spriteId].oam.affineMode = ST_OAM_AFFINE_NORMAL;
+                InitSpriteAffineAnim(&gSprites[spriteId]);
+                StartSpriteAffineAnim(&gSprites[spriteId], 0);
+            }
+
+            // NorthEast sparkle
+            spriteId = CreateObjectGraphicsSprite(OBJ_EVENT_GFX_EXPANDING_SPARKLE, &SparkleCallback, x, y, 0);
+            if (spriteId != MAX_SPRITES)
+            {
+                gSprites[spriteId].coordOffsetEnabled = TRUE;
+                gSprites[spriteId].oam.priority = 1;
+                gSprites[spriteId].data[0] = 0;
+                gSprites[spriteId].oam.affineMode = ST_OAM_AFFINE_NORMAL;
+                InitSpriteAffineAnim(&gSprites[spriteId]);
+                StartSpriteAffineAnim(&gSprites[spriteId], 1);
+            }
+
+            // East sparkle
+            spriteId = CreateObjectGraphicsSprite(OBJ_EVENT_GFX_EXPANDING_SPARKLE, &SparkleCallback, x, y, 0);
+            if (spriteId != MAX_SPRITES)
+            {
+                gSprites[spriteId].coordOffsetEnabled = TRUE;
+                gSprites[spriteId].oam.priority = 1;
+                gSprites[spriteId].data[0] = 0;
+                gSprites[spriteId].oam.affineMode = ST_OAM_AFFINE_NORMAL;
+                InitSpriteAffineAnim(&gSprites[spriteId]);
+                StartSpriteAffineAnim(&gSprites[spriteId], 2);
+            }
+
+            // SouthEast sparkle
+            spriteId = CreateObjectGraphicsSprite(OBJ_EVENT_GFX_EXPANDING_SPARKLE, &SparkleCallback, x, y, 0);
+            if (spriteId != MAX_SPRITES)
+            {
+                gSprites[spriteId].coordOffsetEnabled = TRUE;
+                gSprites[spriteId].oam.priority = 1;
+                gSprites[spriteId].data[0] = 0;
+                gSprites[spriteId].oam.affineMode = ST_OAM_AFFINE_NORMAL;
+                InitSpriteAffineAnim(&gSprites[spriteId]);
+                StartSpriteAffineAnim(&gSprites[spriteId], 3);
+            }
+
+            // South sparkle
+            spriteId = CreateObjectGraphicsSprite(OBJ_EVENT_GFX_EXPANDING_SPARKLE, &SparkleCallback, x, y, 0);
+            if (spriteId != MAX_SPRITES)
+            {
+                gSprites[spriteId].coordOffsetEnabled = TRUE;
+                gSprites[spriteId].oam.priority = 1;
+                gSprites[spriteId].data[0] = 0;
+                gSprites[spriteId].oam.affineMode = ST_OAM_AFFINE_NORMAL;
+                InitSpriteAffineAnim(&gSprites[spriteId]);
+                StartSpriteAffineAnim(&gSprites[spriteId], 4);
+            }
+
+            // SouthWest sparkle
+            spriteId = CreateObjectGraphicsSprite(OBJ_EVENT_GFX_EXPANDING_SPARKLE, &SparkleCallback, x, y, 0);
+            if (spriteId != MAX_SPRITES)
+            {
+                gSprites[spriteId].coordOffsetEnabled = TRUE;
+                gSprites[spriteId].oam.priority = 1;
+                gSprites[spriteId].data[0] = 0;
+                gSprites[spriteId].oam.affineMode = ST_OAM_AFFINE_NORMAL;
+                InitSpriteAffineAnim(&gSprites[spriteId]);
+                StartSpriteAffineAnim(&gSprites[spriteId], 5);
+            }
+
+            // West sparkle
+            spriteId = CreateObjectGraphicsSprite(OBJ_EVENT_GFX_EXPANDING_SPARKLE, &SparkleCallback, x, y, 0);
+            if (spriteId != MAX_SPRITES)
+            {
+                gSprites[spriteId].coordOffsetEnabled = TRUE;
+                gSprites[spriteId].oam.priority = 1;
+                gSprites[spriteId].data[0] = 0;
+                gSprites[spriteId].oam.affineMode = ST_OAM_AFFINE_NORMAL;
+                InitSpriteAffineAnim(&gSprites[spriteId]);
+                StartSpriteAffineAnim(&gSprites[spriteId], 6);
+            }
+
+            // NorthWest sparkle
+            spriteId = CreateObjectGraphicsSprite(OBJ_EVENT_GFX_EXPANDING_SPARKLE, &SparkleCallback, x, y, 0);
+            if (spriteId != MAX_SPRITES)
+            {
+                gSprites[spriteId].coordOffsetEnabled = TRUE;
+                gSprites[spriteId].oam.priority = 1;
+                gSprites[spriteId].data[0] = 0;
+                gSprites[spriteId].oam.affineMode = ST_OAM_AFFINE_NORMAL;
+                InitSpriteAffineAnim(&gSprites[spriteId]);
+                StartSpriteAffineAnim(&gSprites[spriteId], 7);
+            }
+        }
+    }
+}
+
+void FollowerPokeballSparkle(void)
+{
+    if (gObjectEvents[gSaveBlock2Ptr->follower.objId].invisible == TRUE && gSaveBlock2Ptr->follower.comeOutDoorStairs == 0 && !(gPlayerAvatar.flags & PLAYER_AVATAR_FLAG_UNDERWATER) && gSaveBlock2Ptr->follower.inProgress)
+    {
+        struct ObjectEvent *player = &gObjectEvents[gPlayerAvatar.objectEventId];
+        struct ObjectEvent *follower = &gObjectEvents[gSaveBlock2Ptr->follower.objId];
+        s16 x = player->currentCoords.x;
+        s16 y = player->currentCoords.y;
+        u8 spriteId;
+
+        switch(player->facingDirection)
+        {
+            case DIR_SOUTH:
+                SetSpritePosToOffsetMapCoords(&x, &y, 8, 4);
+                gSprites[follower->spriteId].y = y - 4;
+                break;
+            case DIR_NORTH:
+                SetSpritePosToOffsetMapCoords(&x, &y, 8, 0);
+                gSprites[follower->spriteId].y = y;
+                break;
+            case DIR_EAST:
+            case DIR_WEST:
+                SetSpritePosToOffsetMapCoords(&x, &y, 8, 8);
+                gSprites[follower->spriteId].y = y - 8;
+                break;
+        }    
+        gSprites[follower->spriteId].x = x;
+
+        switch(GetMonData(&gPlayerParty[GetLeadMonNotFaintedIndex()], MON_DATA_POKEBALL))
+        {
+            case ITEM_MASTER_BALL:
+                spriteId = CreateObjectGraphicsSprite(OBJ_EVENT_GFX_MASTER_BALL, &SparklePokeballCallback, x, y, 2);
+                break;
+            case ITEM_ULTRA_BALL:
+                spriteId = CreateObjectGraphicsSprite(OBJ_EVENT_GFX_ULTRA_BALL, &SparklePokeballCallback, x, y, 2);
+                break;
+            case ITEM_GREAT_BALL:
+                spriteId = CreateObjectGraphicsSprite(OBJ_EVENT_GFX_GREAT_BALL, &SparklePokeballCallback, x, y, 2);
+                break;
+            case ITEM_SAFARI_BALL:
+                spriteId = CreateObjectGraphicsSprite(OBJ_EVENT_GFX_SAFARI_BALL, &SparklePokeballCallback, x, y, 2);
+                break;
+            case ITEM_NET_BALL:
+                spriteId = CreateObjectGraphicsSprite(OBJ_EVENT_GFX_NET_BALL, &SparklePokeballCallback, x, y, 2);
+                break;
+            case ITEM_DIVE_BALL:
+                spriteId = CreateObjectGraphicsSprite(OBJ_EVENT_GFX_DIVE_BALL, &SparklePokeballCallback, x, y, 2);
+                break;
+            case ITEM_NEST_BALL:
+                spriteId = CreateObjectGraphicsSprite(OBJ_EVENT_GFX_NEST_BALL, &SparklePokeballCallback, x, y, 2);
+                break;
+            case ITEM_REPEAT_BALL:
+                spriteId = CreateObjectGraphicsSprite(OBJ_EVENT_GFX_REPEAT_BALL, &SparklePokeballCallback, x, y, 2);
+                break;
+            case ITEM_TIMER_BALL:
+                spriteId = CreateObjectGraphicsSprite(OBJ_EVENT_GFX_TIMER_BALL, &SparklePokeballCallback, x, y, 2);
+                break;
+            case ITEM_LUXURY_BALL:
+                spriteId = CreateObjectGraphicsSprite(OBJ_EVENT_GFX_LUXURY_BALL, &SparklePokeballCallback, x, y, 2);
+                break;
+            case ITEM_PREMIER_BALL:
+                spriteId = CreateObjectGraphicsSprite(OBJ_EVENT_GFX_PREMIER_BALL, &SparklePokeballCallback, x, y, 2);
+                break;
+            case ITEM_HEAL_BALL:
+                spriteId = CreateObjectGraphicsSprite(OBJ_EVENT_GFX_HEAL_BALL, &SparklePokeballCallback, x, y, 2);
+                break;
+            case ITEM_DUSK_BALL:
+                spriteId = CreateObjectGraphicsSprite(OBJ_EVENT_GFX_DUSK_BALL, &SparklePokeballCallback, x, y, 2);
+                break;
+            case ITEM_QUICK_BALL:
+                spriteId = CreateObjectGraphicsSprite(OBJ_EVENT_GFX_QUICK_BALL, &SparklePokeballCallback, x, y, 2);
+                break;
+            case ITEM_LEVEL_BALL:
+                spriteId = CreateObjectGraphicsSprite(OBJ_EVENT_GFX_LEVEL_BALL, &SparklePokeballCallback, x, y, 2);
+                break;
+            case ITEM_LURE_BALL:
+                spriteId = CreateObjectGraphicsSprite(OBJ_EVENT_GFX_LURE_BALL, &SparklePokeballCallback, x, y, 2);
+                break;
+            case ITEM_MOON_BALL:
+                spriteId = CreateObjectGraphicsSprite(OBJ_EVENT_GFX_MOON_BALL, &SparklePokeballCallback, x, y, 2);
+                break;
+            case ITEM_FRIEND_BALL:
+                spriteId = CreateObjectGraphicsSprite(OBJ_EVENT_GFX_FRIEND_BALL, &SparklePokeballCallback, x, y, 2);
+                break;
+            case ITEM_LOVE_BALL:
+                spriteId = CreateObjectGraphicsSprite(OBJ_EVENT_GFX_LOVE_BALL, &SparklePokeballCallback, x, y, 2);
+                break;
+            case ITEM_FAST_BALL:
+                spriteId = CreateObjectGraphicsSprite(OBJ_EVENT_GFX_FAST_BALL, &SparklePokeballCallback, x, y, 2);
+                break;
+            case ITEM_HEAVY_BALL:
+                spriteId = CreateObjectGraphicsSprite(OBJ_EVENT_GFX_HEAVY_BALL, &SparklePokeballCallback, x, y, 2);
+                break;
+            case ITEM_DREAM_BALL:
+                spriteId = CreateObjectGraphicsSprite(OBJ_EVENT_GFX_DREAM_BALL, &SparklePokeballCallback, x, y, 2);
+                break;
+            case ITEM_SPORT_BALL:
+                spriteId = CreateObjectGraphicsSprite(OBJ_EVENT_GFX_SPORT_BALL, &SparklePokeballCallback, x, y, 2);
+                break;
+            case ITEM_PARK_BALL:
+                spriteId = CreateObjectGraphicsSprite(OBJ_EVENT_GFX_PARK_BALL, &SparklePokeballCallback, x, y, 2);
+                break;
+            case ITEM_CHERISH_BALL:
+                spriteId = CreateObjectGraphicsSprite(OBJ_EVENT_GFX_CHERISH_BALL, &SparklePokeballCallback, x, y, 2);
+                break;
+            default: // PokeBall
+                spriteId = CreateObjectGraphicsSprite(OBJ_EVENT_GFX_ITEM_BALL, &SparklePokeballCallback, x, y, 2);
+                break;
+        }
+
+        if (spriteId != MAX_SPRITES)
+        {
+            gSprites[spriteId].coordOffsetEnabled = TRUE;
+            gSprites[spriteId].oam.priority = 2;
+            gSprites[spriteId].data[0] = 0;
+        }
+
+        follower->currentCoords.x = player->currentCoords.x;
+        follower->currentCoords.y = player->currentCoords.y;
+        follower->facingDirection = player->facingDirection;
+
+        gSprites[follower->spriteId].animNum = player->facingDirection - 1;
+
+        if (player->facingDirection == DIR_NORTH)
+        {
+            gSprites[follower->spriteId].oam.priority = 0;
+            gSprites[follower->spriteId].subpriority = 0;
+            gSprites[gPlayerAvatar.spriteId].oam.priority = 1;
+            gSprites[gPlayerAvatar.spriteId].subpriority = 1; 
+        }
+        else
+        {
+            gSprites[follower->spriteId].oam.priority = 1;
+            gSprites[follower->spriteId].subpriority = 1;
+            gSprites[gPlayerAvatar.spriteId].oam.priority = 0;
+            gSprites[gPlayerAvatar.spriteId].subpriority = 0; 
+        }
+        player->fixedPriority = TRUE;
+        gPlayerAvatar.preventStep = TRUE;
+
+        SeekSpriteAnim(&gSprites[follower->spriteId], 0);        
+        ObjectEventForceSetHeldMovement(follower, MOVEMENT_ACTION_FOLLOWING_POKEMON_GROW);
+    }
+}
+
+void FollowerIntoPokeball(void)
+{
+    if (gObjectEvents[gSaveBlock2Ptr->follower.objId].invisible == FALSE && gSaveBlock2Ptr->follower.inProgress)
+    {
+        gSaveBlock2Ptr->follower.comeOutDoorStairs = 0;
+        gPlayerAvatar.preventStep = TRUE;
+        ObjectEventForceSetHeldMovement(&gObjectEvents[gSaveBlock2Ptr->follower.objId], MOVEMENT_ACTION_FOLLOWING_POKEMON_SHRINK);
+        gSpecialVar_FollowMonFlagDummy = 1;
     }
 }

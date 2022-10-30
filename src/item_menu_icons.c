@@ -33,17 +33,17 @@ static void SpriteCB_SwitchPocketRotatingBallInit(struct Sprite *sprite);
 static void SpriteCB_SwitchPocketRotatingBallContinue(struct Sprite *sprite);
 
 // static const rom data
-static const u16 sRotatingBall_Pal[] = INCBIN_U16("graphics/bag/rotating_ball.gbapal");
-static const u8 sRotatingBall_Gfx[] = INCBIN_U8("graphics/bag/rotating_ball.4bpp");
-static const u8 sCherryUnused[] = INCBIN_U8("graphics/unused/cherry.4bpp");
-static const u16 sCherryUnused_Pal[] = INCBIN_U16("graphics/unused/cherry.gbapal");
+static const u16 gRotatingBall_Pal[] = INCBIN_U16("graphics/interface/bag_spinner.gbapal");
+static const u8 gRotatingBall[] = INCBIN_U8("graphics/interface/bag_spinner.4bpp");
+static const u8 gCherryUnused[] = INCBIN_U8("graphics/unused/cherry.4bpp");
+static const u16 gCherryUnused_Pal[] = INCBIN_U16("graphics/unused/cherry.gbapal");
 
 static const struct OamData sBagOamData =
 {
     .y = 0,
     .affineMode = ST_OAM_AFFINE_NORMAL,
     .objMode = ST_OAM_OBJ_NORMAL,
-    .mosaic = FALSE,
+    .mosaic = 0,
     .bpp = ST_OAM_4BPP,
     .shape = SPRITE_SHAPE(64x64),
     .x = 0,
@@ -93,12 +93,12 @@ static const union AnimCmd sSpriteAnim_Bag_Berries[] =
 
 static const union AnimCmd *const sBagSpriteAnimTable[] =
 {
-    [POCKET_NONE]       = sSpriteAnim_Bag_Closed,
-    [POCKET_ITEMS]      = sSpriteAnim_Bag_Items,
-    [POCKET_POKE_BALLS] = sSpriteAnim_Bag_Pokeballs,
-    [POCKET_TM_HM]      = sSpriteAnim_Bag_TMsHMs,
-    [POCKET_BERRIES]    = sSpriteAnim_Bag_Berries,
-    [POCKET_KEY_ITEMS]  = sSpriteAnim_Bag_KeyItems,
+    sSpriteAnim_Bag_Closed,
+    sSpriteAnim_Bag_Items,
+    sSpriteAnim_Bag_Pokeballs,
+    sSpriteAnim_Bag_TMsHMs,
+    sSpriteAnim_Bag_Berries,
+    sSpriteAnim_Bag_KeyItems
 };
 
 static const union AffineAnimCmd sSpriteAffineAnim_BagNormal[] =
@@ -116,15 +116,10 @@ static const union AffineAnimCmd sSpriteAffineAnim_BagShake[] =
     AFFINEANIMCMD_END
 };
 
-enum {
-    ANIM_BAG_NORMAL,
-    ANIM_BAG_SHAKE,
-};
-
 static const union AffineAnimCmd *const sBagAffineAnimCmds[] =
 {
-    [ANIM_BAG_NORMAL] = sSpriteAffineAnim_BagNormal,
-    [ANIM_BAG_SHAKE]  = sSpriteAffineAnim_BagShake
+    sSpriteAffineAnim_BagNormal,
+    sSpriteAffineAnim_BagShake
 };
 
 const struct CompressedSpriteSheet gBagMaleSpriteSheet =
@@ -158,7 +153,7 @@ static const struct OamData sRotatingBallOamData =
     .y = 0,
     .affineMode = ST_OAM_AFFINE_OFF,
     .objMode = ST_OAM_OBJ_NORMAL,
-    .mosaic = FALSE,
+    .mosaic = 0,
     .bpp = ST_OAM_4BPP,
     .shape = SPRITE_SHAPE(16x16),
     .x = 0,
@@ -205,12 +200,12 @@ static const union AffineAnimCmd *const sRotatingBallAnimCmds_FullRotation[] =
 
 static const struct SpriteSheet sRotatingBallTable =
 {
-    sRotatingBall_Gfx, 0x80, TAG_ROTATING_BALL_GFX
+    gRotatingBall, 0x80, TAG_ROTATING_BALL_GFX
 };
 
 static const struct SpritePalette sRotatingBallPaletteTable =
 {
-    sRotatingBall_Pal, TAG_ROTATING_BALL_GFX
+    gRotatingBall_Pal, TAG_ROTATING_BALL_GFX
 };
 
 static const struct SpriteTemplate sRotatingBallSpriteTemplate =
@@ -229,7 +224,7 @@ static const struct OamData sBerryPicOamData =
     .y = 0,
     .affineMode = ST_OAM_AFFINE_OFF,
     .objMode = ST_OAM_OBJ_NORMAL,
-    .mosaic = FALSE,
+    .mosaic = 0,
     .bpp = ST_OAM_4BPP,
     .shape = SPRITE_SHAPE(64x64),
     .x = 0,
@@ -246,7 +241,7 @@ static const struct OamData sBerryPicRotatingOamData =
     .y = 0,
     .affineMode = ST_OAM_AFFINE_DOUBLE,
     .objMode = ST_OAM_OBJ_NORMAL,
-    .mosaic = FALSE,
+    .mosaic = 0,
     .bpp = ST_OAM_4BPP,
     .shape = SPRITE_SHAPE(64x64),
     .x = 0,
@@ -274,7 +269,7 @@ static const struct SpriteFrameImage sBerryPicSpriteImageTable[] =
     {&gDecompressionBuffer[0], 0x800},
 };
 
-static const struct SpriteTemplate sBerryPicSpriteTemplate =
+static const struct SpriteTemplate gBerryPicSpriteTemplate =
 {
     .tileTag = TAG_NONE,
     .paletteTag = TAG_BERRY_PIC_PAL,
@@ -313,7 +308,7 @@ static const union AffineAnimCmd *const sBerryPicRotatingAnimCmds[] =
     sSpriteAffineAnim_BerryPicRotation2
 };
 
-static const struct SpriteTemplate sBerryPicRotatingSpriteTemplate =
+static const struct SpriteTemplate gBerryPicRotatingSpriteTemplate =
 {
     .tileTag = TAG_NONE,
     .paletteTag = TAG_BERRY_PIC_PAL,
@@ -411,7 +406,7 @@ static const struct OamData sBerryCheckCircleOamData =
     .y = 0,
     .affineMode = ST_OAM_AFFINE_OFF,
     .objMode = ST_OAM_OBJ_NORMAL,
-    .mosaic = FALSE,
+    .mosaic = 0,
     .bpp = ST_OAM_4BPP,
     .shape = SPRITE_SHAPE(64x64),
     .x = 0,
@@ -434,7 +429,7 @@ static const union AnimCmd *const sBerryCheckCircleSpriteAnimTable[] =
     sSpriteAnim_BerryCheckCircle
 };
 
-static const struct SpriteTemplate sBerryCheckCircleSpriteTemplate =
+static const struct SpriteTemplate gBerryCheckCircleSpriteTemplate =
 {
     .tileTag = TAG_BERRY_CHECK_CIRCLE_GFX,
     .paletteTag = TAG_BERRY_CHECK_CIRCLE_GFX,
@@ -466,8 +461,6 @@ void AddBagVisualSprite(u8 bagPocketId)
     SetBagVisualPocketId(bagPocketId, FALSE);
 }
 
-#define sPocketId data[0]
-
 void SetBagVisualPocketId(u8 bagPocketId, bool8 isSwitchingPockets)
 {
     struct Sprite *sprite = &gSprites[gBagMenu->spriteIds[ITEMMENUSPRITE_BAG]];
@@ -475,8 +468,8 @@ void SetBagVisualPocketId(u8 bagPocketId, bool8 isSwitchingPockets)
     {
         sprite->y2 = -5;
         sprite->callback = SpriteCB_BagVisualSwitchingPockets;
-        sprite->sPocketId = bagPocketId + 1;
-        StartSpriteAnim(sprite, POCKET_NONE);
+        sprite->data[0] = bagPocketId + 1;
+        StartSpriteAnim(sprite, 0);
     }
     else
     {
@@ -492,29 +485,26 @@ static void SpriteCB_BagVisualSwitchingPockets(struct Sprite *sprite)
     }
     else
     {
-        StartSpriteAnim(sprite, sprite->sPocketId);
+        StartSpriteAnim(sprite, sprite->data[0]);
         sprite->callback = SpriteCallbackDummy;
     }
 }
-
-#undef sPocketId
 
 void ShakeBagSprite(void)
 {
     struct Sprite *sprite = &gSprites[gBagMenu->spriteIds[ITEMMENUSPRITE_BAG]];
     if (sprite->affineAnimEnded)
     {
-        StartSpriteAffineAnim(sprite, ANIM_BAG_SHAKE);
+        StartSpriteAffineAnim(sprite, 1);
         sprite->callback = SpriteCB_ShakeBagSprite;
     }
 }
 
 static void SpriteCB_ShakeBagSprite(struct Sprite *sprite)
 {
-    // Wait for shaking to end
     if (sprite->affineAnimEnded)
     {
-        StartSpriteAffineAnim(sprite, ANIM_BAG_NORMAL);
+        StartSpriteAffineAnim(sprite, 0);
         sprite->callback = SpriteCallbackDummy;
     }
 }
@@ -579,22 +569,7 @@ void AddBagItemIconSprite(u16 itemId, u8 id)
 
 void RemoveBagItemIconSprite(u8 id)
 {
-// BUG: For one frame, the item you scroll to in the Bag menu
-// will have an incorrect palette and may be seen as a flicker.
-#ifdef BUGFIX
-    u8 *spriteId = &gBagMenu->spriteIds[ITEMMENUSPRITE_ITEM];
-
-    if (spriteId[id ^ 1] != SPRITE_NONE)
-        gSprites[spriteId[id ^ 1]].invisible = TRUE;
-
-    if (spriteId[id] != SPRITE_NONE)
-    {
-        DestroySpriteAndFreeResources(&gSprites[spriteId[id]]);
-        spriteId[id] = SPRITE_NONE;
-    }
-#else
     RemoveBagSprite(id + ITEMMENUSPRITE_ITEM);
-#endif
 }
 
 void CreateItemMenuSwapLine(void)
@@ -659,7 +634,7 @@ static void LoadBerryGfx(u8 berryId)
 u8 CreateBerryTagSprite(u8 id, s16 x, s16 y)
 {
     LoadBerryGfx(id);
-    return CreateSprite(&sBerryPicSpriteTemplate, x, y, 0);
+    return CreateSprite(&gBerryPicSpriteTemplate, x, y, 0);
 }
 
 void FreeBerryTagSpritePalette(void)
@@ -674,7 +649,7 @@ u8 CreateSpinningBerrySprite(u8 berryId, u8 x, u8 y, bool8 startAffine)
 
     FreeSpritePaletteByTag(TAG_BERRY_PIC_PAL);
     LoadBerryGfx(berryId);
-    spriteId = CreateSprite(&sBerryPicRotatingSpriteTemplate, x, y, 0);
+    spriteId = CreateSprite(&gBerryPicRotatingSpriteTemplate, x, y, 0);
     if (startAffine == TRUE)
         StartSpriteAffineAnim(&gSprites[spriteId], 1);
 
@@ -683,5 +658,5 @@ u8 CreateSpinningBerrySprite(u8 berryId, u8 x, u8 y, bool8 startAffine)
 
 u8 CreateBerryFlavorCircleSprite(s16 x)
 {
-    return CreateSprite(&sBerryCheckCircleSpriteTemplate, x, 116, 0);
+    return CreateSprite(&gBerryCheckCircleSpriteTemplate, x, 116, 0);
 }

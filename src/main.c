@@ -69,7 +69,7 @@ u8 gLinkVSyncDisabled;
 u32 IntrMain_Buffer[0x200];
 s8 gPcmDmaCounter;
 
-static EWRAM_DATA u16 sTrainerId = 0;
+static EWRAM_DATA u16 gTrainerId = 0;
 
 //EWRAM_DATA void (**gFlashTimerIntrFunc)(void) = NULL;
 
@@ -119,20 +119,13 @@ void AgbMain()
     gLinkTransferringData = FALSE;
     sUnusedVar = 0xFC0;
 
-#ifndef NDEBUG
-#if (LOG_HANDLER == LOG_HANDLER_MGBA_PRINT)
-    (void) MgbaOpen();
-#elif (LOG_HANDLER == LOG_HANDLER_AGB_PRINT)
-    AGBPrintfInit();
-#endif
-#endif
     for (;;)
     {
         ReadKeys();
 
         if (gSoftResetDisabled == FALSE
-         && JOY_HELD_RAW(A_BUTTON)
-         && JOY_HELD_RAW(B_START_SELECT) == B_START_SELECT)
+         && (gMain.heldKeysRaw & A_BUTTON)
+         && (gMain.heldKeysRaw & B_START_SELECT) == B_START_SELECT)
         {
             rfu_REQ_stopMode();
             rfu_waitREQComplete();
@@ -208,12 +201,12 @@ void SeedRngAndSetTrainerId(void)
     u16 val = REG_TM1CNT_L;
     SeedRng(val);
     REG_TM1CNT_H = 0;
-    sTrainerId = val;
+    gTrainerId = val;
 }
 
 u16 GetGeneratedTrainerIdLower(void)
 {
-    return sTrainerId;
+    return gTrainerId;
 }
 
 void EnableVCountIntrAtLine150(void)
@@ -285,7 +278,7 @@ static void ReadKeys(void)
             gMain.heldKeys |= A_BUTTON;
     }
 
-    if (JOY_NEW(gMain.watchedKeysMask))
+    if (gMain.newKeys & gMain.watchedKeysMask)
         gMain.watchedKeysPressed = TRUE;
 }
 
@@ -408,9 +401,7 @@ static void IntrDummy(void)
 static void WaitForVBlank(void)
 {
     gMain.intrCheck &= ~INTR_FLAG_VBLANK;
-
-    while (!(gMain.intrCheck & INTR_FLAG_VBLANK))
-        ;
+    asm("swi 0x5");
 }
 
 void SetTrainerHillVBlankCounter(u32 *counter)

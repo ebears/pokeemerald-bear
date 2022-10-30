@@ -7,13 +7,13 @@ VerdanturfTown_FriendshipRatersHouse_EventScript_FriendshipRater::
 	msgbox VerdanturfTown_FriendshipRatersHouse_Text_SeeHowMuchPokemonLikesYou, MSGBOX_DEFAULT
 	specialvar VAR_RESULT, GetLeadMonFriendshipScore
 	switch VAR_RESULT
-	case FRIENDSHIP_NONE, VerdanturfTown_FriendshipRatersHouse_EventScript_DetestsYou
-	case FRIENDSHIP_1_TO_49, VerdanturfTown_FriendshipRatersHouse_EventScript_VeryWary
-	case FRIENDSHIP_50_TO_99, VerdanturfTown_FriendshipRatersHouse_EventScript_NotUsedToYou
-	case FRIENDSHIP_100_TO_149, VerdanturfTown_FriendshipRatersHouse_EventScript_GettingUsedToYou
-	case FRIENDSHIP_150_TO_199, VerdanturfTown_FriendshipRatersHouse_EventScript_LikesYouQuiteALot
-	case FRIENDSHIP_200_TO_254, VerdanturfTown_FriendshipRatersHouse_EventScript_VeryHappy
-	case FRIENDSHIP_MAX, VerdanturfTown_FriendshipRatersHouse_EventScript_AdoresYou
+	case 0, VerdanturfTown_FriendshipRatersHouse_EventScript_DetestsYou
+	case 1, VerdanturfTown_FriendshipRatersHouse_EventScript_VeryWary
+	case 2, VerdanturfTown_FriendshipRatersHouse_EventScript_NotUsedToYou
+	case 3, VerdanturfTown_FriendshipRatersHouse_EventScript_GettingUsedToYou
+	case 4, VerdanturfTown_FriendshipRatersHouse_EventScript_LikesYouQuiteALot
+	case 5, VerdanturfTown_FriendshipRatersHouse_EventScript_VeryHappy
+	case 6, VerdanturfTown_FriendshipRatersHouse_EventScript_AdoresYou
 	release
 	end
 
@@ -63,10 +63,10 @@ VerdanturfTown_FriendshipRatersHouse_EventScript_Pikachu::
 	end
 
 VerdanturfTown_FriendshipRatersHouse_Text_SeeHowMuchPokemonLikesYou:
-	.string "Let me see your POKéMON.\n"
+	.string "Let me see your Pokémon.\n"
 	.string "I'll check to see how much it likes you.\p"
 	.string "Oh.\n"
-	.string "Your POKéMON…$"
+	.string "Your Pokémon…$"
 
 VerdanturfTown_FriendshipRatersHouse_Text_AdoresYou:
 	.string "It adores you.\n"
@@ -96,9 +96,9 @@ VerdanturfTown_FriendshipRatersHouse_Text_VeryWary:
 
 VerdanturfTown_FriendshipRatersHouse_Text_DetestsYou:
 	.string "This is a little hard for me to say…\p"
-	.string "Your POKéMON simply detests you.\n"
+	.string "Your Pokémon simply detests you.\n"
 	.string "Doesn't that make you uncomfortable?$"
 
 VerdanturfTown_FriendshipRatersHouse_Text_Pikachu:
-	.string "PIKACHU: Pika pika!$"
+	.string "Pikachu: Pika pika!$"
 

@@ -8,7 +8,7 @@
 
 static EWRAM_DATA u8 sFieldMessageBoxMode = 0;
 
-static void ExpandStringAndStartDrawFieldMessage(const u8 *, bool32);
+static void ExpandStringAndStartDrawFieldMessage(const u8*, bool32);
 static void StartDrawFieldMessage(void);
 
 void InitFieldMessageBox(void)
@@ -33,7 +33,7 @@ static void Task_DrawFieldMessage(u8 taskId)
            task->tState++;
            break;
         case 1:
-           DrawDialogueFrame(0, TRUE);
+           DrawDialogueFrame(0, 1);
            task->tState++;
            break;
         case 2:
@@ -116,7 +116,7 @@ bool8 ShowFieldMessageFromBuffer(void)
     return TRUE;
 }
 
-static void ExpandStringAndStartDrawFieldMessage(const u8 *str, bool32 allowSkippingDelayWithButtonPress)
+static void ExpandStringAndStartDrawFieldMessage(const u8* str, bool32 allowSkippingDelayWithButtonPress)
 {
     StringExpandPlaceholders(gStringVar4, str);
     AddTextPrinterForMessage(allowSkippingDelayWithButtonPress);
@@ -125,14 +125,14 @@ static void ExpandStringAndStartDrawFieldMessage(const u8 *str, bool32 allowSkip
 
 static void StartDrawFieldMessage(void)
 {
-    AddTextPrinterForMessage(TRUE);
+    AddTextPrinterForMessageWithTextColor(TRUE);
     CreateTask_DrawFieldMessage();
 }
 
 void HideFieldMessageBox(void)
 {
     DestroyTask_DrawFieldMessage();
-    ClearDialogWindowAndFrame(0, TRUE);
+    ClearDialogWindowAndFrame(0, 1);
     sFieldMessageBoxMode = FIELD_MESSAGE_BOX_HIDDEN;
 }
 
@@ -152,7 +152,7 @@ bool8 IsFieldMessageBoxHidden(void)
 static void ReplaceFieldMessageWithFrame(void)
 {
     DestroyTask_DrawFieldMessage();
-    DrawStdWindowFrame(0, TRUE);
+    DrawStdWindowFrame(0, 1);
     sFieldMessageBoxMode = FIELD_MESSAGE_BOX_HIDDEN;
 }
 

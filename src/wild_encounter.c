@@ -47,8 +47,6 @@ enum {
 #define WILD_CHECK_REPEL    (1 << 0)
 #define WILD_CHECK_KEEN_EYE (1 << 1)
 
-#define HEADER_NONE 0xFFFF
-
 static u16 FeebasRandom(void);
 static void FeebasSeedRng(u16 seed);
 static bool8 IsWildLevelAllowedByRepel(u8 level);
@@ -68,7 +66,7 @@ static const struct WildPokemon sWildFeebas = {20, 25, SPECIES_FEEBAS};
 
 static const u16 sRoute119WaterTileData[] =
 {
-//yMin, yMax, numSpots in previous sections
+//yMin, yMax, numSpots in previous sections 
      0,  45,  0,
     46,  91,  NUM_FISHING_SPOTS_1,
     92, 139,  NUM_FISHING_SPOTS_1 + NUM_FISHING_SPOTS_2,
@@ -146,7 +144,7 @@ static bool8 CheckFeebas(void)
             feebasSpots[i] = FeebasRandom() % NUM_FISHING_SPOTS;
             if (feebasSpots[i] == 0)
                 feebasSpots[i] = NUM_FISHING_SPOTS;
-
+            
             // < 1 below is a pointless check, it will never be TRUE.
             // >= 4 to skip fishing spots 1-3, because these are inaccessible
             // spots at the top of the map, at (9,7), (7,13), and (15,16).
@@ -178,7 +176,6 @@ static void FeebasSeedRng(u16 seed)
     sFeebasRngValue = seed;
 }
 
-// LAND_WILD_COUNT
 static u8 ChooseWildMonIndex_Land(void)
 {
     u8 rand = Random() % ENCOUNTER_CHANCE_LAND_MONS_TOTAL;
@@ -209,7 +206,6 @@ static u8 ChooseWildMonIndex_Land(void)
         return 11;
 }
 
-// ROCK_WILD_COUNT / WATER_WILD_COUNT
 static u8 ChooseWildMonIndex_WaterRock(void)
 {
     u8 rand = Random() % ENCOUNTER_CHANCE_WATER_MONS_TOTAL;
@@ -226,7 +222,6 @@ static u8 ChooseWildMonIndex_WaterRock(void)
         return 4;
 }
 
-// FISH_WILD_COUNT
 static u8 ChooseWildMonIndex_Fishing(u8 rod)
 {
     u8 wildMonIndex = 0;
@@ -271,6 +266,8 @@ static u8 ChooseWildMonLevel(const struct WildPokemon *wildPokemon)
     u8 max;
     u8 range;
     u8 rand;
+    u8 curvedLevel;
+    u8 curveAmount;
 
     // Make sure minimum level is less than maximum level
     if (wildPokemon->maxLevel >= wildPokemon->minLevel)
@@ -283,7 +280,16 @@ static u8 ChooseWildMonLevel(const struct WildPokemon *wildPokemon)
         min = wildPokemon->maxLevel;
         max = wildPokemon->minLevel;
     }
+    
+    curvedLevel = GetPartyMonCurvedLevel();
+    if (max < curvedLevel)
+        curveAmount = (((2 * curvedLevel) + max) / 3) - max;
+
     range = max - min + 1;
+
+    if ((range < (curveAmount * 3) && (range != 0)))
+        range = curveAmount / 3; 
+
     rand = Random() % range;
 
     // check ability for max level mon
@@ -293,13 +299,13 @@ static u8 ChooseWildMonLevel(const struct WildPokemon *wildPokemon)
         if (ability == ABILITY_HUSTLE || ability == ABILITY_VITAL_SPIRIT || ability == ABILITY_PRESSURE)
         {
             if (Random() % 2 == 0)
-                return max;
+                return max + curveAmount;
 
             if (rand != 0)
                 rand--;
         }
     }
-    return min + rand;
+    return min + rand + curveAmount;
 }
 
 static u16 GetCurrentMapWildMonHeaderId(void)
@@ -315,11 +321,31 @@ static u16 GetCurrentMapWildMonHeaderId(void)
         if (gWildMonHeaders[i].mapGroup == gSaveBlock1Ptr->location.mapGroup &&
             gWildMonHeaders[i].mapNum == gSaveBlock1Ptr->location.mapNum)
         {
+			if (gSaveBlock1Ptr->location.mapGroup == MAP_GROUP(ROUTE101) &&
+                gSaveBlock1Ptr->location.mapNum == MAP_NUM(ROUTE101))
+                i += VarGet(VAR_DAYNIGHT);
+
+			if (gSaveBlock1Ptr->location.mapGroup == MAP_GROUP(ROUTE102) &&
+                gSaveBlock1Ptr->location.mapNum == MAP_NUM(ROUTE102))
+                i += VarGet(VAR_DAYNIGHT);
+
+			if (gSaveBlock1Ptr->location.mapGroup == MAP_GROUP(ROUTE103) &&
+                gSaveBlock1Ptr->location.mapNum == MAP_NUM(ROUTE103))
+                i += VarGet(VAR_DAYNIGHT);
+
+			if (gSaveBlock1Ptr->location.mapGroup == MAP_GROUP(ROUTE104) &&
+                gSaveBlock1Ptr->location.mapNum == MAP_NUM(ROUTE104))
+                i += VarGet(VAR_DAYNIGHT);
+
+			if (gSaveBlock1Ptr->location.mapGroup == MAP_GROUP(LITTLEROOT_CONNECTION) &&
+                gSaveBlock1Ptr->location.mapNum == MAP_NUM(LITTLEROOT_CONNECTION))
+                i += VarGet(VAR_DAYNIGHT);
+
             if (gSaveBlock1Ptr->location.mapGroup == MAP_GROUP(ALTERING_CAVE) &&
                 gSaveBlock1Ptr->location.mapNum == MAP_NUM(ALTERING_CAVE))
             {
                 u16 alteringCaveId = VarGet(VAR_ALTERING_CAVE_WILD_SET);
-                if (alteringCaveId >= NUM_ALTERING_CAVE_TABLES)
+                if (alteringCaveId > 8)
                     alteringCaveId = 0;
 
                 i += alteringCaveId;
@@ -329,7 +355,7 @@ static u16 GetCurrentMapWildMonHeaderId(void)
         }
     }
 
-    return HEADER_NONE;
+    return -1;
 }
 
 static u8 PickWildMonNature(void)
@@ -367,10 +393,7 @@ static u8 PickWildMonNature(void)
     // check synchronize for a pokemon with the same ability
     if (!GetMonData(&gPlayerParty[0], MON_DATA_SANITY_IS_EGG)
         && GetMonAbility(&gPlayerParty[0]) == ABILITY_SYNCHRONIZE
-    #if B_SYNCHRONIZE_NATURE <= GEN_7
-        && (Random() % 2 == 0)
-    #endif
-    )
+        && ((B_SYNCHRONIZE_NATURE >= GEN_8) || Random() % 2 == 0))
     {
         return GetMonData(&gPlayerParty[0], MON_DATA_PERSONALITY) % NUM_NATURES;
     }
@@ -579,7 +602,7 @@ bool8 StandardWildEncounter(u16 currMetaTileBehavior, u16 previousMetaTileBehavi
         return FALSE;
 
     headerId = GetCurrentMapWildMonHeaderId();
-    if (headerId == HEADER_NONE)
+    if (headerId == 0xFFFF)
     {
         if (gMapHeader.mapLayoutId == LAYOUT_BATTLE_FRONTIER_BATTLE_PIKE_ROOM_WILD_MONS)
         {
@@ -711,7 +734,7 @@ void RockSmashWildEncounter(void)
 {
     u16 headerId = GetCurrentMapWildMonHeaderId();
 
-    if (headerId != HEADER_NONE)
+    if (headerId != 0xFFFF)
     {
         const struct WildPokemonInfo *wildPokemonInfo = gWildMonHeaders[headerId].rockSmashMonsInfo;
 
@@ -719,7 +742,7 @@ void RockSmashWildEncounter(void)
         {
             gSpecialVar_Result = FALSE;
         }
-        else if (DoWildEncounterRateTest(wildPokemonInfo->encounterRate, TRUE) == TRUE
+        else if (DoWildEncounterRateTest(wildPokemonInfo->encounterRate, 1) == TRUE
          && TryGenerateWildMon(wildPokemonInfo, WILD_AREA_ROCKS, WILD_CHECK_REPEL | WILD_CHECK_KEEN_EYE) == TRUE)
         {
             BattleSetup_StartWildBattle();
@@ -743,7 +766,7 @@ bool8 SweetScentWildEncounter(void)
 
     PlayerGetDestCoords(&x, &y);
     headerId = GetCurrentMapWildMonHeaderId();
-    if (headerId == HEADER_NONE)
+    if (headerId == 0xFFFF)
     {
         if (gMapHeader.mapLayoutId == LAYOUT_BATTLE_FRONTIER_BATTLE_PIKE_ROOM_WILD_MONS)
         {
@@ -813,7 +836,7 @@ bool8 DoesCurrentMapHaveFishingMons(void)
 {
     u16 headerId = GetCurrentMapWildMonHeaderId();
 
-    if (headerId != HEADER_NONE && gWildMonHeaders[headerId].fishingMonsInfo != NULL)
+    if (headerId != 0xFFFF && gWildMonHeaders[headerId].fishingMonsInfo != NULL)
         return TRUE;
     else
         return FALSE;
@@ -848,7 +871,7 @@ u16 GetLocalWildMon(bool8 *isWaterMon)
 
     *isWaterMon = FALSE;
     headerId = GetCurrentMapWildMonHeaderId();
-    if (headerId == HEADER_NONE)
+    if (headerId == 0xFFFF)
         return SPECIES_NONE;
     landMonsInfo = gWildMonHeaders[headerId].landMonsInfo;
     waterMonsInfo = gWildMonHeaders[headerId].waterMonsInfo;
@@ -880,7 +903,7 @@ u16 GetLocalWaterMon(void)
 {
     u16 headerId = GetCurrentMapWildMonHeaderId();
 
-    if (headerId != HEADER_NONE)
+    if (headerId != 0xFFFF)
     {
         const struct WildPokemonInfo *waterMonsInfo = gWildMonHeaders[headerId].waterMonsInfo;
 
@@ -907,7 +930,7 @@ bool8 UpdateRepelCounter(void)
         VarSet(VAR_REPEL_STEP_COUNT, steps);
         if (steps == 0)
         {
-            ScriptContext_SetupScript(EventScript_RepelWoreOff);
+            ScriptContext1_SetupScript(EventScript_RepelWoreOff);
             return TRUE;
         }
     }
@@ -1006,13 +1029,11 @@ bool8 TryDoDoubleWildBattle(void)
 {
     if (GetSafariZoneFlag() || GetMonsStateToDoubles() != PLAYER_HAS_TWO_USABLE_MONS)
         return FALSE;
-#if B_FLAG_FORCE_DOUBLE_WILD != 0
-    else if (FlagGet(B_FLAG_FORCE_DOUBLE_WILD))
+    else if (B_FLAG_FORCE_DOUBLE_WILD != 0 && FlagGet(B_FLAG_FORCE_DOUBLE_WILD))
         return TRUE;
-#endif
-#if B_DOUBLE_WILD_CHANCE != 0
+    #if B_DOUBLE_WILD_CHANCE != 0
     else if ((Random() % 100) + 1 < B_DOUBLE_WILD_CHANCE)
         return TRUE;
-#endif
+    #endif
     return FALSE;
 }

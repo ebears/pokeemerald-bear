@@ -41,6 +41,7 @@
 #include "constants/moves.h"
 #include "constants/party_menu.h"
 #include "constants/pokemon.h"
+#include "constants/pokemon_size_record.h"
 #include "constants/roulette.h"
 #include "constants/script_menu.h"
 #include "constants/secret_bases.h"
@@ -54,12 +55,15 @@
 #include "constants/union_room.h"
 #include "constants/vars.h"
 #include "constants/weather.h"
+#include "constants/follow_me.h"
+#include "constants/quests.h"
 	.include "asm/macros.inc"
 	.include "asm/macros/event.inc"
 	.include "constants/constants.inc"
 
 	.section script_data, "aw", %progbits
 
+@ 81DB67C
 	.include "data/script_cmd_table.inc"
 
 gSpecialVars::
@@ -83,8 +87,9 @@ gSpecialVars::
 	.4byte gSpecialVar_ContestCategory
 	.4byte gSpecialVar_MonBoxId
 	.4byte gSpecialVar_MonBoxPos
-	.4byte gSpecialVar_Unused_0x8014
+	.4byte gSpecialVar_TextColor
 	.4byte gTrainerBattleOpponent_A
+	.4byte gSpecialVar_FollowMonFlagDummy
 
 	.include "data/specials.inc"
 
@@ -577,8 +582,6 @@ gStdScripts_End::
 	.include "data/scripts/new_game.inc"
 	.include "data/scripts/hall_of_fame.inc"
 
-	.include "data/scripts/debug.inc"
-
 EventScript_WhiteOut::
 	call EverGrandeCity_HallOfFame_EventScript_ResetEliteFour
 	goto EventScript_ResetMrBriney
@@ -837,11 +840,11 @@ Common_EventScript_PlayerHandedOverTheItem::
 @ The below and surf.inc could be split into some text/notices.inc
 gText_PokemartSign::
 	.string "“Selected items for your convenience!”\n"
-	.string "POKéMON MART$"
+	.string "Pokémon Mart$"
 
 gText_PokemonCenterSign::
 	.string "“Rejuvenate your tired partners!”\n"
-	.string "POKéMON CENTER$"
+	.string "Pokémon Center$"
 
 gText_MomOrDadMightLikeThisProgram::
 	.string "{STR_VAR_1} might like this program.\n"
@@ -849,7 +852,7 @@ gText_MomOrDadMightLikeThisProgram::
 	.string "Better get going!$"
 
 gText_WhichFloorWouldYouLike::
-	.string "Welcome to LILYCOVE DEPARTMENT STORE.\p"
+	.string "Welcome to Lilycove Department Store.\p"
 	.string "Which floor would you like?$"
 
 gText_SandstormIsVicious::
@@ -857,16 +860,16 @@ gText_SandstormIsVicious::
 	.string "It's impossible to keep going.$"
 
 gText_SelectWithoutRegisteredItem::
-	.string "An item in the BAG can be\n"
-	.string "registered to SELECT for easy use.$"
+	.string "An item in the Bag can be\n"
+	.string "registered to Select for easy use.$"
 
 gText_PokemonTrainerSchoolEmail::
-	.string "There's an e-mail from POKéMON TRAINER\n"
-	.string "SCHOOL.\p"
+	.string "There's an e-mail from Pokémon Trainer\n"
+	.string "School.\p"
 	.string "… … … … … …\p"
-	.string "A POKéMON may learn up to four moves.\p"
-	.string "A TRAINER's expertise is tested on the\n"
-	.string "move sets chosen for POKéMON.\p"
+	.string "A Pokémon may learn up to four moves.\p"
+	.string "A Trainer's expertise is tested on the\n"
+	.string "move sets chosen for Pokémon.\p"
 	.string "… … … … … …$"
 
 gText_PlayerHouseBootPC::
@@ -881,28 +884,28 @@ gText_UnusedNicknameReceivedPokemon::
 
 gText_PlayerWhitedOut::
 	.string "{PLAYER} is out of usable\n"
-	.string "POKéMON!\p{PLAYER} whited out!$"
+	.string "Pokémon!\p{PLAYER} whited out!$"
 
 gText_RegisteredTrainerinPokeNav::
 	.string "Registered {STR_VAR_1} {STR_VAR_2}\n"
-	.string "in the POKéNAV.$"
+	.string "in the Pokénav.$"
 
 gText_ComeBackWithSecretPower::
-	.string "Do you know the TM SECRET POWER?\p"
-	.string "Our group, we love the TM SECRET\n"
-	.string "POWER.\p"
+	.string "Do you know the TM Secret Power?\p"
+	.string "Our group, we love the TM Secret\n"
+	.string "Power.\p"
 	.string "One of our members will give it to you.\n"
 	.string "Come back and show me if you get it.\p"
 	.string "We'll accept you as a member and sell\n"
 	.string "you good stuff in secrecy.$"
 
 gText_PokerusExplanation::
-	.string "Your POKéMON may be infected with\n"
-	.string "POKéRUS.\p"
-	.string "Little is known about the POKéRUS\n"
+	.string "Your Pokémon may be infected with\n"
+	.string "Pokérus.\p"
+	.string "Little is known about the Pokérus\n"
 	.string "except that they are microscopic life-\l"
-	.string "forms that attach to POKéMON.\p"
-	.string "While infected, POKéMON are said to\n"
+	.string "forms that attach to Pokémon.\p"
+	.string "While infected, Pokémon are said to\n"
 	.string "grow exceptionally well.$"
 
 	.include "data/text/surf.inc"
@@ -916,7 +919,7 @@ gText_BigHoleInTheWall::
 
 gText_SorryWirelessClubAdjustments::
 	.string "I'm terribly sorry.\n"
-	.string "The POKéMON WIRELESS CLUB is\l"
+	.string "The Pokémon Wireless Club is\l"
 	.string "undergoing adjustments now.$"
 
 gText_UndergoingAdjustments::
@@ -925,12 +928,12 @@ gText_UndergoingAdjustments::
 
 @ Unused
 gText_SorryTradeCenterInspections::
-	.string "I'm terribly sorry. The TRADE CENTER\n"
+	.string "I'm terribly sorry. The Trade Center\n"
 	.string "is undergoing inspections.$"
 
 @ Unused
 gText_SorryRecordCornerPreparation::
-	.string "I'm terribly sorry. The RECORD CORNER\n"
+	.string "I'm terribly sorry. The Record Corner\n"
 	.string "is under preparation.$"
 
 gText_PlayerHandedOverTheItem::
@@ -939,7 +942,7 @@ gText_PlayerHandedOverTheItem::
 
 gText_ThankYouForAccessingMysteryGift::
 	.string "Thank you for accessing the\n"
-	.string "MYSTERY GIFT System.$"
+	.string "Mystery Gift System.$"
 
 gText_PlayerFoundOneTMHM::
 	.string "{PLAYER} found one {STR_VAR_1}\n"
@@ -947,7 +950,7 @@ gText_PlayerFoundOneTMHM::
 
 gText_Sudowoodo_Attacked::
 	.string "The weird tree doesn't like the\n"
-	.string "WAILMER PAIL!\p"
+	.string "Wailmer Pail!\p"
 	.string "The weird tree attacked!$"
 
 gText_LegendaryFlewAway::
@@ -1058,3 +1061,5 @@ Common_EventScript_LegendaryFlewAway::
 	.include "data/text/frontier_brain.inc"
 	.include "data/text/save.inc"
 	.include "data/text/birch_speech.inc"
+
+	.include "data/maps/LittlerootConnection/scripts.inc"

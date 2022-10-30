@@ -9,12 +9,9 @@
 #include "constants/flags.h"
 #include "constants/vars.h"
 #include "constants/species.h"
-#include "constants/pokedex.h"
 #include "constants/berry.h"
 #include "constants/maps.h"
-#include "constants/pokemon.h"
-#include "constants/easy_chat.h"
-#include "constants/trainer_hill.h"
+#include "constants/expansion_branches.h"
 
 // Prevent cross-jump optimization.
 #define BLOCK_CROSS_JUMP asm("");
@@ -108,13 +105,13 @@
 #define T1_READ_8(ptr)  ((ptr)[0])
 #define T1_READ_16(ptr) ((ptr)[0] | ((ptr)[1] << 8))
 #define T1_READ_32(ptr) ((ptr)[0] | ((ptr)[1] << 8) | ((ptr)[2] << 16) | ((ptr)[3] << 24))
-#define T1_READ_PTR(ptr) (u8 *) T1_READ_32(ptr)
+#define T1_READ_PTR(ptr) (u8*) T1_READ_32(ptr)
 
 // T2_READ_8 is a duplicate to remain consistent with each group.
 #define T2_READ_8(ptr)  ((ptr)[0])
 #define T2_READ_16(ptr) ((ptr)[0] + ((ptr)[1] << 8))
 #define T2_READ_32(ptr) ((ptr)[0] + ((ptr)[1] << 8) + ((ptr)[2] << 16) + ((ptr)[3] << 24))
-#define T2_READ_PTR(ptr) (void *) T2_READ_32(ptr)
+#define T2_READ_PTR(ptr) (void*) T2_READ_32(ptr)
 
 // Macros for checking the joypad
 #define TEST_BUTTON(field, button) ((field) & (button))
@@ -135,13 +132,8 @@
 
 #define ROUND_BITS_TO_BYTES(numBits) DIV_ROUND_UP(numBits, 8)
 
-#define NUM_DEX_FLAG_BYTES ROUND_BITS_TO_BYTES(POKEMON_SLOTS_NUMBER)
+#define DEX_FLAGS_NO ROUND_BITS_TO_BYTES(POKEMON_SLOTS_NUMBER)
 #define NUM_FLAG_BYTES ROUND_BITS_TO_BYTES(FLAGS_COUNT)
-#define NUM_ADDITIONAL_PHRASE_BYTES ROUND_BITS_TO_BYTES(NUM_ADDITIONAL_PHRASES)
-
-// This produces an error at compile-time if expr is zero.
-// It looks like file.c:line: size of array `id' is negative
-#define STATIC_ASSERT(expr, id) typedef char id[(expr) ? 1 : -1];
 
 struct Coords8
 {
@@ -287,6 +279,8 @@ struct BattleTowerPokemon
     u8 friendship;
 };
 
+#define NULL_BATTLE_TOWER_POKEMON { .nickname = __("$$$$$$$$$$$") }
+
 struct EmeraldBattleTowerRecord
 {
     /*0x00*/ u8 lvlMode; // 0 = level 50, 1 = level 100
@@ -412,7 +406,7 @@ struct BattleFrontier
     /*0xE1A*/ u16 pyramidWinStreaks[FRONTIER_LVL_MODE_COUNT];
     /*0xE1E*/ u16 pyramidRecordStreaks[FRONTIER_LVL_MODE_COUNT];
     /*0xE22*/ u16 pyramidRandoms[4];
-    /*0xE2A*/ u8 pyramidTrainerFlags; // 1 bit for each trainer (MAX_PYRAMID_TRAINERS)
+    /*0xE2A*/ u8 pyramidTrainerFlags;
     /*0xE2C*/ struct PyramidBag pyramidBag;
     /*0xE68*/ u8 pyramidLightRadius;
     /*0xE6A*/ u16 verdanturfTentPrize;
@@ -463,6 +457,32 @@ struct RankingHall1P
     u8 language;
 };
 
+// follow me
+struct FollowerMapData
+{
+    /*0x0*/ u8 id;
+    /*0x1*/ u8 number;
+    /*0x2*/ u8 group;
+}; /* size = 0x4 */
+
+struct Follower
+{
+    /*0x00*/ u8 inProgress:1;
+             u8 warpEnd:1;
+             u8 createSurfBlob:3;
+             u8 comeOutDoorStairs:3;
+    /*0x01*/ u8 objId;
+    /*0x02*/ u8 currentSprite;
+    /*0x03*/ u8 delayedState;
+    /*0x04*/ struct FollowerMapData map;
+    /*0x08*/ struct Coords16 log;
+    /*0x0C*/ const u8* script;
+    /*0x10*/ u16 flag;
+    /*0x12*/ u16 graphicsId;
+    /*0x14*/ u16 flags;
+    /*0x15*/ u8 locked;
+}; /* size = 0x18 */
+
 struct RankingHall2P
 {
     u8 id1[TRAINER_ID_LENGTH];
@@ -472,6 +492,9 @@ struct RankingHall2P
     u8 name2[PLAYER_NAME_LENGTH + 1];
     u8 language;
 };
+
+// quest menu
+#include "constants/quests.h"
 
 struct SaveBlock2
 {
@@ -490,6 +513,11 @@ struct SaveBlock2
              u16 optionsBattleStyle:1; // OPTIONS_BATTLE_STYLE_[SHIFT/SET]
              u16 optionsBattleSceneOff:1; // whether battle animations are disabled
              u16 regionMapZoom:1; // whether the map is zoomed in
+             u16 optionsUnitSystem:1;   //tx_optionsPlus
+             u16 optionsHpBarSpeed:4;   //tx_optionsPlus
+             u16 optionsExpBarSpeed:4;  //tx_optionsPlus
+             u16 optionsDisableMatchCall:1; //tx_optionsPlus
+             u16 optionsCurrentFont:1;  //tx_optionsPlus
     /*0x18*/ struct Pokedex pokedex;
     /*0x90*/ u8 filler_90[0x8];
     /*0x98*/ struct Time localTimeOffset;
@@ -505,7 +533,15 @@ struct SaveBlock2
     /*0x57C*/ struct RankingHall2P hallRecords2P[FRONTIER_LVL_MODE_COUNT][HALL_RECORDS_COUNT]; // From record mixing.
     /*0x624*/ u16 contestLinkResults[CONTEST_CATEGORIES_COUNT][CONTESTANT_COUNT];
     /*0x64C*/ struct BattleFrontier frontier;
-}; // sizeof=0xF2C
+              struct Follower follower;
+
+#define QUEST_FLAGS_COUNT ROUND_BITS_TO_BYTES(QUEST_COUNT)
+#define SUB_FLAGS_COUNT ROUND_BITS_TO_BYTES(SUB_QUEST_COUNT)
+#define QUEST_STATES 5 //Number of different quest states tracked in the saveblock
+
+    u8 questData[QUEST_FLAGS_COUNT * QUEST_STATES];
+    u8 subQuests[SUB_FLAGS_COUNT];
+}; 
 
 extern struct SaveBlock2 *gSaveBlock2Ptr;
 
@@ -814,7 +850,7 @@ struct TrainerNameRecord
     u8 trainerName[PLAYER_NAME_LENGTH + 1];
 };
 
-struct TrainerHillSave
+struct SaveTrainerHill
 {
     /*0x3D64*/ u32 timer;
     /*0x3D68*/ u32 bestTime;
@@ -826,7 +862,7 @@ struct TrainerHillSave
     /*0x3D6E*/ u16 hasLost:1;
     /*0x3D6E*/ u16 maybeECardScanDuringChallenge:1;
     /*0x3D6E*/ u16 field_3D6E_0f:1;
-    /*0x3D6E*/ u16 mode:2; // HILL_MODE_*
+    /*0x3D6E*/ u16 tag:2;
 };
 
 struct WonderNewsMetadata
@@ -881,7 +917,7 @@ struct MysteryGiftSave
     struct WonderCardMetadata cardMetadata;
     u16 questionnaireWords[NUM_QUESTIONNAIRE_WORDS];
     struct WonderNewsMetadata newsMetadata;
-    u32 trainerIds[2][5]; // Saved ids for 10 trainers, 5 each for battles and trades
+    u32 trainerIds[2][5]; // Saved ids for 10 trainers, 5 each for battles and trades 
 }; // 0x36C 0x3598
 
 // For external event data storage. The majority of these may have never been used.
@@ -996,7 +1032,7 @@ struct SaveBlock1
     /*0x2BC8*/ u16 easyChatBattleWon[EASY_CHAT_BATTLE_WORDS_COUNT];
     /*0x2BD4*/ u16 easyChatBattleLost[EASY_CHAT_BATTLE_WORDS_COUNT];
     /*0x2BE0*/ struct Mail mail[MAIL_COUNT];
-    /*0x2E20*/ u8 additionalPhrases[NUM_ADDITIONAL_PHRASE_BYTES]; // bitfield for 33 additional phrases in easy chat system
+    /*0x2E20*/ u8 additionalPhrases[8]; // bitfield for 33 additional phrases in easy chat system
     /*0x2E28*/ OldMan oldMan;
     /*0x2e64*/ struct DewfordTrend dewfordTrends[SAVED_TRENDS_COUNT];
     /*0x2e90*/ struct ContestWinner contestWinners[NUM_CONTEST_WINNERS]; // see CONTEST_WINNER_*
@@ -1008,15 +1044,15 @@ struct SaveBlock1
     /*0x31DC*/ struct Roamer roamer;
     /*0x31F8*/ struct EnigmaBerry enigmaBerry;
     /*0x322C*/ struct MysteryGiftSave mysteryGift;
-    /*0x3???*/ u8 dexSeen[NUM_DEX_FLAG_BYTES];
-    /*0x3???*/ u8 dexCaught[NUM_DEX_FLAG_BYTES];
-    /*0x3???*/ u32 trainerHillTimes[NUM_TRAINER_HILL_MODES];
+    /*0x3???*/ u8 dexSeen[DEX_FLAGS_NO];
+    /*0x3???*/ u8 dexCaught[DEX_FLAGS_NO];
+    /*0x3???*/ u32 trainerHillTimes[4];
     /*0x3???*/ struct RamScript ramScript;
     /*0x3???*/ struct RecordMixingGift recordMixingGift;
     /*0x3???*/ LilycoveLady lilycoveLady;
     /*0x3???*/ struct TrainerNameRecord trainerNameRecords[20];
     /*0x3???*/ u8 registeredTexts[UNION_ROOM_KB_ROW_COUNT][21];
-    /*0x3???*/ struct TrainerHillSave trainerHill;
+    /*0x3???*/ struct SaveTrainerHill trainerHill;
     /*0x3???*/ struct WaldaPhrase waldaPhrase;
     // sizeof: 0x3???
 };
@@ -1027,7 +1063,7 @@ struct MapPosition
 {
     s16 x;
     s16 y;
-    s8 elevation;
+    s8 height;
 };
 
 #endif // GUARD_GLOBAL_H

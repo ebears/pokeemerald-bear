@@ -179,7 +179,7 @@ extern const u8 gText_EmptyString2[];
 extern const u8 gText_Confirm3[];
 extern const u8 gText_Cancel4[];
 extern const u8 gText_IsThisTheCorrectTime[];
-extern const u8 gText_PkmnFainted_FldPsn[];
+extern const u8 gText_PkmnFainted3[];
 extern const u8 gText_Coins[];
 extern const u8 gText_Silver[];
 extern const u8 gText_Gold[];
@@ -300,6 +300,8 @@ extern const u8 gText_BattleSceneOn[];
 extern const u8 gText_BattleSceneOff[];
 extern const u8 gText_BattleStyleShift[];
 extern const u8 gText_BattleStyleSet[];
+extern const u8 gText_UnitSystemMetric[];   //tx_optionsPlus
+extern const u8 gText_UnitSystemImperial[]; //tx_optionsPlus
 extern const u8 gText_SoundMono[];
 extern const u8 gText_SoundStereo[];
 extern const u8 gText_FrameTypeNumber[];
@@ -314,7 +316,11 @@ extern const u8 gText_BattleScene[];
 extern const u8 gText_BattleStyle[];
 extern const u8 gText_Sound[];
 extern const u8 gText_Frame[];
-extern const u8 gText_OptionMenuCancel[];
+extern const u8 gText_Font[];               //tx_optionsPlus
+extern const u8 gText_OptionFontFireRed[];  //tx_optionsPlus
+extern const u8 gText_OptionFontEmerald[];  //tx_optionsPlus
+extern const u8 gText_OptionMatchCalls[];   //tx_optionsPlus
+extern const u8 gText_OptionMenuSave[];
 extern const u8 gText_ButtonMode[];
 
 extern const u8 gText_MaleSymbol[];
@@ -414,6 +420,7 @@ extern const u8 gText_BerryTag[];
 extern const u8 gText_NumberVar1Var2[];
 extern const u8 gText_SizeSlash[];
 extern const u8 gText_Var1DotVar2[];
+extern const u8 gText_Var1DotVar2_Metric[];
 extern const u8 gText_ThreeMarks[];
 extern const u8 gText_FirmSlash[];
 
@@ -464,7 +471,6 @@ extern const u8 gText_MailMessageWillBeLost[];
 extern const u8 gText_MailTakenFromPkmn[];
 extern const u8 gText_NoMoreThanVar1Pkmn[];
 extern const u8 gText_PkmnCantBeTradedNow[];
-extern const u8 gText_PkmnCantBeTraded[];
 extern const u8 gText_EggCantBeTradedNow[];
 extern const u8 gText_OnlyPkmnForBattle[];
 extern const u8 gJPText_AreYouSureYouWantToSpinTradeMon[];
@@ -500,8 +506,6 @@ extern const u8 gText_12PoofForgotMove[];
 extern const u8 gText_StopLearningMove2[];
 extern const u8 gText_MoveNotLearned[];
 extern const u8 gText_PkmnElevatedToLvVar2[];
-extern const u8 gText_PkmnGainedExp[];
-extern const u8 gText_PkmnGainedExpAndElevatedToLvVar3[];
 extern const u8 gText_RemoveMailBeforeItem[];
 extern const u8 gText_PkmnHoldingItemCantHoldMail[];
 extern const u8 gText_MailTransferredFromMailbox[];
@@ -1017,10 +1021,12 @@ extern const u8 gText_InBagVar1[];
 extern const u8 gText_Var1AndYouWantedVar2[];
 extern const u8 gText_HereYouGoThankYou[];
 extern const u8 gText_NoMoreRoomForThis[];
+extern const u8 gText_YouAlreadyHaveThis[];
 extern const u8 gText_ThankYouIllSendItHome[];
 extern const u8 gText_ThanksIllSendItHome[];
 extern const u8 gText_SpaceForVar1Full[];
 extern const u8 gText_ThrowInPremierBall[];
+extern const u8 gText_ThrowInPremierBalls[];
 extern const u8 gText_ShopBuy[];
 extern const u8 gText_ShopSell[];
 extern const u8 gText_ShopQuit[];
@@ -2156,7 +2162,9 @@ extern const u8 gText_Switch2[];
 extern const u8 gText_Item[];
 extern const u8 gText_NotPkmnOtherTrainerWants[];
 extern const u8 gText_ThatIsntAnEgg[];
+extern const u8 gText_PkmnCantBeTradedNow[];
 extern const u8 gText_OtherTrainersPkmnCantBeTraded[];
+extern const u8 gText_EggCantBeTradedNow[];
 extern const u8 gText_OtherTrainerCantAcceptPkmn[];
 extern const u8 gText_CantTradeWithTrainer[];
 
@@ -2991,6 +2999,205 @@ extern const u8 gText_Smartness[];
 extern const u8 gText_Cuteness[];
 extern const u8 gText_Beauty3[];
 
+////side quests
+//generic strings
+extern const u8 gText_QuestAnnounce[];
+extern const u8 gText_QuestComplete[];
+extern const u8 gText_QuestActive[];
+
+//names
+extern const u8 gText_SideQuestName_1[];
+extern const u8 gText_SideQuestName_2[];
+extern const u8 gText_SideQuestName_3[];
+extern const u8 gText_SideQuestName_4[];
+extern const u8 gText_SideQuestName_5[];
+extern const u8 gText_SideQuestName_6[];
+extern const u8 gText_SideQuestName_7[];
+extern const u8 gText_SideQuestName_8[];
+extern const u8 gText_SideQuestName_9[];
+extern const u8 gText_SideQuestName_10[];
+extern const u8 gText_SideQuestName_11[];
+extern const u8 gText_SideQuestName_12[];
+extern const u8 gText_SideQuestName_13[];
+extern const u8 gText_SideQuestName_14[];
+extern const u8 gText_SideQuestName_15[];
+extern const u8 gText_SideQuestName_16[];
+extern const u8 gText_SideQuestName_17[];
+extern const u8 gText_SideQuestName_18[];
+extern const u8 gText_SideQuestName_19[];
+extern const u8 gText_SideQuestName_20[];
+extern const u8 gText_SideQuestName_21[];
+extern const u8 gText_SideQuestName_22[];
+extern const u8 gText_SideQuestName_23[];
+extern const u8 gText_SideQuestName_24[];
+extern const u8 gText_SideQuestName_25[];
+extern const u8 gText_SideQuestName_26[];
+extern const u8 gText_SideQuestName_27[];
+extern const u8 gText_SideQuestName_28[];
+extern const u8 gText_SideQuestName_29[];
+extern const u8 gText_SideQuestName_30[];
+
+//descriptions
+extern const u8 gText_SideQuestDesc_1[];
+extern const u8 gText_SideQuestDesc_2[];
+extern const u8 gText_SideQuestDesc_3[];
+extern const u8 gText_SideQuestDesc_4[];
+extern const u8 gText_SideQuestDesc_5[];
+extern const u8 gText_SideQuestDesc_6[];
+extern const u8 gText_SideQuestDesc_7[];
+extern const u8 gText_SideQuestDesc_8[];
+extern const u8 gText_SideQuestDesc_9[];
+extern const u8 gText_SideQuestDesc_10[];
+extern const u8 gText_SideQuestDesc_11[];
+extern const u8 gText_SideQuestDesc_12[];
+extern const u8 gText_SideQuestDesc_13[];
+extern const u8 gText_SideQuestDesc_14[];
+extern const u8 gText_SideQuestDesc_15[];
+extern const u8 gText_SideQuestDesc_16[];
+extern const u8 gText_SideQuestDesc_17[];
+extern const u8 gText_SideQuestDesc_18[];
+extern const u8 gText_SideQuestDesc_19[];
+extern const u8 gText_SideQuestDesc_20[];
+extern const u8 gText_SideQuestDesc_21[];
+extern const u8 gText_SideQuestDesc_22[];
+extern const u8 gText_SideQuestDesc_23[];
+extern const u8 gText_SideQuestDesc_24[];
+extern const u8 gText_SideQuestDesc_25[];
+extern const u8 gText_SideQuestDesc_26[];
+extern const u8 gText_SideQuestDesc_27[];
+extern const u8 gText_SideQuestDesc_28[];
+extern const u8 gText_SideQuestDesc_29[];
+extern const u8 gText_SideQuestDesc_30[];
+
+//completed quest description
+extern const u8 gText_SideQuestDoneDesc_1[];
+extern const u8 gText_SideQuestDoneDesc_2[];
+extern const u8 gText_SideQuestDoneDesc_3[];
+extern const u8 gText_SideQuestDoneDesc_4[];
+extern const u8 gText_SideQuestDoneDesc_5[];
+extern const u8 gText_SideQuestDoneDesc_6[];
+extern const u8 gText_SideQuestDoneDesc_7[];
+extern const u8 gText_SideQuestDoneDesc_8[];
+extern const u8 gText_SideQuestDoneDesc_9[];
+extern const u8 gText_SideQuestDoneDesc_10[];
+extern const u8 gText_SideQuestDoneDesc_11[];
+extern const u8 gText_SideQuestDoneDesc_12[];
+extern const u8 gText_SideQuestDoneDesc_13[];
+extern const u8 gText_SideQuestDoneDesc_14[];
+extern const u8 gText_SideQuestDoneDesc_15[];
+extern const u8 gText_SideQuestDoneDesc_16[];
+extern const u8 gText_SideQuestDoneDesc_17[];
+extern const u8 gText_SideQuestDoneDesc_18[];
+extern const u8 gText_SideQuestDoneDesc_19[];
+extern const u8 gText_SideQuestDoneDesc_20[];
+extern const u8 gText_SideQuestDoneDesc_21[];
+extern const u8 gText_SideQuestDoneDesc_22[];
+extern const u8 gText_SideQuestDoneDesc_23[];
+extern const u8 gText_SideQuestDoneDesc_24[];
+extern const u8 gText_SideQuestDoneDesc_25[];
+extern const u8 gText_SideQuestDoneDesc_26[];
+extern const u8 gText_SideQuestDoneDesc_27[];
+extern const u8 gText_SideQuestDoneDesc_28[];
+extern const u8 gText_SideQuestDoneDesc_29[];
+extern const u8 gText_SideQuestDoneDesc_30[];
+
+//map
+extern const u8 gText_SideQuestMap1[];
+extern const u8 gText_SideQuestMap2[];
+extern const u8 gText_SideQuestMap3[];
+extern const u8 gText_SideQuestMap4[];
+extern const u8 gText_SideQuestMap5[];
+extern const u8 gText_SideQuestMap6[];
+extern const u8 gText_SideQuestMap7[];
+extern const u8 gText_SideQuestMap8[];
+extern const u8 gText_SideQuestMap9[];
+extern const u8 gText_SideQuestMap10[];
+extern const u8 gText_SideQuestMap11[];
+extern const u8 gText_SideQuestMap12[];
+extern const u8 gText_SideQuestMap13[];
+extern const u8 gText_SideQuestMap14[];
+extern const u8 gText_SideQuestMap15[];
+extern const u8 gText_SideQuestMap16[];
+extern const u8 gText_SideQuestMap17[];
+extern const u8 gText_SideQuestMap18[];
+extern const u8 gText_SideQuestMap19[];
+extern const u8 gText_SideQuestMap20[];
+extern const u8 gText_SideQuestMap21[];
+extern const u8 gText_SideQuestMap22[];
+extern const u8 gText_SideQuestMap23[];
+extern const u8 gText_SideQuestMap24[];
+extern const u8 gText_SideQuestMap25[];
+extern const u8 gText_SideQuestMap26[];
+extern const u8 gText_SideQuestMap27[];
+extern const u8 gText_SideQuestMap28[];
+extern const u8 gText_SideQuestMap29[];
+extern const u8 gText_SideQuestMap30[];
+
+//subquests
+extern const u8 gText_SubQuest1_Name1[];
+extern const u8 gText_SubQuest1_Name2[];
+extern const u8 gText_SubQuest1_Name3[];
+extern const u8 gText_SubQuest1_Name4[];
+extern const u8 gText_SubQuest1_Name5[];
+extern const u8 gText_SubQuest1_Name6[];
+extern const u8 gText_SubQuest1_Name7[];
+extern const u8 gText_SubQuest1_Name8[];
+extern const u8 gText_SubQuest1_Name9[];
+extern const u8 gText_SubQuest1_Name10[];
+
+extern const u8 gText_SubQuest2_Name1[];
+extern const u8 gText_SubQuest2_Name2[];
+extern const u8 gText_SubQuest2_Name3[];
+extern const u8 gText_SubQuest2_Name4[];
+extern const u8 gText_SubQuest2_Name5[];
+extern const u8 gText_SubQuest2_Name6[];
+extern const u8 gText_SubQuest2_Name7[];
+extern const u8 gText_SubQuest2_Name8[];
+extern const u8 gText_SubQuest2_Name9[];
+extern const u8 gText_SubQuest2_Name10[];
+extern const u8 gText_SubQuest2_Name11[];
+extern const u8 gText_SubQuest2_Name12[];
+extern const u8 gText_SubQuest2_Name13[];
+extern const u8 gText_SubQuest2_Name14[];
+extern const u8 gText_SubQuest2_Name15[];
+extern const u8 gText_SubQuest2_Name16[];
+extern const u8 gText_SubQuest2_Name17[];
+extern const u8 gText_SubQuest2_Name18[];
+extern const u8 gText_SubQuest2_Name19[];
+extern const u8 gText_SubQuest2_Name20[];
+
+extern const u8 gText_SubQuest1_Desc1[];
+extern const u8 gText_SubQuest1_Desc2[];
+extern const u8 gText_SubQuest1_Desc3[];
+extern const u8 gText_SubQuest1_Desc4[];
+extern const u8 gText_SubQuest1_Desc5[];
+extern const u8 gText_SubQuest1_Desc6[];
+extern const u8 gText_SubQuest1_Desc7[];
+extern const u8 gText_SubQuest1_Desc8[];
+extern const u8 gText_SubQuest1_Desc9[];
+extern const u8 gText_SubQuest1_Desc10[];
+
+extern const u8 gText_SubQuest2_Desc1[];
+extern const u8 gText_SubQuest2_Desc2[];
+extern const u8 gText_SubQuest2_Desc3[];
+extern const u8 gText_SubQuest2_Desc4[];
+extern const u8 gText_SubQuest2_Desc5[];
+extern const u8 gText_SubQuest2_Desc6[];
+extern const u8 gText_SubQuest2_Desc7[];
+extern const u8 gText_SubQuest2_Desc8[];
+extern const u8 gText_SubQuest2_Desc9[];
+extern const u8 gText_SubQuest2_Desc10[];
+extern const u8 gText_SubQuest2_Desc11[];
+extern const u8 gText_SubQuest2_Desc12[];
+extern const u8 gText_SubQuest2_Desc13[];
+extern const u8 gText_SubQuest2_Desc14[];
+extern const u8 gText_SubQuest2_Desc15[];
+extern const u8 gText_SubQuest2_Desc16[];
+extern const u8 gText_SubQuest2_Desc17[];
+extern const u8 gText_SubQuest2_Desc18[];
+extern const u8 gText_SubQuest2_Desc19[];
+extern const u8 gText_SubQuest2_Desc20[];
+
 // Berry Blender
 extern const u8 gText_SavingDontTurnOff2[];
 extern const u8 gText_BlenderMaxSpeedRecord[];
@@ -3022,12 +3229,5 @@ extern const u8 gText_Summary2[];
 extern const u8 gText_PkmnForSwap[];
 extern const u8 gText_SamePkmnInPartyAlready[];
 extern const u8 gText_Cancel3[];
-
-// Naming Screen
-extern const u8 gText_MoveOkBack[];
-extern const u8 gText_YourName[];
-extern const u8 gText_BoxName[];
-extern const u8 gText_PkmnsNickname[];
-extern const u8 gText_TellHimTheWords[];
 
 #endif // GUARD_STRINGS_H

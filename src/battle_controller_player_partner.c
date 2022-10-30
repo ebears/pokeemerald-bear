@@ -1,14 +1,12 @@
 #include "global.h"
 #include "battle.h"
 #include "battle_ai_main.h"
-#include "battle_ai_util.h"
 #include "battle_anim.h"
 #include "battle_controllers.h"
 #include "battle_message.h"
 #include "battle_interface.h"
 #include "battle_setup.h"
 #include "battle_tower.h"
-#include "battle_z_move.h"
 #include "bg.h"
 #include "data.h"
 #include "item_use.h"
@@ -233,7 +231,7 @@ static void Intro_WaitForHealthbox(void)
     else
     {
         if (gSprites[gHealthboxSpriteIds[gActiveBattler]].callback == SpriteCallbackDummy
-            && gSprites[gHealthboxSpriteIds[BATTLE_PARTNER(gActiveBattler)]].callback == SpriteCallbackDummy)
+            && gSprites[gHealthboxSpriteIds[gActiveBattler ^ BIT_FLANK]].callback == SpriteCallbackDummy)
         {
             finished = TRUE;
         }
@@ -252,7 +250,7 @@ static void Intro_WaitForHealthbox(void)
 static void Intro_ShowHealthbox(void)
 {
     if (!gBattleSpritesDataPtr->healthBoxesData[gActiveBattler].ballAnimActive
-        && !gBattleSpritesDataPtr->healthBoxesData[BATTLE_PARTNER(gActiveBattler)].ballAnimActive
+        && !gBattleSpritesDataPtr->healthBoxesData[gActiveBattler ^ BIT_FLANK].ballAnimActive
         && gSprites[gBattleControllerData[gActiveBattler]].callback == SpriteCallbackDummy
         && gSprites[gBattlerSpriteIds[gActiveBattler]].callback == SpriteCallbackDummy
         && ++gBattleSpritesDataPtr->healthBoxesData[gActiveBattler].introEndDelay != 1)
@@ -261,10 +259,10 @@ static void Intro_ShowHealthbox(void)
 
         if (IsDoubleBattle() && !(gBattleTypeFlags & BATTLE_TYPE_MULTI))
         {
-            DestroySprite(&gSprites[gBattleControllerData[BATTLE_PARTNER(gActiveBattler)]]);
-            UpdateHealthboxAttribute(gHealthboxSpriteIds[BATTLE_PARTNER(gActiveBattler)], &gPlayerParty[gBattlerPartyIndexes[BATTLE_PARTNER(gActiveBattler)]], HEALTHBOX_ALL);
-            StartHealthboxSlideIn(BATTLE_PARTNER(gActiveBattler));
-            SetHealthboxSpriteVisible(gHealthboxSpriteIds[BATTLE_PARTNER(gActiveBattler)]);
+            DestroySprite(&gSprites[gBattleControllerData[gActiveBattler ^ BIT_FLANK]]);
+            UpdateHealthboxAttribute(gHealthboxSpriteIds[gActiveBattler ^ BIT_FLANK], &gPlayerParty[gBattlerPartyIndexes[gActiveBattler ^ BIT_FLANK]], HEALTHBOX_ALL);
+            StartHealthboxSlideIn(gActiveBattler ^ BIT_FLANK);
+            SetHealthboxSpriteVisible(gHealthboxSpriteIds[gActiveBattler ^ BIT_FLANK]);
         }
 
         DestroySprite(&gSprites[gBattleControllerData[gActiveBattler]]);
@@ -292,7 +290,7 @@ static void CompleteOnHealthbarDone(void)
 
     if (hpValue != -1)
     {
-        UpdateHpTextInHealthbox(gHealthboxSpriteIds[gActiveBattler], HP_CURRENT, hpValue, gBattleMons[gActiveBattler].maxHP);
+        UpdateHpTextInHealthbox(gHealthboxSpriteIds[gActiveBattler], hpValue, HP_CURRENT);
     }
     else
     {
@@ -340,7 +338,7 @@ static void Task_GiveExpToMon(u8 taskId)
             gActiveBattler = savedActiveBank;
 
             if (IsDoubleBattle() == TRUE
-             && ((u16)(monId) == gBattlerPartyIndexes[battlerId] || (u16)(monId) == gBattlerPartyIndexes[BATTLE_PARTNER(battlerId)]))
+             && ((u16)(monId) == gBattlerPartyIndexes[battlerId] || (u16)(monId) == gBattlerPartyIndexes[battlerId ^ BIT_FLANK]))
                 gTasks[taskId].func = Task_LaunchLvlUpAnim;
             else
                 gTasks[taskId].func = DestroyExpTaskAndCompleteOnInactiveTextPrinter;
@@ -435,7 +433,7 @@ static void Task_LaunchLvlUpAnim(u8 taskId)
     u8 battlerId = gTasks[taskId].tExpTask_bank;
     u8 monIndex = gTasks[taskId].tExpTask_monId;
 
-    if (IsDoubleBattle() == TRUE && monIndex == gBattlerPartyIndexes[BATTLE_PARTNER(battlerId)])
+    if (IsDoubleBattle() == TRUE && monIndex == gBattlerPartyIndexes[battlerId ^ BIT_FLANK])
         battlerId ^= BIT_FLANK;
 
     InitAndLaunchSpecialAnimation(battlerId, battlerId, battlerId, B_ANIM_LVL_UP);
@@ -452,8 +450,8 @@ static void Task_UpdateLvlInHealthbox(u8 taskId)
 
         GetMonData(&gPlayerParty[monIndex], MON_DATA_LEVEL);  // Unused return value
 
-        if (IsDoubleBattle() == TRUE && monIndex == gBattlerPartyIndexes[BATTLE_PARTNER(battlerId)])
-            UpdateHealthboxAttribute(gHealthboxSpriteIds[BATTLE_PARTNER(battlerId)], &gPlayerParty[monIndex], HEALTHBOX_ALL);
+        if (IsDoubleBattle() == TRUE && monIndex == gBattlerPartyIndexes[battlerId ^ BIT_FLANK])
+            UpdateHealthboxAttribute(gHealthboxSpriteIds[battlerId ^ BIT_FLANK], &gPlayerParty[monIndex], HEALTHBOX_ALL);
         else
             UpdateHealthboxAttribute(gHealthboxSpriteIds[battlerId], &gPlayerParty[monIndex], HEALTHBOX_ALL);
 
@@ -701,7 +699,7 @@ static u32 CopyPlayerPartnerMonData(u8 monId, u8 *dst)
             moveData.pp[size] = GetMonData(&gPlayerParty[monId], MON_DATA_PP1 + size);
         }
         moveData.ppBonuses = GetMonData(&gPlayerParty[monId], MON_DATA_PP_BONUSES);
-        src = (u8 *)(&moveData);
+        src = (u8*)(&moveData);
         for (size = 0; size < sizeof(moveData); size++)
             dst[size] = src[size];
         break;
@@ -1430,8 +1428,15 @@ static void PlayerPartnerHandleMoveAnimation(void)
         gWeatherMoveAnim = gBattleResources->bufferA[gActiveBattler][12] | (gBattleResources->bufferA[gActiveBattler][13] << 8);
         gAnimDisableStructPtr = (struct DisableStruct *)&gBattleResources->bufferA[gActiveBattler][16];
         gTransformedPersonalities[gActiveBattler] = gAnimDisableStructPtr->transformedMonPersonality;
-        gBattleSpritesDataPtr->healthBoxesData[gActiveBattler].animationState = 0;
-        gBattlerControllerFuncs[gActiveBattler] = PlayerPartnerDoMoveAnimation;
+        if (IsMoveWithoutAnimation(move, gAnimMoveTurn)) // always returns FALSE
+        {
+            PlayerPartnerBufferExecCompleted();
+        }
+        else
+        {
+            gBattleSpritesDataPtr->healthBoxesData[gActiveBattler].animationState = 0;
+            gBattlerControllerFuncs[gActiveBattler] = PlayerPartnerDoMoveAnimation;
+        }
     }
 }
 
@@ -1490,7 +1495,7 @@ static void PlayerPartnerHandlePrintString(void)
 
     gBattle_BG0_X = 0;
     gBattle_BG0_Y = 0;
-    stringId = (u16 *)(&gBattleResources->bufferA[gActiveBattler][2]);
+    stringId = (u16*)(&gBattleResources->bufferA[gActiveBattler][2]);
     BufferStringBattle(*stringId);
     BattlePutTextOnWindow(gDisplayedStringBattle, B_WIN_MSG);
     gBattlerControllerFuncs[gActiveBattler] = CompleteOnInactiveTextPrinter2;
@@ -1515,10 +1520,10 @@ static void PlayerPartnerHandleYesNoBox(void)
 static void PlayerPartnerHandleChooseMove(void)
 {
     u8 chosenMoveId;
-    struct ChooseMoveStruct *moveInfo = (struct ChooseMoveStruct *)(&gBattleResources->bufferA[gActiveBattler][4]);
+    struct ChooseMoveStruct *moveInfo = (struct ChooseMoveStruct*)(&gBattleResources->bufferA[gActiveBattler][4]);
 
-    chosenMoveId = gBattleStruct->aiMoveOrAction[gActiveBattler];
-    gBattlerTarget = gBattleStruct->aiChosenTarget[gActiveBattler];
+    BattleAI_SetupAIData(0xF);
+    chosenMoveId = BattleAI_ChooseMoveOrAction();
 
     if (gBattleMoves[moveInfo->moves[chosenMoveId]].target & (MOVE_TARGET_USER | MOVE_TARGET_USER_OR_SELECTED))
         gBattlerTarget = gActiveBattler;
@@ -1528,9 +1533,6 @@ static void PlayerPartnerHandleChooseMove(void)
         if (gAbsentBattlerFlags & gBitTable[gBattlerTarget])
             gBattlerTarget = GetBattlerAtPosition(B_POSITION_OPPONENT_RIGHT);
     }
-
-    if (ShouldUseZMove(gActiveBattler, gBattlerTarget, moveInfo->moves[chosenMoveId]))
-        QueueZMove(gActiveBattler, moveInfo->moves[chosenMoveId]);
 
     // If partner can mega evolve, do it.
     if (CanMegaEvolve(gActiveBattler))

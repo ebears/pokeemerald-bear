@@ -91,6 +91,8 @@ static const u8 sBerryDescriptionPart1_Pamtre[] = _("Drifts on the sea from some
 static const u8 sBerryDescriptionPart2_Pamtre[] = _("It is thought to grow elsewhere.");
 static const u8 sBerryDescriptionPart1_Watmel[] = _("A huge Berry, with some over 20");
 static const u8 sBerryDescriptionPart2_Watmel[] = _("inches discovered. Exceedingly sweet.");
+const u8 sBerryDescriptionPart1_WatmelMetric[] = _("A huge Berry, with some over half a");
+const u8 sBerryDescriptionPart2_WatmelMetric[] = _("meter discovered. Exceedingly sweet.");
 static const u8 sBerryDescriptionPart1_Durin[] = _("Bitter to even look at. It is so");
 static const u8 sBerryDescriptionPart2_Durin[] = _("bitter, no one has ever eaten it as is.");
 static const u8 sBerryDescriptionPart1_Belue[] = _("It is glossy and looks delicious, but");
@@ -794,7 +796,7 @@ const struct Berry gBerries[] =
 
     [ITEM_CHILAN_BERRY - FIRST_BERRY_INDEX] =
     {
-        .name = _("Chilan"),
+        .name = _("CHILAN"),
         .firmness = BERRY_FIRMNESS_VERY_SOFT,
         .size = 34,
         .maxYield = 5,
@@ -812,7 +814,7 @@ const struct Berry gBerries[] =
 
     [ITEM_OCCA_BERRY - FIRST_BERRY_INDEX] =
     {
-        .name = _("Occa"),
+        .name = _("OCCA"),
         .firmness = BERRY_FIRMNESS_SUPER_HARD,
         .size = 90,
         .maxYield = 5,
@@ -830,7 +832,7 @@ const struct Berry gBerries[] =
 
     [ITEM_PASSHO_BERRY - FIRST_BERRY_INDEX] =
     {
-        .name = _("Passho"),
+        .name = _("PASSHO"),
         .firmness = BERRY_FIRMNESS_SOFT,
         .size = 33,
         .maxYield = 5,
@@ -848,7 +850,7 @@ const struct Berry gBerries[] =
 
     [ITEM_WACAN_BERRY - FIRST_BERRY_INDEX] =
     {
-        .name = _("Wacan"),
+        .name = _("WACAN"),
         .firmness = BERRY_FIRMNESS_VERY_SOFT,
         .size = 250,
         .maxYield = 5,
@@ -866,7 +868,7 @@ const struct Berry gBerries[] =
 
     [ITEM_RINDO_BERRY - FIRST_BERRY_INDEX] =
     {
-        .name = _("Rindo"),
+        .name = _("RINDO"),
         .firmness = BERRY_FIRMNESS_SOFT,
         .size = 156,
         .maxYield = 5,
@@ -884,7 +886,7 @@ const struct Berry gBerries[] =
 
     [ITEM_YACHE_BERRY - FIRST_BERRY_INDEX] =
     {
-        .name = _("Yache"),
+        .name = _("YACHE"),
         .firmness = BERRY_FIRMNESS_VERY_HARD,
         .size = 135,
         .maxYield = 5,
@@ -902,7 +904,7 @@ const struct Berry gBerries[] =
 
     [ITEM_CHOPLE_BERRY - FIRST_BERRY_INDEX] =
     {
-        .name = _("Chople"),
+        .name = _("CHOPLE"),
         .firmness = BERRY_FIRMNESS_SOFT,
         .size = 77,
         .maxYield = 5,
@@ -920,7 +922,7 @@ const struct Berry gBerries[] =
 
     [ITEM_KEBIA_BERRY - FIRST_BERRY_INDEX] =
     {
-        .name = _("Kebia"),
+        .name = _("KEBIA"),
         .firmness = BERRY_FIRMNESS_HARD,
         .size = 90,
         .maxYield = 5,
@@ -938,7 +940,7 @@ const struct Berry gBerries[] =
 
     [ITEM_SHUCA_BERRY - FIRST_BERRY_INDEX] =
     {
-        .name = _("Shuca"),
+        .name = _("SHUCA"),
         .firmness = BERRY_FIRMNESS_SOFT,
         .size = 42,
         .maxYield = 5,
@@ -956,7 +958,7 @@ const struct Berry gBerries[] =
 
     [ITEM_COBA_BERRY - FIRST_BERRY_INDEX] =
     {
-        .name = _("Coba"),
+        .name = _("COBA"),
         .firmness = BERRY_FIRMNESS_VERY_HARD,
         .size = 278,
         .maxYield = 5,
@@ -974,7 +976,7 @@ const struct Berry gBerries[] =
 
     [ITEM_PAYAPA_BERRY - FIRST_BERRY_INDEX] =
     {
-        .name = _("Payapa"),
+        .name = _("PAYAPA"),
         .firmness = BERRY_FIRMNESS_SOFT,
         .size = 252,
         .maxYield = 5,
@@ -992,7 +994,7 @@ const struct Berry gBerries[] =
 
     [ITEM_TANGA_BERRY - FIRST_BERRY_INDEX] =
     {
-        .name = _("Tanga"),
+        .name = _("TANGA"),
         .firmness = BERRY_FIRMNESS_VERY_SOFT,
         .size = 42,
         .maxYield = 5,
@@ -1010,7 +1012,7 @@ const struct Berry gBerries[] =
 
     [ITEM_CHARTI_BERRY - FIRST_BERRY_INDEX] =
     {
-        .name = _("Charti"),
+        .name = _("CHARTI"),
         .firmness = BERRY_FIRMNESS_VERY_SOFT,
         .size = 28,
         .maxYield = 5,
@@ -1028,7 +1030,7 @@ const struct Berry gBerries[] =
 
     [ITEM_KASIB_BERRY - FIRST_BERRY_INDEX] =
     {
-        .name = _("Kasib"),
+        .name = _("KASIB"),
         .firmness = BERRY_FIRMNESS_HARD,
         .size = 144,
         .maxYield = 5,
@@ -1046,7 +1048,7 @@ const struct Berry gBerries[] =
 
     [ITEM_HABAN_BERRY - FIRST_BERRY_INDEX] =
     {
-        .name = _("Haban"),
+        .name = _("HABAN"),
         .firmness = BERRY_FIRMNESS_SOFT,
         .size = 23,
         .maxYield = 5,
@@ -1064,7 +1066,7 @@ const struct Berry gBerries[] =
 
     [ITEM_COLBUR_BERRY - FIRST_BERRY_INDEX] =
     {
-        .name = _("Colbur"),
+        .name = _("COLBUR"),
         .firmness = BERRY_FIRMNESS_SUPER_HARD,
         .size = 39,
         .maxYield = 5,
@@ -1082,7 +1084,7 @@ const struct Berry gBerries[] =
 
     [ITEM_BABIRI_BERRY - FIRST_BERRY_INDEX] =
     {
-        .name = _("Babiri"),
+        .name = _("BABIRI"),
         .firmness = BERRY_FIRMNESS_SUPER_HARD,
         .size = 265,
         .maxYield = 5,
@@ -1100,7 +1102,7 @@ const struct Berry gBerries[] =
 
     [ITEM_ROSELI_BERRY - FIRST_BERRY_INDEX] =
     {
-        .name = _("Roseli"),
+        .name = _("ROSELI"),
         .firmness = BERRY_FIRMNESS_HARD,
         .size = 35,
         .maxYield = 5,
@@ -1444,7 +1446,7 @@ void ClearEnigmaBerries(void)
 void SetEnigmaBerry(u8 *src)
 {
     u32 i;
-    u8 *dest = (u8 *)&gSaveBlock1Ptr->enigmaBerry;
+    u8 *dest = (u8*)&gSaveBlock1Ptr->enigmaBerry;
 
     for (i = 0; i < sizeof(gSaveBlock1Ptr->enigmaBerry); i++)
         dest[i] = src[i];
@@ -1456,7 +1458,7 @@ static u32 GetEnigmaBerryChecksum(struct EnigmaBerry *enigmaBerry)
     u32 checksum;
     u8 *dest;
 
-    dest = (u8 *)enigmaBerry;
+    dest = (u8*)enigmaBerry;
     checksum = 0;
     for (i = 0; i < sizeof(gSaveBlock1Ptr->enigmaBerry) - sizeof(gSaveBlock1Ptr->enigmaBerry.checksum); i++)
         checksum += dest[i];
@@ -1478,7 +1480,7 @@ bool32 IsEnigmaBerryValid(void)
 const struct Berry *GetBerryInfo(u8 berry)
 {
     if (berry == ITEM_TO_BERRY(ITEM_ENIGMA_BERRY_E_READER) && IsEnigmaBerryValid())
-        return (struct Berry *)(&gSaveBlock1Ptr->enigmaBerry.berry);
+        return (struct Berry*)(&gSaveBlock1Ptr->enigmaBerry.berry);
     else
     {
         if (berry == BERRY_NONE || berry > ITEM_TO_BERRY(LAST_BERRY_INDEX))
@@ -1670,7 +1672,7 @@ void GetBerryNameByBerryType(u8 berry, u8 *string)
     string[BERRY_NAME_LENGTH] = EOS;
 }
 
-void GetBerryCountStringByBerryType(u8 berry, u8 *dest, u32 berryCount)
+void GetBerryCountStringByBerryType(u8 berry, u8* dest, u32 berryCount)
 {
     GetBerryCountString(dest, GetBerryInfo(berry)->name, berryCount);
 }
@@ -1798,7 +1800,7 @@ void ObjectEventInteractionPlantBerryTree(void)
 {
     u8 berry = ItemIdToBerryType(gSpecialVar_ItemId);
 
-    PlantBerryTree(GetObjectEventBerryTreeId(gSelectedObjectEvent), berry, BERRY_STAGE_PLANTED, TRUE);
+    PlantBerryTree(GetObjectEventBerryTreeId(gSelectedObjectEvent), berry, 1, TRUE);
     ObjectEventInteractionGetBerryTreeData();
 }
 

@@ -4,10 +4,6 @@
 extern u8 gUnusedPokedexU8;
 extern void (*gPokedexVBlankCB)(void);
 
-#if P_ENABLE_DEBUG == TRUE
-extern const u8 *const gMonFootprintTable[];
-#endif
-
 enum
 {
     DEX_MODE_HOENN,

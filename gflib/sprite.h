@@ -270,7 +270,7 @@ u8 CreateSpriteAtEnd(const struct SpriteTemplate *template, s16 x, s16 y, u8 sub
 u8 CreateInvisibleSprite(void (*callback)(struct Sprite *));
 u8 CreateSpriteAndAnimate(const struct SpriteTemplate *template, s16 x, s16 y, u8 subpriority);
 void DestroySprite(struct Sprite *sprite);
-void ResetOamRange(u8 start, u8 end);
+void ResetOamRange(u8 a, u8 b);
 void LoadOam(void);
 void SetOamMatrix(u8 matrixNum, u16 a, u16 b, u16 c, u16 d);
 void CalcCenterToCornerVec(struct Sprite *sprite, u8 shape, u8 size, u8 affineMode);
@@ -282,7 +282,7 @@ void FreeSpritePalette(struct Sprite *sprite);
 void FreeSpriteOamMatrix(struct Sprite *sprite);
 void DestroySpriteAndFreeResources(struct Sprite *sprite);
 void AnimateSprite(struct Sprite *sprite);
-void SetSpriteMatrixAnchor(struct Sprite *sprite, s16 x, s16 y);
+void SetSpriteMatrixAnchor(struct Sprite* sprite, s16 x, s16 y);
 void StartSpriteAnim(struct Sprite *sprite, u8 animNum);
 void StartSpriteAnimIfDifferent(struct Sprite *sprite, u8 animNum);
 void SeekSpriteAnim(struct Sprite *sprite, u8 animCmdIndex);
@@ -296,6 +296,7 @@ void FreeOamMatrix(u8 matrixNum);
 void InitSpriteAffineAnim(struct Sprite *sprite);
 void SetOamMatrixRotationScaling(u8 matrixNum, s16 xScale, s16 yScale, u16 rotation);
 u16 LoadSpriteSheet(const struct SpriteSheet *sheet);
+u16 LoadSpriteSheetByTemplate(const struct SpriteTemplate *template, u8 frame);
 void LoadSpriteSheets(const struct SpriteSheet *sheets);
 u16 AllocTilesForSpriteSheet(struct SpriteSheet *sheet);
 void AllocTilesForSpriteSheets(struct SpriteSheet *sheets);
@@ -322,5 +323,6 @@ void CopyFromSprites(u8 *dest);
 u8 SpriteTileAllocBitmapOp(u16 bit, u8 op);
 void ClearSpriteCopyRequests(void);
 void ResetAffineAnimData(void);
+void RequestSpriteFrameImageCopy(u16 index, u16 tileNum, const struct SpriteFrameImage *images);
 
 #endif //GUARD_SPRITE_H
