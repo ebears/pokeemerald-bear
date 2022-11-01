@@ -57,6 +57,8 @@ Very large following Pokemon sprites (Regigigas) sometimes clip through tiles.
 
 Nighttime lights in Oldale Town turn 'off' when entering town connection.
 
+The blue in Mr. Briney's Cottage glows in the dark.
+
 ~~Spawns a duplicate of the player when it should be their starter follower, but only in Prof. Birch's lab. Likely caused by commit [2353c2a52563eee98be762666c09a14cc7156e42](https://github.com/ebears/emerald-dx/commit/2353c2a52563eee98be762666c09a14cc7156e42).~~
 
 - ~~Commit [ffd4e9cc79dd7e45042dcf48ffb5022afbc17cd7](https://github.com/ebears/emerald-dx/commit/ffd4e9cc79dd7e45042dcf48ffb5022afbc17cd7) seems to have remedied this problem, now the following Pokemon appears correctly but makes half the player sprite invisible for a half second.~~
