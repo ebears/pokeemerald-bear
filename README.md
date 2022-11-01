@@ -37,7 +37,8 @@ and [Morning/Day/Evening/Night encounters](https://www.pokecommunity.com/showpos
 [Newer Gen. Poke Mart Premier Balls](https://github.com/pret/pokeemerald/wiki/LGPE-Style-Bonus-Premier-Balls)\
 [Move Pokemon as First Pokemon Storage Option](https://www.pokecommunity.com/showpost.php?p=10065761)\
 [Togglable 2-in-1 Bike by Pressing R (Use the Acro Bike)](https://www.pokecommunity.com/showpost.php?p=10217718&postcount=172)\
-[Survive Poison Status in the Overworld](https://github.com/LOuroboros/pokeemerald/tree/ow_1hp_psn_survival)
+[Survive Poison Status in the Overworld](https://github.com/LOuroboros/pokeemerald/tree/ow_1hp_psn_survival)\
+[Run Indoors](https://github.com/pret/pokeemerald/wiki/Allow-running-indoors)
 
 ### Engine Fixes
 
