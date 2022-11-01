@@ -131,6 +131,8 @@ LittlerootTown_ProfessorBirchsLab_EventScript_NicknameStarter::
 	end
 
 LittlerootTown_ProfessorBirchsLab_EventScript_GoSeeRival::
+	setflag FLAG_SYS_QUEST_MENU_GET
+	questmenu QUEST_MENU_SET_ACTIVE QUEST_RIVAL_BATTLE
 	msgbox LittlerootTown_ProfessorBirchsLab_Text_MightBeGoodIdeaToGoSeeRival, MSGBOX_YESNO
 	goto_if_eq VAR_RESULT, YES, LittlerootTown_ProfessorBirchsLab_EventScript_AgreeToSeeRival
 	goto_if_eq VAR_RESULT, NO, LittlerootTown_ProfessorBirchsLab_EventScript_DeclineSeeingRival
@@ -140,17 +142,18 @@ LittlerootTown_ProfessorBirchsLab_EventScript_AgreeToSeeRival::
 	msgbox LittlerootTown_ProfessorBirchsLab_Text_GetRivalToTeachYou, MSGBOX_DEFAULT
 	clearflag FLAG_HIDE_ROUTE_101_BOY
 	setvar VAR_BIRCH_LAB_STATE, 3
+	releaseall
+	startquest QUEST_RIVAL_BATTLE
+	openquestmenu
+	waitmessage
 	addobject 7
 	hideobjectat 7, MAP_LITTLEROOT_TOWN_PROFESSOR_BIRCHS_LAB
 	setfollower 7, 0x7E
 	updatefollowerpokemongraphic
-	releaseall
 	@ some funny stuff is required to have the follower appear as a Pokemon, otherwise it is a duplicate of the player
-	lock
 	warp MAP_LITTLEROOT_TOWN_PROFESSOR_BIRCHS_LAB, 6, 5
 	waitstate
 	updatefollowerpokemongraphic
-	release
 	@ funny stuff done
 	end
 
@@ -523,7 +526,10 @@ EventScript_RegisterProfBirch::
 	end
 
 LittlerootTown_ProfessorBirchsLab_EventScript_GivePokedex::
+	questmenu QUEST_MENU_COMPLETE_QUEST QUEST_RIVAL_BATTLE
 	msgbox LittlerootTown_ProfessorBirchsLab_Text_HeardYouBeatRivalTakePokedex, MSGBOX_DEFAULT
+	special DoDomeConfetti
+	completequest QUEST_RIVAL_BATTLE
 	call LittlerootTown_ProfessorBirchsLab_EventScript_ReceivePokedex
 	msgbox LittlerootTown_ProfessorBirchsLab_Text_ExplainPokedex, MSGBOX_DEFAULT
 	closemessage

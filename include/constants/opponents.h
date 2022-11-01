@@ -857,11 +857,33 @@
 #define TRAINER_BRENDAN_PLACEHOLDER         853
 #define TRAINER_MAY_PLACEHOLDER             854
 
+// Custom Trainers
+
+#define TRAINER_BRENDAN_ROUTE_103_BULBASAUR 855
+#define TRAINER_BRENDAN_ROUTE_103_CHARMANDER 856
+#define TRAINER_BRENDAN_ROUTE_103_SQUIRTLE  857
+#define TRAINER_BRENDAN_ROUTE_103_CHIKORITA 858
+#define TRAINER_BRENDAN_ROUTE_103_CYNDAQUIL 859
+#define TRAINER_BRENDAN_ROUTE_103_TOTODILE 860
+#define TRAINER_BRENDAN_ROUTE_103_TURTWIG 861
+#define TRAINER_BRENDAN_ROUTE_103_CHIMCHAR 862
+#define TRAINER_BRENDAN_ROUTE_103_PIPLUP 863
+
+#define TRAINER_MAY_ROUTE_103_BULBASAUR 864
+#define TRAINER_MAY_ROUTE_103_CHARMANDER 865
+#define TRAINER_MAY_ROUTE_103_SQUIRTLE 866
+#define TRAINER_MAY_ROUTE_103_CHIKORITA 867
+#define TRAINER_MAY_ROUTE_103_CYNDAQUIL 868
+#define TRAINER_MAY_ROUTE_103_TOTODILE 869
+#define TRAINER_MAY_ROUTE_103_TURTWIG 870
+#define TRAINER_MAY_ROUTE_103_CHIMCHAR 871
+#define TRAINER_MAY_ROUTE_103_PIPLUP 872
+
 // NOTE: Because each Trainer uses a flag to determine when they are defeated, there is only space for 9 additional trainers before trainer flag space overflows
 //       More space can be made by shifting flags around in constants/flags.h or changing how trainer flags are handled
 //       MAX_TRAINERS_COUNT can be increased but will take up additional saveblock space
 
-#define TRAINERS_COUNT                      855
-#define MAX_TRAINERS_COUNT                  864
+#define TRAINERS_COUNT                      873
+#define MAX_TRAINERS_COUNT                  874
 
 #endif  // GUARD_CONSTANTS_OPPONENTS_H

@@ -84,9 +84,18 @@ Route103_EventScript_RivalMay::
 	waitmovement 0
 	msgbox Route103_Text_MayLetsBattle, MSGBOX_DEFAULT
 	switch VAR_STARTER_MON
-	case 0, Route103_EventScript_StartMayBattleTreecko
-	case 1, Route103_EventScript_StartMayBattleTorchic
-	case 2, Route103_EventScript_StartMayBattleMudkip
+	case 0, Route103_EventScript_StartMayBattleBulbasaur
+	case 1, Route103_EventScript_StartMayBattleCharmander
+	case 2, Route103_EventScript_StartMayBattleSquirtle
+	case 3, Route103_EventScript_StartMayBattleChikorita
+	case 4, Route103_EventScript_StartMayBattleCyndaquil
+	case 5, Route103_EventScript_StartMayBattleTotodile
+	case 6, Route103_EventScript_StartMayBattleTreecko
+	case 7, Route103_EventScript_StartMayBattleTorchic
+	case 8, Route103_EventScript_StartMayBattleMudkip
+	case 9, Route103_EventScript_StartMayBattleTurtwig
+	case 10, Route103_EventScript_StartMayBattleChimchar
+	case 11, Route103_EventScript_StartMayBattlePiplup
 	end
 
 Route103_EventScript_RivalBrendan::
@@ -101,9 +110,48 @@ Route103_EventScript_RivalBrendan::
 	waitmovement 0
 	msgbox Route103_Text_BrendanLetsBattle, MSGBOX_DEFAULT
 	switch VAR_STARTER_MON
-	case 0, Route103_EventScript_StartBrendanBattleTreecko
-	case 1, Route103_EventScript_StartBrendanBattleTorchic
-	case 2, Route103_EventScript_StartBrendanBattleMudkip
+	case 0, Route103_EventScript_StartBrendanBattleBulbasaur
+	case 1, Route103_EventScript_StartBrendanBattleCharmander
+	case 2, Route103_EventScript_StartBrendanBattleSquirtle
+	case 3, Route103_EventScript_StartBrendanBattleChikorita
+	case 4, Route103_EventScript_StartBrendanBattleCyndaquil
+	case 5, Route103_EventScript_StartBrendanBattleTotodile
+	case 6, Route103_EventScript_StartBrendanBattleTreecko
+	case 7, Route103_EventScript_StartBrendanBattleTorchic
+	case 8, Route103_EventScript_StartBrendanBattleMudkip
+	case 9, Route103_EventScript_StartBrendanBattleTurtwig
+	case 10, Route103_EventScript_StartBrendanBattleChimchar
+	case 11, Route103_EventScript_StartBrendanBattlePiplup
+	end
+
+Route103_EventScript_StartMayBattleBulbasaur::
+	trainerbattle_no_intro TRAINER_MAY_ROUTE_103_BULBASAUR, Route103_Text_MayDefeated
+	goto Route103_EventScript_AfterMayBattle
+	end
+
+Route103_EventScript_StartMayBattleCharmander::
+	trainerbattle_no_intro TRAINER_MAY_ROUTE_103_CHARMANDER, Route103_Text_MayDefeated
+	goto Route103_EventScript_AfterMayBattle
+	end
+
+Route103_EventScript_StartMayBattleSquirtle::
+	trainerbattle_no_intro TRAINER_MAY_ROUTE_103_SQUIRTLE, Route103_Text_MayDefeated
+	goto Route103_EventScript_AfterMayBattle
+	end
+
+Route103_EventScript_StartMayBattleChikorita::
+	trainerbattle_no_intro TRAINER_MAY_ROUTE_103_CHIKORITA, Route103_Text_MayDefeated
+	goto Route103_EventScript_AfterMayBattle
+	end
+
+Route103_EventScript_StartMayBattleCyndaquil::
+	trainerbattle_no_intro TRAINER_MAY_ROUTE_103_CYNDAQUIL, Route103_Text_MayDefeated
+	goto Route103_EventScript_AfterMayBattle
+	end
+
+Route103_EventScript_StartMayBattleTotodile::
+	trainerbattle_no_intro TRAINER_MAY_ROUTE_103_TOTODILE, Route103_Text_MayDefeated
+	goto Route103_EventScript_AfterMayBattle
 	end
 
 Route103_EventScript_StartMayBattleTreecko::
@@ -121,6 +169,51 @@ Route103_EventScript_StartMayBattleMudkip::
 	goto Route103_EventScript_AfterMayBattle
 	end
 
+Route103_EventScript_StartMayBattleTurtwig::
+	trainerbattle_no_intro TRAINER_MAY_ROUTE_103_TURTWIG, Route103_Text_MayDefeated
+	goto Route103_EventScript_AfterMayBattle
+	end
+
+Route103_EventScript_StartMayBattleChimchar::
+	trainerbattle_no_intro TRAINER_MAY_ROUTE_103_CHIMCHAR, Route103_Text_MayDefeated
+	goto Route103_EventScript_AfterMayBattle
+	end
+
+Route103_EventScript_StartMayBattlePiplup::
+	trainerbattle_no_intro TRAINER_MAY_ROUTE_103_PIPLUP, Route103_Text_MayDefeated
+	goto Route103_EventScript_AfterMayBattle
+	end
+
+Route103_EventScript_StartBrendanBattleBulbasaur::
+	trainerbattle_no_intro TRAINER_BRENDAN_ROUTE_103_BULBASAUR, Route103_Text_BrendanDefeated
+	goto Route103_EventScript_AfterBrendanBattle
+	end
+
+Route103_EventScript_StartBrendanBattleCharmander::
+	trainerbattle_no_intro TRAINER_BRENDAN_ROUTE_103_CHARMANDER, Route103_Text_BrendanDefeated
+	goto Route103_EventScript_AfterBrendanBattle
+	end
+
+Route103_EventScript_StartBrendanBattleSquirtle::
+	trainerbattle_no_intro TRAINER_BRENDAN_ROUTE_103_SQUIRTLE, Route103_Text_BrendanDefeated
+	goto Route103_EventScript_AfterBrendanBattle
+	end
+
+Route103_EventScript_StartBrendanBattleChikorita::
+	trainerbattle_no_intro TRAINER_BRENDAN_ROUTE_103_CHIKORITA, Route103_Text_BrendanDefeated
+	goto Route103_EventScript_AfterBrendanBattle
+	end
+
+Route103_EventScript_StartBrendanBattleCyndaquil::
+	trainerbattle_no_intro TRAINER_BRENDAN_ROUTE_103_CYNDAQUIL, Route103_Text_BrendanDefeated
+	goto Route103_EventScript_AfterBrendanBattle
+	end
+
+Route103_EventScript_StartBrendanBattleTotodile::
+	trainerbattle_no_intro TRAINER_BRENDAN_ROUTE_103_TOTODILE, Route103_Text_BrendanDefeated
+	goto Route103_EventScript_AfterBrendanBattle
+	end
+
 Route103_EventScript_StartBrendanBattleTreecko::
 	trainerbattle_no_intro TRAINER_BRENDAN_ROUTE_103_TREECKO, Route103_Text_BrendanDefeated
 	goto Route103_EventScript_AfterBrendanBattle
@@ -133,6 +226,21 @@ Route103_EventScript_StartBrendanBattleTorchic::
 
 Route103_EventScript_StartBrendanBattleMudkip::
 	trainerbattle_no_intro TRAINER_BRENDAN_ROUTE_103_MUDKIP, Route103_Text_BrendanDefeated
+	goto Route103_EventScript_AfterBrendanBattle
+	end
+
+Route103_EventScript_StartBrendanBattleTurtwig::
+	trainerbattle_no_intro TRAINER_BRENDAN_ROUTE_103_TURTWIG, Route103_Text_BrendanDefeated
+	goto Route103_EventScript_AfterBrendanBattle
+	end
+
+Route103_EventScript_StartBrendanBattleChimchar::
+	trainerbattle_no_intro TRAINER_BRENDAN_ROUTE_103_CHIMCHAR, Route103_Text_BrendanDefeated
+	goto Route103_EventScript_AfterBrendanBattle
+	end
+
+Route103_EventScript_StartBrendanBattlePiplup::
+	trainerbattle_no_intro TRAINER_BRENDAN_ROUTE_103_PIPLUP, Route103_Text_BrendanDefeated
 	goto Route103_EventScript_AfterBrendanBattle
 	end
 
@@ -193,7 +301,10 @@ Route103_EventScript_RivalEnd::
 	clearflag FLAG_HIDE_OLDALE_TOWN_RIVAL
 	savebgm MUS_DUMMY
 	fadedefaultbgm
+	questmenu QUEST_MENU_SET_REWARD QUEST_RIVAL_BATTLE
 	releaseall
+	returnqueststate QUEST_RIVAL_BATTLE
+	openquestmenu
 	end
 
 Route103_Movement_RivalExitFacingNorth1:
