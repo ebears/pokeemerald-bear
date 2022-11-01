@@ -8056,6 +8056,35 @@ u16 GetFormChangeTargetSpecies(struct Pokemon *mon, u16 method, u32 arg)
     return species != targetSpecies ? targetSpecies : SPECIES_NONE;
 }
 
+// Get the latest badge the player has earned (unless they skipped Winona)
+// League is counted as badge 9 for simplicity
+u8 GetLevelCap(void)
+{
+    u8 currentLevelCap;
+/*    if (FlagGet(FLAG_SYS_GAME_CLEAR))
+        return 9;
+    if (FlagGet(FLAG_BADGE08_GET))
+        return 8;
+    if (FlagGet(FLAG_BADGE07_GET))
+        return 7;
+    if (FlagGet(FLAG_BADGE06_GET))
+        return 6;
+    if (FlagGet(FLAG_BADGE05_GET))
+        return 5;*/
+    if (FlagGet(FLAG_BADGE04_GET))
+        currentLevelCap = 101;
+    else if (FlagGet(FLAG_BADGE03_GET))
+        currentLevelCap = 50;
+    else if (FlagGet(FLAG_BADGE02_GET))
+        currentLevelCap = 38;
+    else if (FlagGet(FLAG_BADGE01_GET))
+        currentLevelCap = 25;
+    else
+        currentLevelCap = 17;
+
+    return currentLevelCap;
+}
+
 u8 GetPartyMonCurvedLevel(void)
 {
     u8 adjustedLevel, currentLevel, monCount, partyMon, badgeModifier, firstMon;
