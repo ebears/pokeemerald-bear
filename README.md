@@ -16,7 +16,8 @@ This is inspired, of course, by the many hacks of [Drayano60](https://twitter.co
 [Day & Night Cycle](https://github.com/Xhyzi/pokeemerald/tree/day-and-night)\
 and [Morning/Day/Evening/Night encounters](https://www.pokecommunity.com/showpost.php?p=10450677)\
 [Following Pokemon (except Shellos, Gastrodon and Porygon-Z -- WIP)](https://github.com/W1serV1ser/pokeemerald/tree/FollowingPokemon)\
-[Unbound Quest Menu](https://www.pokecommunity.com/showthread.php?p=10528414#post10528414)
+[Unbound Quest Menu](https://www.pokecommunity.com/showthread.php?p=10528414#post10528414)\
+[Pokedex Plus](https://www.pokecommunity.com/showthread.php?t=441996)
 
 ### Other Features
 

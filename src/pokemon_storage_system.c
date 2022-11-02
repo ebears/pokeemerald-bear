@@ -1317,7 +1317,7 @@ static const union AnimCmd *const sAnims_Arrow[] =
     sAnim_Arrow_Right
 };
 
-static const struct SpriteTemplate sSpriteTemplate_Arrow =
+const struct SpriteTemplate sSpriteTemplate_Arrow =
 {
     .tileTag = GFXTAG_ARROW,
     .paletteTag = PALTAG_MISC_2,
