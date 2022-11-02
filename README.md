@@ -32,6 +32,7 @@ and [Morning/Day/Evening/Night encounters](https://www.pokecommunity.com/showpos
 [Unlimited TM Usage](https://github.com/pret/pokeemerald/wiki/Infinite-TM-usage)\
 [HMs are Forgettable](https://www.pokecommunity.com/showpost.php?p=10182839&postcount=119)\
 [Physical Special Split Icons In Battle](https://www.pokecommunity.com/showthread.php?p=10527471#post10527471)\
+[DS-Style Party Screen](https://www.pokecommunity.com/showpost.php?p=10218092&postcount=173)\
 [RHH Intro Credits](https://github.com/Xhyzi/pokeemerald/tree/rhh-intro-credits)\
 [HG/SS-Style Overworld Shadows](https://github.com/aarant/pokeemerald/commit/12e3b4efadafdef43bba26ca1ce897135808779c)\
 [Faster Text Speed Options](https://www.pokecommunity.com/showthread.php?p=10400198#post10400198)\
