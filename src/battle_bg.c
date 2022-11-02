@@ -379,6 +379,33 @@ static const struct WindowTemplate gStandardBattleWindowTemplates[] =
         .paletteNum = 0,
         .baseBlock = 0x00b0,
     },
+    [B_WIN_TYPE_SUP_EFF] = { // super effective
+    	.bg = 0,
+    	.tilemapLeft = 21,
+    	.tilemapTop = 57,
+    	.width = 8,
+    	.height = 2,
+    	.paletteNum = 5,
+    	.baseBlock = 0x02a0,
+    },
+    [B_WIN_TYPE_NOT_EFF] = { // not very effective
+    	.bg = 0,
+    	.tilemapLeft = 21,
+    	.tilemapTop = 57,
+    	.width = 8,
+    	.height = 2,
+    	.paletteNum = 5,
+    	.baseBlock = 0x02a0,
+    },
+    [B_WIN_TYPE_NO_EFF] = { // no effect
+    	.bg = 0,
+    	.tilemapLeft = 21,
+    	.tilemapTop = 57,
+    	.width = 8,
+    	.height = 2,
+    	.paletteNum = 5,
+    	.baseBlock = 0x02a0,
+    },
     DUMMY_WIN_TEMPLATE
 };
 
