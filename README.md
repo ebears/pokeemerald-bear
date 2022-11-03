@@ -36,6 +36,7 @@ Choice of 12 Starter Pokémon\
 [HMs are Forgettable](https://www.pokecommunity.com/showpost.php?p=10182839&postcount=119)\
 [Physical Special Split Icons In Battle](https://www.pokecommunity.com/showthread.php?p=10527471#post10527471)\
 [Type-Effectiveness In Battle](https://www.pokecommunity.com/showpost.php?p=10167016&postcount=83)\
+[Nickname from Party Screen](https://github.com/pret/pokeemerald/wiki/Nickname-your-Pok%C3%A9mon-from-the-party-menu)\
 [DS-Style Party Screen](https://www.pokecommunity.com/showpost.php?p=10218092&postcount=173)\
 [Swap Party Screen Slots Using Select](https://www.pokecommunity.com/showpost.php?p=10420662)\
 [RHH Intro Credits](https://github.com/Xhyzi/pokeemerald/tree/rhh-intro-credits)\
