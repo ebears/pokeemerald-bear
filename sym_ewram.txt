@@ -153,3 +153,4 @@
 	.include "src/dns.o"
 	.include "src/quests.o"
 	.include "src/surfable_pokemon.o"
+	.include "src/tm_case.o"

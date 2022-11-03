@@ -2042,6 +2042,17 @@ static const u8 sEmpty5[0x3242]  = {0};
 static const u8 sUnused3[]       = {0x40};
 static const u8 sEmpty6[0x13]    = {0};
 
+// frlg_tm_case_port
+const u32 gUnknown_8E845D8[] = INCBIN_U32("graphics/tm_case/unk_8E845D8.4bpp.lz");
+const u32 gUnknown_8E84A24[] = INCBIN_U32("graphics/tm_case/unk_8E84A24.bin.lz");
+const u32 gUnknown_8E84B70[] = INCBIN_U32("graphics/tm_case/unk_8E84B70.bin.lz");
+const u32 gUnknown_8E84CB0[] = INCBIN_U32("graphics/tm_case/unk_8E84CB0.gbapal.lz");
+const u32 gUnknown_8E84D20[] = INCBIN_U32("graphics/tm_case/unk_8E84D20.gbapal.lz");
+const u32 gTMCase_TMSpriteGfx[] = INCBIN_U32("graphics/tm_case/unk_8E84D90.4bpp.lz");
+const u32 gUnknown_8E84F20[] = INCBIN_U32("graphics/tm_case/unk_8E84F20.gbapal.lz");
+const u32 gUnknown_8E85068[] = INCBIN_U32("graphics/tm_case/unk_8E85068.gbapal.lz");
+const u16 gTMCaseMainWindowPalette[] = INCBIN_U16("graphics/tm_case/unk_841F408.gbapal");
+
 // Summary Screen
 const u32 gSummaryScreenTiles[] = INCBIN_U32("graphics/summary_screen/tiles.4bpp.lz");
 const u32 gSummaryScreenBackgroundTilemap[] = INCBIN_U32("graphics/summary_screen/background.bin.lz");

@@ -338,6 +338,7 @@ SECTIONS {
         src/follow_me.o(.text);
         src/quests.o(.text);
         src/surfable_pokemon.o(.text);
+        src/tm_case.o(.text);
     } =0
 
     script_data :
@@ -706,6 +707,7 @@ SECTIONS {
         src/follow_me.o(.rodata);
         src/quests.o(.rodata);
         src/surfable_pokemon.o(.rodata);
+        src/tm_case.o(.rodata);
     } =0
 
     song_data :

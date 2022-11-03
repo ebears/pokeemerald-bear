@@ -24,6 +24,7 @@ and [Morning/Day/Evening/Night encounters](https://www.pokecommunity.com/showpos
 Choice of 12 Starter Pokémon\
 [Most Gen 1-3 Pokémon as Surf Sprites](https://github.com/surskitty/pokeemerald/wiki#surfable)\
 [Register Items in a Shortcut Menu](https://www.pokecommunity.com/showpost.php?p=10380770&postcount=285)\
+[TM Case](https://www.pokecommunity.com/showpost.php?p=10378278&postcount=280)\
 [Soft Level Scaling on Wild Pokémon](https://www.pokecommunity.com/showpost.php?p=10356613)\
 [Badge-based Level Cap](https://github.com/BuffelSaft/pokeemerald)\
 [DP/Pt-Style Pokémon Summary Screen](https://github.com/citrusbolt/pokeemerald/tree/summary_screen)\

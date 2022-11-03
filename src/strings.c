@@ -1831,6 +1831,14 @@ const u8 gText_PokeBalls[] = _("Poké Balls");
 const u8 gText_Berry[] = _("Berry");
 const u8 gText_Berries[] = _("Berries");
 
+// frlg_tm_case_port
+const u8 gText_TMCase[] =               _("TM Case");
+const u8 gText_Close[] =                _("Close");
+const u8 gText_TMCaseWillBePutAway[] =  _("The TM Case will be\nput away.");
+const u8 gText_FontSmall[] =            _("{FONT_SMALL}");
+const u8 gText_FontShort[] =            _("{FONT_SHORT}");
+const u8 gText_TMCase_Blue[] =          _("{COLOR_HIGHLIGHT_SHADOW BLUE TRANSPARENT LIGHT_BLUE}{STR_VAR_2}");
+
 //HGSS_Ui PokedexPlus
 const u8 gText_Stats_Buttons[]  = _("{A_BUTTON}Toggle   {DPAD_UPDOWN}Moves");
 const u8 gText_Stats_Buttons_Decapped[]  = _("{A_BUTTON}Toggle   {DPAD_UPDOWN}Moves");
@@ -1853,7 +1861,7 @@ const u8 gText_Stats_Gender_50[]     = _("♀ 1/1 ♂");     //_("♀ 50 / 50 �
 const u8 gText_Stats_Gender_75[]     = _("♀ 3/1 ♂");     //_("♀ 75 / 25 ♂");
 const u8 gText_Stats_Gender_87_5[]   = _("♀ 7/1 ♂");
 const u8 gText_Stats_Gender_100[]    = _("♀");
-const u8 gText_Stats_CatchRate[]     = _("CATCH{0x5B}: ");
+const u8 gText_Stats_CatchRate[]     = _("Catch{0x5B}: ");
 const u8 gText_Stats_CatchRate_Legend[]         = _("Legendary");
 const u8 gText_Stats_CatchRate_VeryHard[]       = _("Very Hard");
 const u8 gText_Stats_CatchRate_Difficult[]      = _("Difficult");
