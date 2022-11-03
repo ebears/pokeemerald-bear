@@ -55,51 +55,49 @@ enum
  * "light colour".                                                  */
 const struct LightingColour gLightingColours[] =
 {
-    /*
-    Pokecenter Doors
+    /* Pokecenter Doors
     {
         .paletteNum = 1,
         .colourNum = 10,
         .lightColour = RGB2(26, 25, 10),
-    },
-    */
-    // windows ??
+    },*/
+    // Player House Windows
     {
         .paletteNum = 6,
         .colourNum = 9,
         .lightColour = RGB2(22, 21, 9),
     },
-    // windows ??
+    // Player House Windows
     {
         .paletteNum = 6,
         .colourNum = 10,
         .lightColour = RGB2(26, 25, 10),
 
     },
-    // windows ??
+    /* Pokemon Lab Windows (POTENTIALLY CAUSES UNWANTED VISUAL GLITCHES)
     {
         .paletteNum = 8,
         .colourNum = 9,
         .lightColour = RGB2(22, 21, 9),
-    },
-    // windows ??
+    },*/
+    /* Pokemon Lab Windows (POTENTIALLY CAUSES UNWANTED VISUAL GLITCHES)
     {
         .paletteNum = 8,
         .colourNum = 10,
         .lightColour = RGB2(26, 25, 10),
-    },
-    // windows ??
+    },*/
+    /* Oldale Town House Windows (POTENTIALLY CAUSES UNWANTED VISUAL GLITCHES)
     {
         .paletteNum = 9,
         .colourNum = 9,
         .lightColour = RGB2(22, 21, 9),
-    },
-    // windows ??
+    },*/
+    /* Oldale Town House Windows (POTENTIALLY CAUSES UNWANTED VISUAL GLITCHES)
     {
         .paletteNum = 9,
         .colourNum = 10,
         .lightColour = RGB2(26, 25, 10),
-    },
+    },*/
 };
 
 /* Maptypes that are not affected by DNS */
