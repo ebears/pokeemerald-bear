@@ -35,6 +35,7 @@ Choice of 12 Starter Pokémon\
 [Unlimited TM Usage](https://github.com/pret/pokeemerald/wiki/Infinite-TM-usage)\
 [HMs are Forgettable](https://www.pokecommunity.com/showpost.php?p=10182839&postcount=119)\
 [Physical Special Split Icons In Battle](https://www.pokecommunity.com/showthread.php?p=10527471#post10527471)\
+[Sort Items in Bag by Pressing Start](https://www.pokecommunity.com/showpost.php?p=10167488&postcount=84)\
 [Type-Effectiveness In Battle](https://www.pokecommunity.com/showpost.php?p=10167016&postcount=83)\
 [Nickname from Party Screen](https://github.com/pret/pokeemerald/wiki/Nickname-your-Pok%C3%A9mon-from-the-party-menu)\
 [DS-Style Party Screen](https://www.pokecommunity.com/showpost.php?p=10218092&postcount=173)\
