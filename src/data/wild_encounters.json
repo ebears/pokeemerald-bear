@@ -263,7 +263,7 @@
               {
                 "min_level": 2,
                 "max_level": 4,
-                "species": "SPECIES_STUNKY"
+                "species": "SPECIES_RALTS"
               },
               {
                 "min_level": 2,
@@ -273,7 +273,7 @@
               {
                 "min_level": 2,
                 "max_level": 4,
-                "species": "SPECIES_RALTS"
+                "species": "SPECIES_STUNKY"
               },
               {
                 "min_level": 2,
@@ -337,7 +337,7 @@
               {
                 "min_level": 2,
                 "max_level": 4,
-                "species": "SPECIES_MURKROW"
+                "species": "SPECIES_RALTS"
               },
               {
                 "min_level": 2,
