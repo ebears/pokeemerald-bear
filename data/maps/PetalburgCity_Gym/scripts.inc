@@ -170,7 +170,7 @@ PetalburgCity_Gym_EventScript_BeginWallyTutorial::
 	end
 
 PetalburgCity_Gym_EventScript_WallyQuestComplete::
-	goto_if_quest_not_reward QUEST_WALLYS_FIRST_POKEMON, PetalburgCity_Gym_EventScript_WallyQuestInProgress
+	goto_if_quest_not_complete QUEST_WALLYS_FIRST_POKEMON, PetalburgCity_Gym_EventScript_WallyQuestInProgress
 	call_if_eq VAR_0x8008, 0, PetalburgCity_Gym_EventScript_NormanFaceDoorSouth
 	call_if_eq VAR_0x8008, 1, PetalburgCity_Gym_EventScript_NormanFaceDoorNorth
 	call_if_eq VAR_0x8008, 2, PetalburgCity_Gym_EventScript_NormanFaceDoorWest
@@ -179,7 +179,6 @@ PetalburgCity_Gym_EventScript_WallyQuestComplete::
 	call_if_eq VAR_0x8008, 1, PetalburgCity_Gym_EventScript_WallyFaceDown
 	call_if_eq VAR_0x8008, 2, PetalburgCity_Gym_EventScript_WallyFacePlayer
 	call_if_eq VAR_0x8008, 3, PetalburgCity_Gym_EventScript_WallyFacePlayer
-	questmenu QUEST_MENU_COMPLETE_QUEST QUEST_RIVAL_BATTLE
 	msgbox PetalburgCity_Gym_Text_WallyThankYouForHelp, MSGBOX_DEFAULT
 	closemessage
 	setflag FLAG_HIDE_PETALBURG_CITY_WALLYS_MOM
@@ -189,8 +188,6 @@ PetalburgCity_Gym_EventScript_WallyQuestComplete::
 	clearflag FLAG_HIDE_PETALBURG_GYM_WALLY
 	setflag FLAG_HIDE_LITTLEROOT_TOWN_BIRCHS_LAB_RIVAL
 	special InitBirchState
-	special DoDomeConfetti
-	completequest QUEST_RIVAL_BATTLE
 	release
 	end
 
@@ -200,9 +197,9 @@ PetalburgCity_Gym_EventScript_WallyQuestInProgress::
 	waitstate
 	copyvar VAR_RESULT, VAR_CURRENT_MON
 	goto_if_eq VAR_RESULT, PARTY_NOTHING_CHOSEN, PetalburgCity_Gym_EventScript_ThatIsNotARalts
-	special CompareIfRalts
-	goto_if_eq VAR_RESULT, 1, PetalburgCity_Gym_EventScript_ThatIsNotARalts
-	goto_if_eq VAR_RESULT, 2, PetalburgCity_Gym_EventScript_ThatIsARalts
+	special IsItRalts
+	goto_if_eq VAR_RESULT, 1, PetalburgCity_Gym_EventScript_ThatIsARalts
+	goto_if_eq VAR_RESULT, 2, PetalburgCity_Gym_EventScript_ThatIsNotARalts
 	release
 	end
 
@@ -213,6 +210,9 @@ PetalburgCity_Gym_EventScript_ThatIsNotARalts::
 	end
 
 PetalburgCity_Gym_EventScript_ThatIsARalts::
+	questmenu QUEST_MENU_COMPLETE_QUEST QUEST_RIVAL_BATTLE
+	special DoDomeConfetti
+	completequest QUEST_RIVAL_BATTLE
 	msgbox PetalburgCity_Gym_Text_ThatIsARalts
 	closemessage
 	release
