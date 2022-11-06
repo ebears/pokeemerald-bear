@@ -302,9 +302,8 @@
 #define VAR_FOLLOW_MON_FLAG_DUMMY     0x8014
 #define VAR_TRAINER_BATTLE_OPPONENT_A 0x8015 // Alias of gTrainerBattleOpponent_A
 #define VAR_PREV_TEXT_COLOR           0x8016
-#define VAR_TEXT_COLOR                0x8017
-#define VAR_CURRENT_MON               0x8018
+#define VAR_TEXT_COLOR                0X8017
 
-#define SPECIAL_VARS_END              0x8018
+#define SPECIAL_VARS_END              0x8017
 
 #endif // GUARD_CONSTANTS_VARS_H
