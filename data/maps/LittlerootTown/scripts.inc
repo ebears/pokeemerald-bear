@@ -910,41 +910,41 @@ LittlerootTown_EventScript_GiveRunningShoes::
 	return
 
 LittlerootTown_Text_OurNewHomeLetsGoInside:
-	.string "Mom: {PLAYER}, we're here, honey!\p"
+	.string "{COLOR LIGHT_BLUE}{PLAYER}{COLOR RED}, we're here, honey!\p"
 	.string "It must be tiring riding with our things\n"
 	.string "in the moving truck.\p"
-	.string "Well, this is Littleroot Town.\p"
+	.string "Well, this is {COLOR LIGHT_GREEN}Littleroot Town{COLOR RED}.\p"
 	.string "How do you like it?\n"
 	.string "This is our new home!\p"
 	.string "It has a quaint feel, but it seems to be\n"
 	.string "an easy place to live, don't you think?\p"
-	.string "And, you get your own room, {PLAYER}!\n"
+	.string "And, you get your own room, {COLOR LIGHT_BLUE}{PLAYER}{COLOR RED}!\n"
 	.string "Let's go inside.$"
 
 LittlerootTown_Text_WaitPlayer:
-	.string "Mom: Wait, {PLAYER}!$"
+	.string "{COLOR RED}Wait, {COLOR LIGHT_GREEN}{PLAYER}{COLOR RED}!$"
 
 LittlerootTown_Text_WearTheseRunningShoes:
-	.string "Mom: {PLAYER}! {PLAYER}! Did you\n"
-	.string "introduce yourself to Prof. Birch?\p"
+	.string "{COLOR LIGHT_BLUE}{PLAYER}{COLOR RED}! {COLOR LIGHT_BLUE}{PLAYER}{COLOR RED}! Did you\n"
+	.string "introduce yourself to {COLOR LIGHT_GREEN}Prof. Birch{COLOR RED}?\p"
 	.string "Oh! What an adorable Pokémon!\n"
-	.string "You got it from Prof. Birch. How nice!\p"
+	.string "You got it from {COLOR LIGHT_GREEN}Prof. Birch{COLOR RED}. How nice!\p"
 	.string "You're your father's child, all right.\n"
 	.string "You look good together with Pokémon!\p"
 	.string "Here, honey! If you're going out on an\n"
-	.string "adventure, wear these Running Shoes.\p"
+	.string "adventure, wear these {COLOR LIGHT_GREEN}Running Shoes{COLOR RED}.\p"
 	.string "They'll put a zip in your step!$"
 
 LittlerootTown_Text_SwitchShoesWithRunningShoes:
-	.string "{PLAYER} switched shoes with the\n"
+	.string "{COLOR LIGHT_BLUE}{PLAYER} {COLOR DARK_GRAY}switched shoes with the\n"
 	.string "Running Shoes.$"
 
 LittlerootTown_Text_ExplainRunningShoes:
-	.string "Mom: {PLAYER}, those shoes came with\n"
+	.string "{COLOR LIGHT_BLUE}{PLAYER}{COLOR RED}, those shoes came with\n"
 	.string "instructions.\p"
-	.string "“Press the B Button while wearing these\n"
-	.string "Running Shoes to run extra-fast!\p"
-	.string "“Slip on these Running Shoes and race\n"
+	.string "“Press the {COLOR LIGHT_GREEN}B Button {COLOR RED}while wearing these\n"
+	.string "{COLOR LIGHT_GREEN}Running Shoes {COLOR RED}to run extra-fast!\p"
+	.string "“Slip on these {COLOR LIGHT_GREEN}Running Shoes {COLOR RED}and race\n"
 	.string "in the great outdoors!”$"
 
 LittlerootTown_Text_ComeHomeIfAnythingHappens:
