@@ -96,4 +96,7 @@ void MoveDeleterChooseMoveToForget(void);
 
 bool8 CanLearnTutorMove(u16, u8);
 
+void ChoosePartyMonForDad(void);
+void IsItRalts(void);
+
 #endif // GUARD_PARTY_MENU_H

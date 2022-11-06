@@ -5,8 +5,6 @@
 PetalburgCity_Gym_MapScripts::
 	map_script MAP_SCRIPT_ON_LOAD, PetalburgCity_Gym_OnLoad
 	map_script MAP_SCRIPT_ON_TRANSITION, PetalburgCity_Gym_OnTransition
-	map_script MAP_SCRIPT_ON_WARP_INTO_MAP_TABLE, PetalburgCity_Gym_OnWarp
-	map_script MAP_SCRIPT_ON_FRAME_TABLE, PetalburgCity_Gym_OnFrame
 	.byte 0
 
 PetalburgCity_Gym_OnLoad:
@@ -65,44 +63,6 @@ PetalburgCity_Gym_EventScript_DontMoveNormanToFront::
 	setvar VAR_PETALBURG_GYM_STATE, 8
 	end
 
-PetalburgCity_Gym_OnWarp:
-	map_script_2 VAR_PETALBURG_GYM_STATE, 1, PetalburgCity_Gym_EventScript_TurnPlayerNorth
-	.2byte 0
-
-PetalburgCity_Gym_EventScript_TurnPlayerNorth::
-	turnobject OBJ_EVENT_ID_PLAYER, DIR_NORTH
-	end
-
-PetalburgCity_Gym_OnFrame:
-	map_script_2 VAR_PETALBURG_GYM_STATE, 1, PetalburgCity_Gym_EventScript_ReturnFromWallyTutorial
-	.2byte 0
-
-PetalburgCity_Gym_EventScript_ReturnFromWallyTutorial::
-	lockall
-	msgbox PetalburgCity_Gym_Text_DadSoDidItWorkOut, MSGBOX_DEFAULT
-	msgbox PetalburgCity_Gym_Text_WallyThankYouBye, MSGBOX_DEFAULT
-	closemessage
-	applymovement OBJ_EVENT_ID_PLAYER, Common_Movement_WalkInPlaceFasterDown
-	applymovement LOCALID_WALLY, PetalburgCity_Gym_Movement_WallyExitGym
-	waitmovement 0
-	playse SE_EXIT
-	removeobject LOCALID_WALLY
-	setflag FLAG_HIDE_PETALBURG_CITY_WALLY
-	delay 30
-	applymovement OBJ_EVENT_ID_PLAYER, Common_Movement_WalkInPlaceFasterUp
-	waitmovement 0
-	msgbox PetalburgCity_Gym_Text_DadGoCollectBadges, MSGBOX_DEFAULT
-	setvar VAR_PETALBURG_GYM_STATE, 2
-	releaseall
-	end
-
-PetalburgCity_Gym_Movement_WallyExitGym:
-	walk_down
-	walk_down
-	walk_down
-	delay_16
-	step_end
-
 PetalburgCity_Gym_EventScript_Norman::
 	lock
 	faceplayer
@@ -114,6 +74,7 @@ PetalburgCity_Gym_EventScript_Norman::
 	case 6, PetalburgCity_Gym_EventScript_NormanBattle
 	case 7, PetalburgCity_Gym_EventScript_NormanPostBattle
 	case 8, PetalburgCity_Gym_EventScript_NormanRematch
+	goto_if_set FLAG_DAD_QUEST_OBTAINED, PetalburgCity_Gym_EventScript_WallyQuestComplete
 	msgbox PetalburgCity_Gym_Text_DadYoureHereWithYourPokemon, MSGBOX_DEFAULT
 	closemessage
 	switch VAR_FACING
@@ -158,14 +119,18 @@ PetalburgCity_Gym_EventScript_BeginWallyTutorial::
 	call_if_eq VAR_0x8008, 1, PetalburgCity_Gym_EventScript_NormanAddressPlayerNorth
 	call_if_eq VAR_0x8008, 2, PetalburgCity_Gym_EventScript_NormanAddressPlayerWest
 	call_if_eq VAR_0x8008, 3, PetalburgCity_Gym_EventScript_NormanAddressPlayerEast
-	msgbox PetalburgCity_Gym_Text_DadPlayerGoWithWally, MSGBOX_DEFAULT
-	call_if_eq VAR_0x8008, 0, PetalburgCity_Gym_EventScript_NormanAddressWallySouth
-	call_if_eq VAR_0x8008, 1, PetalburgCity_Gym_EventScript_NormanAddressWallyNorth
-	call_if_eq VAR_0x8008, 2, PetalburgCity_Gym_EventScript_NormanAddressWallyWest
-	call_if_eq VAR_0x8008, 3, PetalburgCity_Gym_EventScript_NormanAddressWallyEast
-	msgbox PetalburgCity_Gym_Text_IllLoanYouMyZigzagoon, MSGBOX_DEFAULT
-	msgbox PetalburgCity_Gym_Text_WallyThankYouAndDadGivesPokeBall, MSGBOX_DEFAULT
-	msgbox PetalburgCity_Gym_Text_WallyOhWowThankYou, MSGBOX_DEFAULT
+	msgbox PetalburgCity_Gym_Text_DadPlayerGoCatchForWally, MSGBOX_YESNO
+	goto_if_eq VAR_RESULT, NO, PetalburgCity_Gym_eventScript_DeclineWallyHelp
+	msgbox PetalburgCity_Gym_Text_DadWallyQuestInfo, MSGBOX_DEFAULT
+	msgbox PetalburgCity_Gym_Text_DadWallyQuestExtraInfo, MSGBOX_DEFAULT
+	startquest QUEST_WALLYS_FIRST_POKEMON
+	setflag FLAG_DAD_QUEST_OBTAINED
+	closemessage
+	release
+	end
+
+PetalburgCity_Gym_EventScript_WallyQuestComplete::
+	goto_if_quest_not_complete QUEST_WALLYS_FIRST_POKEMON, PetalburgCity_Gym_EventScript_WallyQuestInProgress
 	call_if_eq VAR_0x8008, 0, PetalburgCity_Gym_EventScript_NormanFaceDoorSouth
 	call_if_eq VAR_0x8008, 1, PetalburgCity_Gym_EventScript_NormanFaceDoorNorth
 	call_if_eq VAR_0x8008, 2, PetalburgCity_Gym_EventScript_NormanFaceDoorWest
@@ -174,24 +139,47 @@ PetalburgCity_Gym_EventScript_BeginWallyTutorial::
 	call_if_eq VAR_0x8008, 1, PetalburgCity_Gym_EventScript_WallyFaceDown
 	call_if_eq VAR_0x8008, 2, PetalburgCity_Gym_EventScript_WallyFacePlayer
 	call_if_eq VAR_0x8008, 3, PetalburgCity_Gym_EventScript_WallyFacePlayer
-	msgbox PetalburgCity_Gym_Text_WouldYouReallyComeWithMe, MSGBOX_DEFAULT
+	msgbox PetalburgCity_Gym_Text_ThanksForTheHelp
 	closemessage
-	setflag FLAG_DONT_TRANSITION_MUSIC
-	playbgm MUS_FOLLOW_ME, FALSE
-	call_if_eq VAR_0x8008, 0, PetalburgCity_Gym_EventScript_ExitGymWithWallySouth
-	call_if_eq VAR_0x8008, 1, PetalburgCity_Gym_EventScript_ExitGymWithWallyNorth
-	call_if_eq VAR_0x8008, 2, PetalburgCity_Gym_EventScript_ExitGymWithWallyWest
-	call_if_eq VAR_0x8008, 3, PetalburgCity_Gym_EventScript_ExitGymWithWallyEast
-	removeobject LOCALID_WALLY
+	release
+	end
+
+PetalburgCity_Gym_EventScript_WallyQuestInProgress::
+	msgbox PetalburgCity_Gym_Text_WallyQuestInProgress
+	special ChoosePartyMonForDad
+	waitstate
+	copyvar VAR_RESULT, VAR_0x8006
+	goto_if_eq VAR_RESULT, PARTY_NOTHING_CHOSEN, PetalburgCity_Gym_EventScript_ThatIsNotARalts
+	special IsItRalts
+	goto_if_eq VAR_RESULT, 1, PetalburgCity_Gym_EventScript_ThatIsARalts
+	goto_if_eq VAR_RESULT, 2, PetalburgCity_Gym_EventScript_ThatIsNotARalts
+	release
+	end
+
+PetalburgCity_Gym_EventScript_ThatIsNotARalts::
+	msgbox PetalburgCity_Gym_Text_ThatIsNotARalts
+	closemessage
+	release
+	end
+
+PetalburgCity_Gym_EventScript_ThatIsARalts::
+	questmenu QUEST_MENU_COMPLETE_QUEST QUEST_WALLYS_FIRST_POKEMON
+	special DoDomeConfetti
+	completequest QUEST_WALLYS_FIRST_POKEMON
+	msgbox PetalburgCity_Gym_Text_ThatIsARalts
 	setflag FLAG_HIDE_PETALBURG_CITY_WALLYS_MOM
-	setvar VAR_PETALBURG_GYM_STATE, 1
 	setvar VAR_PETALBURG_CITY_STATE, 2
 	clearflag FLAG_HIDE_PETALBURG_CITY_WALLY
 	clearflag FLAG_HIDE_PETALBURG_GYM_WALLY
 	setflag FLAG_HIDE_LITTLEROOT_TOWN_BIRCHS_LAB_RIVAL
 	special InitBirchState
-	warp MAP_PETALBURG_CITY, 15, 8
-	waitstate
+	closemessage
+	release
+	end
+
+PetalburgCity_Gym_eventScript_DeclineWallyHelp::
+	msgbox PetalburgCity_Gym_Text_DadOkayDoNotHelp, MSGBOX_DEFAULT
+	closemessage
 	release
 	end
 
@@ -213,31 +201,6 @@ PetalburgCity_Gym_EventScript_WallyArriveWestEast::
 	applymovement LOCALID_NORMAN, Common_Movement_WalkInPlaceFasterDown
 	applymovement OBJ_EVENT_ID_PLAYER, Common_Movement_WalkInPlaceFasterDown
 	applymovement LOCALID_WALLY, PetalburgCity_Gym_Movement_WallyArrive
-	waitmovement 0
-	return
-
-PetalburgCity_Gym_EventScript_ExitGymWithWallySouth::
-	applymovement LOCALID_NORMAN, Common_Movement_WalkInPlaceFasterDown
-	applymovement LOCALID_WALLY, PetalburgCity_Gym_Movement_WallyExitSouthWest
-	applymovement OBJ_EVENT_ID_PLAYER, PetalburgCity_Gym_Movement_PlayerExitWithWallySouth
-	waitmovement 0
-	return
-
-PetalburgCity_Gym_EventScript_ExitGymWithWallyNorth::
-	applymovement LOCALID_WALLY, PetalburgCity_Gym_Movement_WallyExitNorth
-	applymovement OBJ_EVENT_ID_PLAYER, PetalburgCity_Gym_Movement_PlayerExitWithWallyNorth
-	waitmovement 0
-	return
-
-PetalburgCity_Gym_EventScript_ExitGymWithWallyWest::
-	applymovement LOCALID_WALLY, PetalburgCity_Gym_Movement_WallyExitSouthWest
-	applymovement OBJ_EVENT_ID_PLAYER, PetalburgCity_Gym_Movement_PlayerExitWithWallyWest
-	waitmovement 0
-	return
-
-PetalburgCity_Gym_EventScript_ExitGymWithWallyEast::
-	applymovement LOCALID_WALLY, PetalburgCity_Gym_Movement_WallyExitEast
-	applymovement OBJ_EVENT_ID_PLAYER, PetalburgCity_Gym_Movement_PlayerExitWithWallyEast
 	waitmovement 0
 	return
 
@@ -1167,36 +1130,59 @@ PetalburgCity_Gym_Text_WallyIveNeverCaughtAPokemon:
 	.string "relatives in Verdanturf Town.\p"
 	.string "I thought I would be lonely by myself,\n"
 	.string "so I wanted to take a Pokémon along.\p"
-	.string "But I've never caught a Pokémon before.\n"
-	.string "I don't know how…$"
+	.string "But I've never caught a Pokémon before.$"
 
 PetalburgCity_Gym_Text_DadHmISee:
 	.string "Dad: Hm. I see.$"
 
-PetalburgCity_Gym_Text_DadPlayerGoWithWally:
+PetalburgCity_Gym_Text_DadPlayerGoCatchForWally:
 	.string "Dad: {PLAYER}, you heard that,\n"
 	.string "right?\p"
-	.string "Go with Wally and make sure that he\n"
-	.string "safely catches a Pokémon.$"
+	.string "Considering you're a new trainer...\p"
+	.string "It's great experience if you caught Wally\n"
+	.string "his first Pokémon. Don't you think?$"
 
-PetalburgCity_Gym_Text_IllLoanYouMyZigzagoon:
-	.string "Wally, here, I'll loan you my Pokémon.\p"
-	.string "Wally received a Zigzagoon!$"
+PetalburgCity_Gym_Text_DadOkayDoNotHelp:
+	.string "Very well, {PLAYER}. I suppose you\n"
+	.string "have better things to do...$"
 
-PetalburgCity_Gym_Text_WallyThankYouAndDadGivesPokeBall:
-	.string "Wally: Oh, wow!\n"
-	.string "A Pokémon!\p"
-	.string "Dad: Hm. I'll give you a Poké Ball, too.\n"
-	.string "Go for it!\p"
-	.string "Wally received a Poké Ball!$"
+PetalburgCity_Gym_Text_DadWallyQuestInfo:
+	.string "Glad you can help.\p"
+	.string "There are Ralts in the routes\n"
+	.string "to the east of here.\p"
+	.string "I think that would make a great\n"
+	.string "starter for Wally.$"
 
-PetalburgCity_Gym_Text_WallyOhWowThankYou:
-	.string "Wally: Oh, wow!\n"
-	.string "Thank you!$"
+PetalburgCity_Gym_Text_DadWallyQuestExtraInfo:
+	.string "...\p"
+	.string "Oh {PLAYER}, now that you are a\n"
+	.string "trainer, you should know:\p"
+	.string "The time of day affects which sort of\n"
+	.string "Pokémon you encounter in each route.\p"
+	.string "With that being said...\p"
+	.string "Ralts are known to appear in Route 102\n"
+	.string "during the day.\p"
+	.string "And in Route 101, right by our\n"
+	.string "house, at night.$"
 
-PetalburgCity_Gym_Text_WouldYouReallyComeWithMe:
-	.string "{PLAYER}… Would you really come\n"
-	.string "with me?$"
+PetalburgCity_Gym_Text_WallyQuestInProgress:
+	.string "{PLAYER}, have you found Wally\n"
+	.string "a Ralts?$"
+
+PetalburgCity_Gym_Text_ThatIsNotARalts:
+	.string "Hm, come back when you've\n"
+	.string "found Wally a Ralts.$"
+
+PetalburgCity_Gym_Text_ThatIsARalts:
+	.string "Great, this looks like a fantastic\n"
+	.string "starter for Wally.$"
+
+PetalburgCity_Gym_Text_WallyThankYouForHelp:
+	.string "Wally: Thanks {PLAYER}, I am going\n"
+	.string "to become the best trainer ever!$"
+
+PetalburgCity_Gym_Text_ThanksForTheHelp:
+	.string "{PLAYER}, thank you for the help.$"
 
 PetalburgCity_Gym_Text_DadSoDidItWorkOut:
 	.string "Dad: So, did it work out?$"

@@ -409,6 +409,10 @@ static bool8 SetUpFieldMove_Fly(void);
 static bool8 SetUpFieldMove_Waterfall(void);
 static bool8 SetUpFieldMove_Dive(void);
 
+static void Task_ChoosePartyMonForDad(u8 taskId);
+static void BufferMonSelectionForDad(void);
+static u8 CompareMonForRalts(u16 species);
+
 // static const data
 #include "data/pokemon/tutor_learnsets.h"
 #include "data/party_menu.h"
@@ -6796,4 +6800,56 @@ void IsLastMonThatKnowsSurf(void)
         if (AnyStorageMonWithMove(move) != TRUE)
             gSpecialVar_Result = TRUE;
     }
+}
+
+void ChoosePartyMonForDad(void)
+{
+    ScriptContext2_Enable();
+    FadeScreen(FADE_TO_BLACK, 0);
+    CreateTask(Task_ChoosePartyMonForDad, 10);
+}
+
+void Task_ChoosePartyMonForDad(u8 taskId)
+{
+    if (!gPaletteFade.active)
+    {
+        CleanupOverworldWindowsAndTilemaps();
+        InitPartyMenu(PARTY_MENU_TYPE_CHOOSE_MON, PARTY_LAYOUT_SINGLE, PARTY_ACTION_CHOOSE_AND_CLOSE, FALSE, PARTY_MSG_CHOOSE_MON, Task_HandleChooseMonInput, BufferMonSelectionForDad);
+        DestroyTask(taskId);
+    }
+}
+
+static void BufferMonSelectionForDad(void)
+{
+    gSpecialVar_0x8006 = GetCursorSelectionMonId();
+    if (gSpecialVar_0x8006 >= PARTY_SIZE)
+        gSpecialVar_0x8006 = PARTY_NOTHING_CHOSEN;
+    gFieldCallback2 = CB2_FadeFromPartyMenu;
+    SetMainCallback2(CB2_ReturnToField);
+}
+
+static u8 CompareMonForRalts(u16 species)
+{
+    if (gSpecialVar_Result == 0xFF)
+    {
+        return 0;
+    }
+    else
+    {
+        struct Pokemon *pkmn = &gPlayerParty[gSpecialVar_Result];
+
+        if (GetMonData(pkmn, MON_DATA_IS_EGG) == TRUE || GetMonData(pkmn, MON_DATA_SPECIES) != species)
+        {
+            return 2;
+        }
+        else
+        {
+            return 1;
+        }
+    }
+}
+
+void IsItRalts(void)
+{
+    gSpecialVar_Result = CompareMonForRalts(SPECIES_RALTS);
 }

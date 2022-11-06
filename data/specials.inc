@@ -538,3 +538,5 @@ gSpecials::
 	def_special SetTotemBoost
 	def_special GetEncounterTime
 	def_special BufferUnitSystemText
+	def_special ChoosePartyMonForDad
+	def_special IsItRalts
