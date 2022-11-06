@@ -76,6 +76,7 @@ void Task_QuestMenu_OpenFromStartMenu(u8);
 void QuestMenu_CopyQuestName(u8 *dst, u8 questId);
 void QuestMenu_CopySubquestName(u8 *dst, u8 parentId, u8 childId);
 void QuestMenu_ResetMenuSaveData(void);
-u8 IsItRalts(u16 species);
+static u8 CompareIfCorrectMon(u16 species);
+void CompareIfRalts(void);
 
 #endif // GUARD_QUESTS_H

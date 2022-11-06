@@ -2810,14 +2810,28 @@ void QuestMenu_ResetMenuSaveData(void)
 	       sizeof(gSaveBlock2Ptr->subQuests));
 }
 
-u8 IsItRalts(u16 species)
+static u8 CompareIfCorrectMon(u16 species)
 {
-    if (species == SPECIES_RALTS)
+    if (gSpecialVar_Result == 0xFF)
     {
-        return 1;
+        return 0;
     }
     else
     {
-        return 2;
+        struct Pokemon *pkmn = &gPlayerParty[gSpecialVar_Result];
+
+        if (GetMonData(pkmn, MON_DATA_IS_EGG) == TRUE || GetMonData(pkmn, MON_DATA_SPECIES) != species)
+        {
+            return 1;
+        }
+        else
+        {
+            return 2;
+		}
 	}
+}
+
+void CompareIfRalts(void)
+{
+	gSpecialVar_Result = CompareIfCorrectMon(SPECIES_RALTS);
 }
