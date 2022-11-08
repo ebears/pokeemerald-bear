@@ -910,111 +910,111 @@ LittlerootTown_EventScript_GiveRunningShoes::
 	return
 
 LittlerootTown_Text_OurNewHomeLetsGoInside:
-	.string "{COLOR LIGHT_BLUE}{PLAYER}{COLOR RED}, we're here, honey!\p"
+	.string "{COLOR DYNAMIC_COLOR5}{PLAYER}{COLOR DYNAMIC_COLOR6}, we're here, honey!\p"
 	.string "It must be tiring riding with our things\n"
 	.string "in the moving truck.\p"
-	.string "Well, this is {COLOR LIGHT_GREEN}Littleroot Town{COLOR RED}.\p"
+	.string "Well, this is {COLOR RED}Littleroot Town{COLOR DYNAMIC_COLOR6}.\p"
 	.string "How do you like it?\n"
 	.string "This is our new home!\p"
 	.string "It has a quaint feel, but it seems to be\n"
 	.string "an easy place to live, don't you think?\p"
-	.string "And, you get your own room, {COLOR LIGHT_BLUE}{PLAYER}{COLOR RED}!\n"
+	.string "And, you get your own room, {COLOR DYNAMIC_COLOR5}{PLAYER}{COLOR DYNAMIC_COLOR6}!\n"
 	.string "Let's go inside.$"
 
 LittlerootTown_Text_WaitPlayer:
-	.string "{COLOR RED}Wait, {COLOR LIGHT_GREEN}{PLAYER}{COLOR RED}!$"
+	.string "{COLOR DYNAMIC_COLOR6}Wait, {COLOR DYNAMIC_COLOR5}{PLAYER}{COLOR DYNAMIC_COLOR6}!$"
 
 LittlerootTown_Text_WearTheseRunningShoes:
-	.string "{COLOR LIGHT_BLUE}{PLAYER}{COLOR RED}! {COLOR LIGHT_BLUE}{PLAYER}{COLOR RED}! Did you\n"
-	.string "introduce yourself to {COLOR LIGHT_GREEN}Prof. Birch{COLOR RED}?\p"
-	.string "Oh! What an adorable Pokémon!\n"
-	.string "You got it from {COLOR LIGHT_GREEN}Prof. Birch{COLOR RED}. How nice!\p"
+	.string "{COLOR DYNAMIC_COLOR5}{PLAYER}{COLOR DYNAMIC_COLOR6}! {COLOR DYNAMIC_COLOR5}{PLAYER}{COLOR DYNAMIC_COLOR6}! Did you\n"
+	.string "introduce yourself to {COLOR RED}Prof. Birch{COLOR DYNAMIC_COLOR6}?\p"
+	.string "Oh! What an adorable {COLOR DYNAMIC_COLOR4}Pokémon{COLOR DYNAMIC_COLOR6}!\n"
+	.string "You got it from {COLOR RED}Prof. Birch{COLOR DYNAMIC_COLOR6}. How nice!\p"
 	.string "You're your father's child, all right.\n"
-	.string "You look good together with Pokémon!\p"
+	.string "You look good together with {COLOR DYNAMIC_COLOR4}Pokémon{COLOR DYNAMIC_COLOR6}!\p"
 	.string "Here, honey! If you're going out on an\n"
-	.string "adventure, wear these {COLOR LIGHT_GREEN}Running Shoes{COLOR RED}.\p"
+	.string "adventure, wear these {COLOR RED}Running Shoes{COLOR DYNAMIC_COLOR6}.\p"
 	.string "They'll put a zip in your step!$"
 
 LittlerootTown_Text_SwitchShoesWithRunningShoes:
-	.string "{COLOR LIGHT_BLUE}{PLAYER} {COLOR DARK_GRAY}switched shoes with the\n"
+	.string "{COLOR DYNAMIC_COLOR5}{PLAYER} {COLOR DARK_GRAY}switched shoes with the\n"
 	.string "Running Shoes.$"
 
 LittlerootTown_Text_ExplainRunningShoes:
-	.string "{COLOR LIGHT_BLUE}{PLAYER}{COLOR RED}, those shoes came with\n"
+	.string "{COLOR DYNAMIC_COLOR5}{PLAYER}{COLOR DYNAMIC_COLOR6}, those shoes came with\n"
 	.string "instructions.\p"
-	.string "“Press the {COLOR LIGHT_GREEN}B Button {COLOR RED}while wearing these\n"
-	.string "{COLOR LIGHT_GREEN}Running Shoes {COLOR RED}to run extra-fast!\p"
-	.string "“Slip on these {COLOR LIGHT_GREEN}Running Shoes {COLOR RED}and race\n"
+	.string "“Press the {COLOR RED}B Button {COLOR DYNAMIC_COLOR6}while wearing these\n"
+	.string "{COLOR RED}Running Shoes {COLOR DYNAMIC_COLOR6}to run extra-fast!\p"
+	.string "“Slip on these {COLOR RED}Running Shoes {COLOR DYNAMIC_COLOR6}and race\n"
 	.string "in the great outdoors!”$"
 
 LittlerootTown_Text_ComeHomeIfAnythingHappens:
-	.string "… … … … … … … …\n"
+	.string "{COLOR DYNAMIC_COLOR6}… … … … … … … …\n"
 	.string "… … … … … … … …\p"
 	.string "To think that you have your very own\n"
-	.string "Pokémon now…\l"
+	.string "{COLOR DYNAMIC_COLOR4}Pokémon {COLOR DYNAMIC_COLOR6}now…\l"
 	.string "Your father will be overjoyed.\p"
 	.string "…But please be careful.\n"
 	.string "If anything happens, you can come home.\p"
 	.string "Go on, go get them, honey!$"
 
 LittlerootTown_Text_CanUsePCToStoreItems:
-	.string "If you use a PC, you can store items\n"
-	.string "and Pokémon.\p"
+	.string "{COLOR BLUE}If you use a {COLOR RED}PC{COLOR BLUE}, you can store items\n"
+	.string "and {COLOR DYNAMIC_COLOR4}Pokémon{COLOR BLUE}.\p"
 	.string "The power of science is staggering!$"
 
 LittlerootTown_Text_BirchSpendsDaysInLab:
-	.string "Prof. Birch spends days in his Lab\n"
+	.string "{COLOR RED}Prof. Birch {COLOR BLUE}spends days in his Lab\n"
 	.string "studying, then he'll suddenly go out in\l"
 	.string "the wild to do more research…\p"
-	.string "When does Prof. Birch spend time\n"
+	.string "When does {COLOR RED}Prof. Birch {COLOR BLUE}spend time\n"
 	.string "at home?$"
 
 LittlerootTown_Text_IfYouGoInGrassPokemonWillJumpOut:
-	.string "Um, um, um!\p"
+	.string "{COLOR DYNAMIC_COLOR6}Um, um, um!\p"
 	.string "If you go outside and go in the grass,\n"
-	.string "wild Pokémon will jump out!$"
+	.string "wild {COLOR DYNAMIC_COLOR4}Pokémon{COLOR DYNAMIC_COLOR6} will jump out!$"
 
 LittlerootTown_Text_DangerousIfYouDontHavePokemon:
-	.string "It's dangerous if you don't have\n"
-	.string "your own Pokémon.$"
+	.string "{COLOR DYNAMIC_COLOR6}It's dangerous if you don't have\n"
+	.string "your own {COLOR DYNAMIC_COLOR4}Pokémon{COLOR DYNAMIC_COLOR6}.$"
 
 LittlerootTown_Text_CanYouGoSeeWhatsHappening:
-	.string "Um, hi!\p"
-	.string "There are scary Pokémon outside!\n"
+	.string "{COLOR DYNAMIC_COLOR6}Um, hi!\p"
+	.string "There are scary {COLOR DYNAMIC_COLOR4}Pokémon{COLOR DYNAMIC_COLOR6} outside!\n"
 	.string "I can hear their cries!\p"
 	.string "I want to go see what's going on,\n"
-	.string "but I don't have any Pokémon…\p"
+	.string "but I don't have any {COLOR DYNAMIC_COLOR4}Pokémon{COLOR DYNAMIC_COLOR6}…\p"
 	.string "Can you go see what's happening\n"
 	.string "for me?$"
 
 LittlerootTown_Text_YouSavedBirch:
-	.string "You saved Prof. Birch!\n"
+	.string "{COLOR DYNAMIC_COLOR6}You saved {COLOR RED}Prof. Birch{COLOR DYNAMIC_COLOR6}!\n"
 	.string "I'm so glad!$"
 
 LittlerootTown_Text_GoodLuckCatchingPokemon:
-	.string "Are you going to catch Pokémon?\n"
+	.string "{COLOR DYNAMIC_COLOR6}Are you going to catch {COLOR DYNAMIC_COLOR4}Pokémon{COLOR DYNAMIC_COLOR6}?\n"
 	.string "Good luck!$"
 
 LittlerootTown_Text_TownSign:
-	.string "Littleroot Town\n"
-	.string "“A town that can't be shaded any hue.”$"
+	.string "{COLOR RED}Littleroot Town\n"
+	.string "{COLOR DARK_GRAY}“A town that can't be shaded any hue.”$"
 
 LittlerootTown_Text_ProfBirchsLab:
-	.string "Prof. Birch's Pokémon Lab$"
+	.string "{COLOR RED}Prof. Birch's {COLOR DARK_GRAY}Pokémon Lab$"
 
 LittlerootTown_Text_PlayersHouse:
-	.string "{PLAYER}'s House$"
+	.string "{COLOR DYNAMIC_COLOR5}{PLAYER}'s {COLOR DARK_GRAY}House$"
 
 LittlerootTown_Text_ProfBirchsHouse:
-	.string "Prof. Birch's House$"
+	.string "{COLOR RED}Prof. Birch's{COLOR DARK_GRAY} House$"
 
 LittlerootTown_Text_BirchSomethingToShowYouAtLab:
-	.string "Prof. Birch: Well, well, {PLAYER}{KUN}!\n"
+	.string "{COLOR GREEN}Well, well, {COLOR DYNAMIC_COLOR5}{PLAYER}{KUN}{COLOR GREEN}!\n"
 	.string "That was good work out there!\p"
 	.string "I knew there was something special\n"
 	.string "about you when I first saw you,\l"
 	.string "but I never expected this.\p"
-	.string "Oh, yes. Do you still have the Pokédex\n"
+	.string "Oh, yes. Do you still have the {COLOR RED}Pokédex{COLOR GREEN}\n"
 	.string "I gave you?\p"
 	.string "I have something to show you.\n"
 	.string "Let's go to my Lab.$"

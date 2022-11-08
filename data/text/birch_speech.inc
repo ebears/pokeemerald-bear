@@ -1,8 +1,8 @@
 gText_Birch_Welcome::
 	.string "{COLOR GREEN}Hi! Sorry to keep you waiting!\p"
 	.string "Welcome to the world of {COLOR DYNAMIC_COLOR4}Pokémon{COLOR GREEN}!\p"
-	.string "My name is {COLOR LIGHT_GREEN}Birch{COLOR GREEN}.\p"
-	.string "But everyone calls me the {COLOR LIGHT_GREEN}Pokémon\n"
+	.string "My name is {COLOR RED}Birch{COLOR GREEN}.\p"
+	.string "But everyone calls me the {COLOR RED}Pokémon\n"
 	.string "Professor{COLOR GREEN}.\p"
 	.string "$"
 
@@ -45,7 +45,7 @@ gText_Birch_SoItsPlayer::
 gText_Birch_YourePlayer::
 	.string "{COLOR GREEN}Ah, okay!\p"
 	.string "You're {COLOR DYNAMIC_COLOR5}{PLAYER}{KUN} {COLOR GREEN}who's moving to my\n"
-	.string "hometown of {COLOR LIGHT_GREEN}Littleroot{COLOR GREEN}.\l"
+	.string "hometown of {COLOR RED}Littleroot{COLOR GREEN}.\l"
 	.string "I get it now!\p"
 	.string "$"
 
@@ -57,5 +57,5 @@ gText_Birch_AreYouReady::
 	.string "world of {COLOR DYNAMIC_COLOR4}Pokémon{COLOR GREEN} where dreams,\l"
 	.string "adventure, and friendships await!\p"
 	.string "Well, I'll be expecting you later.\n"
-	.string "Come see me in my {COLOR LIGHT_GREEN}Pokémon Lab{COLOR GREEN}.\p"
+	.string "Come see me in my {COLOR RED}Pokémon Lab{COLOR GREEN}.\p"
 	.string "$"
