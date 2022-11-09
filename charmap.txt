@@ -458,12 +458,12 @@ TRANSPARENT = 00
 WHITE = 01
 DARK_GRAY = 02
 LIGHT_GRAY = 03
-RED = 04
-LIGHT_RED = 05
-GREEN = 06
-LIGHT_GREEN = 07
-BLUE = 08
-LIGHT_BLUE = 09
+RED = 04 @ modified purplish-red
+LIGHT_RED = 05 @ purplish-pink
+GREEN = 06 @ emerald green
+LIGHT_GREEN = 07 @ orange
+BLUE = 08 @ modified blue
+LIGHT_BLUE = 09 @ teal-ish
 @ these next colors can be set to anything arbitrary at runtime
 @ usually though they'll have the textbox border colors as described below
 DYNAMIC_COLOR1 = 0A @ white

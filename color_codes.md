@@ -1,9 +1,14 @@
 DARK_GRAY - Non-narrated events
+
 RED - Objects
-LIGHT_RED - Pokenav Text
+LIGHT_RED (Purplish-pink) - Girl NPCs
+
 GREEN - Important NPCs
-LIGHT_GREEN - Pokemon NPCs
+LIGHT_GREEN (Orange) - Player's name
+
 BLUE - Boy NPCs
-DYNAMIC_COLOR4 - exclusive to the word 'Pokemon'
-DYNAMIC_COLOR5 - exclusive to the player's name
-DYNAMIC_COLOR6 - Girl NPCs
+LIGHT_BLUE (Yellow-green) - Pokemon NPCs
+
+DYNAMIC_COLOR4 (deep green) - Pokenav Text
+
+DYNAMIC_COLOR6 (lighter green) - exclusive to the word 'Pokemon'

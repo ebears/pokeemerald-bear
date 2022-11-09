@@ -288,92 +288,92 @@ LittlerootTown_BrendansHouse_1F_Movement_BrendanGoUpstairs2:
 	step_end
 
 PlayersHouse_1F_Text_IsntItNiceInHere:
-	.string "{COLOR DYNAMIC_COLOR6}See, {COLOR DYNAMIC_COLOR5}{PLAYER}{COLOR DYNAMIC_COLOR6}?\n"
+	.string "{COLOR LIGHT_RED}See, {COLOR LIGHT_GREEN}{PLAYER}{COLOR LIGHT_RED}?\n"
 	.string "Isn't it nice in here, too?$"
 
 PlayersHouse_1F_Text_MoversPokemonGoSetClock:
-	.string "{COLOR DYNAMIC_COLOR6}The mover's {COLOR DYNAMIC_COLOR4}Pokémon{COLOR DYNAMIC_COLOR6} do all the work\n"
+	.string "{COLOR LIGHT_RED}The mover's {COLOR DYNAMIC_COLOR6}Pokémon{COLOR LIGHT_RED} do all the work\n"
 	.string "of moving us in and cleaning up after.\l"
 	.string "This is so convenient!\p"
-	.string "{COLOR DYNAMIC_COLOR5}{PLAYER}{COLOR DYNAMIC_COLOR6}, your room is upstairs.\n"
+	.string "{COLOR LIGHT_GREEN}{PLAYER}{COLOR LIGHT_RED}, your room is upstairs.\n"
 	.string "Go check it out, dear!\p"
-	.string "{COLOR RED}Dad{COLOR DYNAMIC_COLOR6} bought you a new clock to mark\n"
+	.string "{COLOR RED}Dad{COLOR LIGHT_RED} bought you a new clock to mark\n"
 	.string "our move here.\l"
 	.string "Don't forget to set it!$"
 
 PlayersHouse_1F_Text_ArentYouInterestedInRoom:
-	.string "{COLOR DYNAMIC_COLOR6}Well, {COLOR DYNAMIC_COLOR5}{PLAYER}{COLOR DYNAMIC_COLOR6}?\p"
+	.string "{COLOR LIGHT_RED}Well, {COLOR LIGHT_GREEN}{PLAYER}{COLOR LIGHT_RED}?\p"
 	.string "Aren't you interested in seeing your\n"
 	.string "very own room?$"
 
 PlayersHouse_1F_Text_GoSetTheClock:
-	.string "{COLOR DYNAMIC_COLOR5}{PLAYER}{COLOR DYNAMIC_COLOR6}.\p"
+	.string "{COLOR LIGHT_GREEN}{PLAYER}{COLOR LIGHT_RED}.\p"
 	.string "Go set the clock in your room, honey.$"
 
 PlayersHouse_1F_Text_OhComeQuickly:
-	.string "{COLOR DYNAMIC_COLOR6}Oh! {COLOR DYNAMIC_COLOR5}{PLAYER}{COLOR DYNAMIC_COLOR6}, {COLOR DYNAMIC_COLOR5}{PLAYER}{COLOR DYNAMIC_COLOR6}!\n"
+	.string "{COLOR LIGHT_RED}Oh! {COLOR LIGHT_GREEN}{PLAYER}{COLOR LIGHT_RED}, {COLOR LIGHT_GREEN}{PLAYER}{COLOR LIGHT_RED}!\n"
 	.string "Quick! Come quickly!$"
 
 PlayersHouse_1F_Text_MaybeDadWillBeOn:
-	.string "{COLOR DYNAMIC_COLOR6}Look! It's {COLOR RED}Petalburg Gym{COLOR DYNAMIC_COLOR6}!\n"
-	.string "Maybe {COLOR RED}Dad{COLOR DYNAMIC_COLOR6} will be on!$"
+	.string "{COLOR LIGHT_RED}Look! It's {COLOR RED}Petalburg Gym{COLOR LIGHT_RED}!\n"
+	.string "Maybe {COLOR RED}Dad{COLOR LIGHT_RED} will be on!$"
 
 PlayersHouse_1F_Text_ItsOverWeMissedHim:
-	.string "{COLOR DYNAMIC_COLOR6}Oh… It's over.\p"
-	.string "I think {COLOR RED}Dad{COLOR DYNAMIC_COLOR6} was on, but we missed him.\n"
+	.string "{COLOR LIGHT_RED}Oh… It's over.\p"
+	.string "I think {COLOR RED}Dad{COLOR LIGHT_RED} was on, but we missed him.\n"
 	.string "Too bad.$"
 
 PlayersHouse_1F_Text_GoIntroduceYourselfNextDoor:
-	.string "{COLOR DYNAMIC_COLOR6}Oh, yes.\n"
-	.string "One of {COLOR RED}Dad's{COLOR DYNAMIC_COLOR6} friends lives in town.\p"
-	.string "{COLOR RED}Prof. Birch{COLOR DYNAMIC_COLOR6} is his name.\p"
+	.string "{COLOR LIGHT_RED}Oh, yes.\n"
+	.string "One of {COLOR RED}Dad's{COLOR LIGHT_RED} friends lives in town.\p"
+	.string "{COLOR RED}Prof. Birch{COLOR LIGHT_RED} is his name.\p"
 	.string "He lives right next door, so you should\n"
 	.string "go over and introduce yourself.$"
 
 PlayersHouse_1F_Text_SeeYouHoney:
-	.string "{COLOR DYNAMIC_COLOR6}See you, honey!$"
+	.string "{COLOR LIGHT_RED}See you, honey!$"
 
 PlayersHouse_1F_Text_DidYouMeetProfBirch:
-	.string "{COLOR DYNAMIC_COLOR6}Did you introduce yourself to\n"
-	.string "{COLOR RED}Prof. Birch{COLOR DYNAMIC_COLOR6}?$"
+	.string "{COLOR LIGHT_RED}Did you introduce yourself to\n"
+	.string "{COLOR RED}Prof. Birch{COLOR LIGHT_RED}?$"
 
 PlayersHouse_1F_Text_YouShouldRestABit:
-	.string "{COLOR DYNAMIC_COLOR6}How are you doing, {COLOR DYNAMIC_COLOR5}{PLAYER}{COLOR DYNAMIC_COLOR6}?\n"
+	.string "{COLOR LIGHT_RED}How are you doing, {COLOR LIGHT_GREEN}{PLAYER}{COLOR LIGHT_RED}?\n"
 	.string "You look a little tired.\p"
 	.string "I think you should rest a bit.$"
 
 PlayersHouse_1F_Text_TakeCareHoney:
-	.string "{COLOR DYNAMIC_COLOR6}Take care, honey!$"
+	.string "{COLOR LIGHT_RED}Take care, honey!$"
 
 PlayersHouse_1F_Text_GotDadsBadgeHeresSomethingFromMom:
-	.string "{COLOR DYNAMIC_COLOR6}Oh? Did {COLOR RED}Dad{COLOR DYNAMIC_COLOR6} give you that {COLOR RED}Badge{COLOR DYNAMIC_COLOR6}?\p"
-	.string "Then here's something from your {COLOR RED}Mom{COLOR DYNAMIC_COLOR6}!$"
+	.string "{COLOR LIGHT_RED}Oh? Did {COLOR RED}Dad{COLOR LIGHT_RED} give you that {COLOR RED}Badge{COLOR LIGHT_RED}?\p"
+	.string "Then here's something from your {COLOR RED}Mom{COLOR LIGHT_RED}!$"
 
 PlayersHouse_1F_Text_DontPushYourselfTooHard:
-	.string "{COLOR DYNAMIC_COLOR6}Don't push yourself too hard, dear.\n"
+	.string "{COLOR LIGHT_RED}Don't push yourself too hard, dear.\n"
 	.string "You can always come home.\p"
 	.string "Go for it, honey!$"
 
 PlayersHouse_1F_Text_IsThatAPokenav:
-	.string "{COLOR DYNAMIC_COLOR6}What is that, honey? A {COLOR RED}Pokénav{COLOR DYNAMIC_COLOR6}?\n"
-	.string "Someone from {COLOR RED}Devon{COLOR DYNAMIC_COLOR6} gave it to you?\p"
+	.string "{COLOR LIGHT_RED}What is that, honey? A {COLOR RED}Pokénav{COLOR LIGHT_RED}?\n"
+	.string "Someone from {COLOR RED}Devon{COLOR LIGHT_RED} gave it to you?\p"
 	.string "Well, honey, how about registering\n"
 	.string "your mom?\p"
 	.string "… … …$"
 
 PlayersHouse_1F_Text_RegisteredMom:
-	.string "{COLOR DYNAMIC_COLOR6}Registered {COLOR RED}Mom{COLOR DYNAMIC_COLOR6}\n"
-	.string "in the {COLOR RED}Pokénav{COLOR DYNAMIC_COLOR6}.$"
+	.string "{COLOR DYNAMIC_COLOR4}Registered {COLOR RED}Mom{COLOR DYNAMIC_COLOR4}\n"
+	.string "in the {COLOR RED}Pokénav{COLOR DYNAMIC_COLOR4}.$"
 
 PlayersHouse_1F_Text_Vigoroth1:
-	.string "{COLOR DYNAMIC_COLOR2}Fugiiiiih!$"
+	.string "{COLOR LIGHT_BLUE}Fugiiiiih!$"
 
 PlayersHouse_1F_Text_Vigoroth2:
-	.string "{COLOR DYNAMIC_COLOR2}Huggoh, uggo uggo…$"
+	.string "{COLOR LIGHT_BLUE}Huggoh, uggo uggo…$"
 
 PlayersHouse_1F_Text_ReportFromPetalburgGym:
-	.string "{COLOR RED}Interviewer{COLOR DARK_GRAY}: …We brought you this\n"
-	.string "report from in front of {COLOR RED}Petalburg Gym{COLOR DARK_GRAY}.$"
+	.string "{COLOR RED}Interviewer: {COLOR LIGHT_RED}…We brought you this\n"
+	.string "report from in front of {COLOR RED}Petalburg Gym{COLOR LIGHT_RED}.$"
 
 PlayersHouse_1F_Text_TheresAMovieOnTV:
 	.string "{COLOR DARK_GRAY}There is a movie on TV.\p"
@@ -384,40 +384,40 @@ PlayersHouse_1F_Text_TheresAMovieOnTV:
 PlayersHouse_1F_Text_RunningShoesManual:
 	.string "{COLOR DARK_GRAY}It's the instruction booklet for the\n"
 	.string "{COLOR RED}Running Shoes{COLOR DARK_GRAY}.\p"
-	.string "{COLOR DYNAMIC_COLOR6}“Press the {COLOR RED}B Button{COLOR DYNAMIC_COLOR6} to run while\n"
-	.string "wearing your {COLOR RED}Running Shoes{COLOR DYNAMIC_COLOR6}.”\p"
-	.string "“Lace up your {COLOR RED}Running Shoes{COLOR DYNAMIC_COLOR6} and hit\n"
+	.string "{COLOR LIGHT_RED}“Press the {COLOR RED}B Button{COLOR LIGHT_RED} to run while\n"
+	.string "wearing your {COLOR RED}Running Shoes{COLOR LIGHT_RED}.”\p"
+	.string "“Lace up your {COLOR RED}Running Shoes{COLOR LIGHT_RED} and hit\n"
 	.string "the road running!”$"
 
 PlayersHouse_1F_Text_TicketFromBrineyCameForYou:
-	.string "Dad: Hm?\p"
-	.string "Hey, it's {PLAYER}!\p"
+	.string "{COLOR BLUE}Hm?\p"
+	.string "Hey, it's {COLOR LIGHT_GREEN}{PLAYER}{COLOR BLUE}!\p"
 	.string "It's been a while since I saw you,\n"
 	.string "but you look…stronger, somehow.\p"
 	.string "That's the impression I get.\n"
 	.string "But your old man hasn't given up yet!\p"
 	.string "Oh, yes, I have something for you.\n"
 	.string "This came to you from someone named\l"
-	.string "Mr. Briney.$"
+	.string "{COLOR RED}Mr. Briney{COLOR BLUE}.$"
 
 PlayersHouse_1F_Text_PortsInSlateportLilycove:
-	.string "Dad: Hm, a Ticket for a ferry?\p"
+	.string "{COLOR BLUE}Hm, a {COLOR RED}Ticket {COLOR BLUE}for a ferry?\p"
 	.string "If I recall, there are ferry ports in\n"
-	.string "Slateport and Lilycove.$"
+	.string "{COLOR RED}Slateport {COLOR BLUE}and {COLOR RED}Lilycove{COLOR BLUE}.$"
 
 PlayersHouse_1F_Text_BetterGetBackToGym:
-	.string "I'd better get back to Petalburg Gym.\p"
-	.string "Mom, thanks for looking after the house\n"
+	.string "{COLOR BLUE}I'd better get back to {COLOR RED}Petalburg Gym{COLOR BLUE}.\p"
+	.string "{COLOR RED}Mom{COLOR BLUE}, thanks for looking after the house\n"
 	.string "while I'm away.$"
 
 PlayersHouse_1F_Text_DadShouldStayLonger:
-	.string "Mom: That Dad of yours…\p"
+	.string "{COLOR LIGHT_RED}That {COLOR RED}Dad {COLOR LIGHT_RED}of yours…\p"
 	.string "He comes home for the first time in a\n"
-	.string "while, but all he talks about is Pokémon.\p"
+	.string "while, but all he talks about is {COLOR DYNAMIC_COLOR6}Pokémon{COLOR LIGHT_RED}.\p"
 	.string "He should relax and stay a little longer.$"
 
 PlayersHouse_1F_Text_IsThatABreakingStory:
-	.string "Mom: Is that a breaking news story?$"
+	.string "{COLOR LIGHT_RED}Is that a breaking news story?$"
 
 PlayersHouse_1F_Text_LatiEmergencyNewsFlash:
 	.string "We bring you this emergency\n"
