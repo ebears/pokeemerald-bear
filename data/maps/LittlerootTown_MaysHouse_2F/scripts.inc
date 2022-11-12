@@ -321,7 +321,7 @@ RivalsHouse_2F_Text_MayWhoAreYou:
 	.string "Glad to meet you!\p"
 	.string "I…\n"
 	.string "I have this dream of becoming friends\l"
-	.string "with {COLOR DYNAMIC_COLOR6}Pokémon {COLOR GREEN}all over the world.\p"
+	.string "with {COLOR RED}Pokémon {COLOR GREEN}all over the world.\p"
 	.string "I… I heard about you, {COLOR LIGHT_GREEN}{PLAYER}{KUN}{COLOR GREEN}, from\n"
 	.string "my dad, {COLOR RED}Prof. Birch{COLOR GREEN}.\p"
 	.string "I was hoping that you would be nice,\n"
@@ -331,11 +331,11 @@ RivalsHouse_2F_Text_MayWhoAreYou:
 	.string "Eheheh…\p"
 	.string "Oh, no! I forgot!\p"
 	.string "I was supposed to go help Dad catch\n"
-	.string "some wild {COLOR DYNAMIC_COLOR6}Pokémon{COLOR GREEN}!\p"
+	.string "some wild {COLOR RED}Pokémon{COLOR GREEN}!\p"
 	.string "{COLOR LIGHT_GREEN}{PLAYER}{KUN}{COLOR GREEN}, I'll catch you later!$"
 
 RivalsHouse_2F_Text_MayGettingReady:
-	.string "{COLOR DYNAMIC_COLOR6}Pokémon {COLOR GREEN}fully restored!\n"
+	.string "{COLOR RED}Pokémon {COLOR GREEN}fully restored!\n"
 	.string "{COLOR RED}Items {COLOR GREEN}ready, and…$"
 
 RivalsHouse_2F_Text_BrendanWhoAreYou:
@@ -351,15 +351,15 @@ RivalsHouse_2F_Text_BrendanWhoAreYou:
 	.string "My name's {COLOR RED}Brendan{COLOR GREEN}.\n"
 	.string "So, hi, neighbor!\p"
 	.string "Huh? Hey, {COLOR LIGHT_GREEN}{PLAYER}{COLOR GREEN}, don't you have\n"
-	.string "a {COLOR DYNAMIC_COLOR6}Pokémon{COLOR GREEN}?\p"
+	.string "a {COLOR RED}Pokémon{COLOR GREEN}?\p"
 	.string "Do you want me to go catch you one?\p"
 	.string "Aw, darn, I forgot…\p"
 	.string "I'm supposed to go help my dad catch\n"
-	.string "some wild {COLOR DYNAMIC_COLOR6}Pokémon{COLOR GREEN}.\p"
+	.string "some wild {COLOR RED}Pokémon{COLOR GREEN}.\p"
 	.string "Some other time, okay?$"
 
 RivalsHouse_2F_Text_BrendanGettingReady:
-	.string "{COLOR DYNAMIC_COLOR6}Pokémon {COLOR GREEN}fully restored…\n"
+	.string "{COLOR RED}Pokémon {COLOR GREEN}fully restored…\n"
 	.string "{COLOR RED}Items {COLOR GREEN}all packed, and…$"
 
 RivalsHouse_2F_Text_ItsRivalsPokeBall:
@@ -369,12 +369,12 @@ RivalsHouse_2F_Text_ItsRivalsPokeBall:
 RivalsHouse_2F_Text_MayJustCheckingMyPokedex:
 	.string "{COLOR LIGHT_GREEN}{PLAYER}{KUN}{COLOR GREEN}!\p"
 	.string "I was just checking my {COLOR RED}Pokédex{COLOR GREEN}.\p"
-	.string "There's still a lot of {COLOR DYNAMIC_COLOR6}Pokémon {COLOR GREEN}that\n"
+	.string "There's still a lot of {COLOR RED}Pokémon {COLOR GREEN}that\n"
 	.string "I've seen but haven't caught.\p"
 	.string "And there are many others that\n"
 	.string "I think will evolve.\p"
 	.string "I wonder where I should go catch\n"
-	.string "some {COLOR DYNAMIC_COLOR6}Pokémon {COLOR GREEN}next?$"
+	.string "some {COLOR RED}Pokémon {COLOR GREEN}next?$"
 
 RivalsHouse_2F_Text_MayWhereShouldIGoNext:
 	.string "May: I wonder where I should go catch\n"

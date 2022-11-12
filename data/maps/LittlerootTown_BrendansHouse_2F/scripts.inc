@@ -273,32 +273,32 @@ PlayersHouse_2F_EventScript_GameCube::
 	end
 
 PlayersHouse_2F_Text_ClockIsStopped:
-	.string "{COLOR DARK_GRAY}The clock is stopped…\p"
+	.string "{COLOR GREEN}The clock is stopped…\p"
 	.string "Better set it and start it!$"
 
 PlayersHouse_2F_Text_HowDoYouLikeYourRoom:
-	.string "{COLOR LIGHT_GREEN}{PLAYER}{COLOR LIGHT_RED}, how do you like your\n"
+	.string "{COLOR LIGHT_GREEN}{PLAYER}{COLOR BLUE}, how do you like your\n"
 	.string "new room?\p"
 	.string "Good! Everything's put away neatly!\p"
 	.string "They finished moving everything in\n"
 	.string "downstairs, too.\p"
-	.string "{COLOR DYNAMIC_COLOR6}Pokémon {COLOR LIGHT_RED}movers are so convenient!\p"
+	.string "{COLOR RED}Pokémon {COLOR BLUE}movers are so convenient!\p"
 	.string "Oh, you should make sure that\n"
 	.string "everything's all there on your desk.$"
 
 PlayersHouse_2F_Text_Notebook:
-	.string "{COLOR LIGHT_GREEN}{PLAYER} {COLOR DARK_GRAY}flipped open the notebook.\p"
+	.string "{COLOR LIGHT_GREEN}{PLAYER} {COLOR GREEN}flipped open the notebook.\p"
 	.string "Adventure Rule No. 1\n"
-	.string "Open the Menu with {COLOR RED}Start{COLOR DARK_GRAY}.\p"
+	.string "Open the Menu with {COLOR RED}Start{COLOR GREEN}.\p"
 	.string "Adventure Rule No. 2\n"
 	.string "Record your progress with Save.\p"
 	.string "The remaining pages are blank…$"
 
 Common_Text_LookCloserAtMap:
-	.string "{COLOR LIGHT_GREEN}{PLAYER} {COLOR DARK_GRAY}took a closer look at the\n"
-	.string "{COLOR RED}Hoenn {COLOR DARK_GRAY}region map.$"
+	.string "{COLOR LIGHT_GREEN}{PLAYER} {COLOR GREEN}took a closer look at the\n"
+	.string "{COLOR RED}Hoenn {COLOR GREEN}region map.$"
 
 PlayersHouse_2F_Text_ItsAGameCube:
-	.string "{COLOR DARK_GRAY}It's a {COLOR RED}Nintendo GameCube{COLOR DARK_GRAY}.\p"
-	.string "A {COLOR RED}Game Boy Advance {COLOR DARK_GRAY}is connected to\n"
+	.string "{COLOR GREEN}It's a {COLOR RED}Nintendo GameCube{COLOR GREEN}.\p"
+	.string "A {COLOR RED}Game Boy Advance {COLOR GREEN}is connected to\n"
 	.string "serve as the controller.$"

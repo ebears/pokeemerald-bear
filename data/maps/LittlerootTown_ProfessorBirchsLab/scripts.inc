@@ -704,143 +704,143 @@ LittlerootTown_ProfessorBirchsLab_Text_BirchIsntOneForDeskWork:
 
 LittlerootTown_ProfessorBirchsLab_Text_BirchEnjoysRivalsHelpToo:
 	.string "{COLOR RED}Prof. Birch {COLOR BLUE}is studying the habitats\n"
-	.string "and distribution of {COLOR DYNAMIC_COLOR6}Pokémon{COLOR BLUE}.\p"
+	.string "and distribution of {COLOR RED}Pokémon{COLOR BLUE}.\p"
 	.string "The Prof enjoys {COLOR RED}{RIVAL}'s {COLOR BLUE}help, too.\n"
 	.string "There's a lot of love there.$"
 
 LittlerootTown_ProfessorBirchsLab_Text_LikeYouToHavePokemon:
-	.string "{COLOR GREEN}Prof. Birch: So, {COLOR LIGHT_GREEN}{PLAYER}{KUN}{COLOR GREEN}.\p"
+	.string "{COLOR BLUE}Prof. Birch: So, {COLOR LIGHT_GREEN}{PLAYER}{KUN}{COLOR BLUE}.\p"
 	.string "I've heard so much about you from\n"
 	.string "your father.\p"
 	.string "I've heard that you don't have your\n"
-	.string "own {COLOR DYNAMIC_COLOR6}Pokémon {COLOR GREEN}yet.\p"
+	.string "own {COLOR RED}Pokémon {COLOR BLUE}yet.\p"
 	.string "But the way you battled earlier,\n"
 	.string "you pulled it off with aplomb!\p"
 	.string "I guess you have your father's blood\n"
 	.string "in your veins after all!\p"
 	.string "Oh, yes. As thanks for rescuing me,\n"
-	.string "I'd like you to have the {COLOR DYNAMIC_COLOR6}Pokémon {COLOR GREEN}you\l"
+	.string "I'd like you to have the {COLOR RED}Pokémon {COLOR BLUE}you\l"
 	.string "used earlier.\p"
-	.string "{COLOR LIGHT_GREEN}{PLAYER} {COLOR DARK_GRAY}received the {COLOR RED}{STR_VAR_1}{COLOR DARK_GRAY}!$"
+	.string "{COLOR LIGHT_GREEN}{PLAYER} {COLOR GREEN}received the {COLOR RED}{STR_VAR_1}{COLOR GREEN}!$"
 
 LittlerootTown_ProfessorBirchsLab_Text_WhyNotGiveNicknameToMon:
-	.string "{COLOR GREEN}Prof. Birch: While you're at it, why not\n"
-	.string "give a nickname to that {COLOR RED}{STR_VAR_1}{COLOR GREEN}?$"
+	.string "{COLOR BLUE}Prof. Birch: While you're at it, why not\n"
+	.string "give a nickname to that {COLOR RED}{STR_VAR_1}{COLOR BLUE}?$"
 
 LittlerootTown_ProfessorBirchsLab_Text_MightBeGoodIdeaToGoSeeRival:
-	.string "{COLOR GREEN}Prof. Birch: If you work at {COLOR DYNAMIC_COLOR6}Pokémon\n"
-	.string "{COLOR GREEN}and gain experience, I think you'll make\l"
+	.string "{COLOR BLUE}Prof. Birch: If you work at {COLOR RED}Pokémon\n"
+	.string "{COLOR BLUE}and gain experience, I think you'll make\l"
 	.string "an extremely good Trainer.\p"
-	.string "My kid, {COLOR RED}{RIVAL}{COLOR GREEN}, is also studying\n"
-	.string "{COLOR DYNAMIC_COLOR6}Pokémon {COLOR GREEN}while helping me out.\p"
-	.string "{COLOR LIGHT_GREEN}{PLAYER}{KUN}{COLOR GREEN}, don't you think it might be\n"
-	.string "a good idea to go see {COLOR RED}{RIVAL}{COLOR GREEN}?$"
+	.string "My kid, {COLOR RED}{RIVAL}{COLOR BLUE}, is also studying\n"
+	.string "{COLOR RED}Pokémon {COLOR BLUE}while helping me out.\p"
+	.string "{COLOR LIGHT_GREEN}{PLAYER}{KUN}{COLOR BLUE}, don't you think it might be\n"
+	.string "a good idea to go see {COLOR RED}{RIVAL}{COLOR BLUE}?$"
 
 LittlerootTown_ProfessorBirchsLab_Text_GetRivalToTeachYou:
-	.string "{COLOR GREEN}Prof. Birch: Great!\n"
-	.string "{COLOR RED}{RIVAL} {COLOR GREEN}should be happy, too.\p"
-	.string "Get {COLOR RED}{RIVAL} {COLOR GREEN}to teach you what it\n"
+	.string "{COLOR BLUE}Prof. Birch: Great!\n"
+	.string "{COLOR RED}{RIVAL} {COLOR BLUE}should be happy, too.\p"
+	.string "Get {COLOR RED}{RIVAL} {COLOR BLUE}to teach you what it\n"
 	.string "means to be a trainer.$"
 
 LittlerootTown_ProfessorBirchsLab_Text_DontBeThatWay:
-	.string "{COLOR GREEN}Prof. Birch: Oh, don't be that way.\n"
+	.string "{COLOR BLUE}Prof. Birch: Oh, don't be that way.\n"
 	.string "You should go meet my kid.$"
 
 LittlerootTown_ProfessorBirchsLab_Text_BirchRivalGoneHome:
-	.string "{COLOR GREEN}Prof. Birch: {COLOR RED}{RIVAL}{COLOR GREEN}?\n"
+	.string "{COLOR BLUE}Prof. Birch: {COLOR RED}{RIVAL}{COLOR BLUE}?\n"
 	.string "Gone home, I think.\p"
 	.string "Or maybe that kid's scrabbling around\n"
 	.string "in tall grass again somewhere…\p"
-	.string "If you or your {COLOR DYNAMIC_COLOR6}Pokémon {COLOR GREEN}get tired,\n"
+	.string "If you or your {COLOR RED}Pokémon {COLOR BLUE}get tired,\n"
 	.string "you should get some rest at home.$"
 
 LittlerootTown_ProfessorBirchsLab_Text_HeardYouBeatRivalTakePokedex:
-	.string "{COLOR GREEN}Prof. Birch: Oh, hi, {COLOR LIGHT_GREEN}{PLAYER}{KUN}{COLOR GREEN}!\p"
-	.string "I heard you beat {COLOR RED}{RIVAL} {COLOR GREEN}on\n"
+	.string "{COLOR BLUE}Prof. Birch: Oh, hi, {COLOR LIGHT_GREEN}{PLAYER}{KUN}{COLOR BLUE}!\p"
+	.string "I heard you beat {COLOR RED}{RIVAL} {COLOR BLUE}on\n"
 	.string "your first try. That's excellent!\p"
-	.string "{COLOR RED}{RIVAL}'s {COLOR GREEN}been helping with my research\n"
+	.string "{COLOR RED}{RIVAL}'s {COLOR BLUE}been helping with my research\n"
 	.string "for a long time.\p"
-	.string "{COLOR RED}{RIVAL} {COLOR GREEN}has an extensive history as\n"
+	.string "{COLOR RED}{RIVAL} {COLOR BLUE}has an extensive history as\n"
 	.string "a trainer already.\p"
-	.string "Here, {COLOR LIGHT_GREEN}{PLAYER}{KUN}{COLOR GREEN}, I ordered this for my\n"
+	.string "Here, {COLOR LIGHT_GREEN}{PLAYER}{KUN}{COLOR BLUE}, I ordered this for my\n"
 	.string "research, but I think you should have\l"
-	.string "this {COLOR RED}Pokédex{COLOR GREEN}.$"
+	.string "this {COLOR RED}Pokédex{COLOR BLUE}.$"
 
 LittlerootTown_ProfessorBirchsLab_Text_ReceivedPokedex:
-	.string "{COLOR LIGHT_GREEN}{PLAYER} {COLOR DARK_GRAY}received the {COLOR RED}Pokédex{COLOR DARK_GRAY}!$"
+	.string "{COLOR LIGHT_GREEN}{PLAYER} {COLOR GREEN}received the {COLOR RED}Pokédex{COLOR GREEN}!$"
 
 LittlerootTown_ProfessorBirchsLab_Text_ExplainPokedex:
-	.string "{COLOR GREEN}Prof. Birch: The {COLOR RED}Pokédex {COLOR GREEN}is a high-tech\n"
+	.string "{COLOR BLUE}Prof. Birch: The {COLOR RED}Pokédex {COLOR BLUE}is a high-tech\n"
 	.string "tool that automatically makes a record\l"
-	.string "of any {COLOR DYNAMIC_COLOR6}Pokémon {COLOR GREEN}you meet or catch.\p"
-	.string "My kid, {COLOR RED}{RIVAL}{COLOR GREEN}, goes everywhere\n"
+	.string "of any {COLOR RED}Pokémon {COLOR BLUE}you meet or catch.\p"
+	.string "My kid, {COLOR RED}{RIVAL}{COLOR BLUE}, goes everywhere\n"
 	.string "with it.\p"
-	.string "Whenever my kid catches a rare {COLOR DYNAMIC_COLOR6}Pokémon\n"
-	.string "{COLOR GREEN}and records its data in the {COLOR RED}Pokédex{COLOR GREEN},\l"
-	.string "why, {COLOR RED}{RIVAL} {COLOR GREEN}looks for me while I'm out\l"
+	.string "Whenever my kid catches a rare {COLOR RED}Pokémon\n"
+	.string "{COLOR BLUE}and records its data in the {COLOR RED}Pokédex{COLOR BLUE},\l"
+	.string "why, {COLOR RED}{RIVAL} {COLOR BLUE}looks for me while I'm out\l"
 	.string "doing fieldwork, and shows me.$"
 
 LittlerootTown_ProfessorBirchsLab_Text_CountlessPokemonAwait:
-	.string "{COLOR GREEN}Prof. Birch: Countless {COLOR DYNAMIC_COLOR6}Pokémon\n"
-	.string "{COLOR GREEN}await you!\p"
+	.string "{COLOR BLUE}Prof. Birch: Countless {COLOR RED}Pokémon\n"
+	.string "{COLOR BLUE}await you!\p"
 	.string "Argh, I'm getting the itch to get out\n"
 	.string "and do fieldwork again!$"
 
 LittlerootTown_ProfessorBirchsLab_Text_MayGotPokedexTooTakeThese:
-	.string "{COLOR GREEN}May: Oh, wow, {COLOR LIGHT_GREEN}{PLAYER}{KUN}{COLOR GREEN}!\n"
-	.string "You got a {COLOR RED}Pokédex{COLOR GREEN}, too!\p"
+	.string "{COLOR BLUE}May: Oh, wow, {COLOR LIGHT_GREEN}{PLAYER}{KUN}{COLOR BLUE}!\n"
+	.string "You got a {COLOR RED}Pokédex{COLOR BLUE}, too!\p"
 	.string "That's great! Just like me!\n"
 	.string "I've got something for you, too!$"
 
 LittlerootTown_ProfessorBirchsLab_Text_CatchCutePokemonWithPokeBalls:
-	.string "{COLOR GREEN}May: It's fun if you can get a lot of\n"
-	.string "{COLOR DYNAMIC_COLOR6}Pokémon{COLOR GREEN}!\p"
+	.string "{COLOR BLUE}May: It's fun if you can get a lot of\n"
+	.string "{COLOR RED}Pokémon{COLOR BLUE}!\p"
 	.string "I'm going to look all over the place\n"
-	.string "because I want different {COLOR DYNAMIC_COLOR6}Pokémon{COLOR GREEN}.\p"
-	.string "If I find any cute {COLOR DYNAMIC_COLOR6}Pokémon{COLOR GREEN}, I'll catch\n"
-	.string "them with {COLOR RED}Poké Balls{COLOR GREEN}!$"
+	.string "because I want different {COLOR RED}Pokémon{COLOR BLUE}.\p"
+	.string "If I find any cute {COLOR RED}Pokémon{COLOR BLUE}, I'll catch\n"
+	.string "them with {COLOR RED}Poké Balls{COLOR BLUE}!$"
 
 LittlerootTown_ProfessorBirchsLab_Text_OhYourBagsFull:
-	.string "{COLOR GREEN}Oh? Your {COLOR RED}Bag's {COLOR GREEN}full.$"
+	.string "{COLOR BLUE}Oh? Your {COLOR RED}Bag's {COLOR BLUE}full.$"
 
 LittlerootTown_ProfessorBirchsLab_Text_MayWhereShouldIGoNext:
-	.string "{COLOR GREEN}May: I wonder where I should go look\n"
-	.string "for {COLOR DYNAMIC_COLOR6}Pokémon {COLOR GREEN}next?$"
+	.string "{COLOR BLUE}May: I wonder where I should go look\n"
+	.string "for {COLOR RED}Pokémon {COLOR BLUE}next?$"
 
 LittlerootTown_ProfessorBirchsLab_Text_BrendanGotPokedexTooTakeThese:
-	.string "{COLOR GREEN}Brendan: Huh…\n"
-	.string "So you got a {COLOR RED}Pokédex{COLOR GREEN}, too.\p"
+	.string "{COLOR BLUE}Brendan: Huh…\n"
+	.string "So you got a {COLOR RED}Pokédex{COLOR BLUE}, too.\p"
 	.string "Well then, here.\n"
 	.string "I'll give you these.$"
 
 LittlerootTown_ProfessorBirchsLab_Text_CatchCoolPokemonWithPokeBalls:
-	.string "{COLOR GREEN}Brendan: You know it's more fun to\n"
-	.string "have a whole bunch of {COLOR DYNAMIC_COLOR6}Pokémon{COLOR GREEN}.\p"
+	.string "{COLOR BLUE}Brendan: You know it's more fun to\n"
+	.string "have a whole bunch of {COLOR RED}Pokémon{COLOR BLUE}.\p"
 	.string "I'm going to explore all over the place\n"
-	.string "to find different {COLOR DYNAMIC_COLOR6}Pokémon{COLOR GREEN}.\p"
-	.string "If I find any cool {COLOR DYNAMIC_COLOR6}Pokémon{COLOR GREEN}, you bet\n"
-	.string "I'll try to get them with {COLOR RED}Poké Balls{COLOR GREEN}.$"
+	.string "to find different {COLOR RED}Pokémon{COLOR BLUE}.\p"
+	.string "If I find any cool {COLOR RED}Pokémon{COLOR BLUE}, you bet\n"
+	.string "I'll try to get them with {COLOR RED}Poké Balls{COLOR BLUE}.$"
 
 LittlerootTown_ProfessorBirchsLab_Text_HeyYourBagsFull:
-	.string "{COLOR GREEN}Hey, your {COLOR RED}Bag's {COLOR GREEN}full.$"
+	.string "{COLOR BLUE}Hey, your {COLOR RED}Bag's {COLOR BLUE}full.$"
 
 LittlerootTown_ProfessorBirchsLab_Text_BrendanWhereShouldIGoNext:
-	.string "{COLOR GREEN}Brendan: Where should I look for\n"
-	.string "{COLOR DYNAMIC_COLOR6}Pokémon {COLOR GREEN}next…$"
+	.string "{COLOR BLUE}Brendan: Where should I look for\n"
+	.string "{COLOR RED}Pokémon {COLOR BLUE}next…$"
 
 LittlerootTown_ProfessorBirchsLab_Text_SeriousLookingMachine:
-	.string "{COLOR DARK_GRAY}It's a serious-looking machine.\n"
+	.string "{COLOR GREEN}It's a serious-looking machine.\n"
 	.string "The Prof must use this for research.$"
 
 LittlerootTown_ProfessorBirchsLab_Text_PCUsedForResearch:
-	.string "{COLOR DARK_GRAY}It's a PC used for research.\n"
+	.string "{COLOR GREEN}It's a PC used for research.\n"
 	.string "Better not mess around with it.$"
 
 LittlerootTown_ProfessorBirchsLab_Text_CrammedWithBooksOnPokemon:
-	.string "{COLOR DARK_GRAY}It's crammed with books on {COLOR DYNAMIC_COLOR6}Pokémon{COLOR DARK_GRAY}.$"
+	.string "{COLOR GREEN}It's crammed with books on {COLOR RED}Pokémon{COLOR GREEN}.$"
 
 LittlerootTown_ProfessorBirchsLab_Text_BookTooHardToRead:
-	.string "{COLOR DARK_GRAY}It's a book that's too hard to read.$"
+	.string "{COLOR GREEN}It's a book that's too hard to read.$"
 
 LittlerootTown_ProfessorBirchsLab_Text_OtherRegionsUpgradeToNational:
 	.string "Prof. Birch: Now…\p"

@@ -310,41 +310,41 @@ Route101_Movement_BirchApproachPlayer:
 	step_end
 
 Route101_Text_HelpMe:
-	.string "{COLOR GREEN}H-help me!$"
+	.string "{COLOR BLUE}H-help me!$"
 
 Route101_Text_PleaseHelp:
-	.string "{COLOR GREEN}Hello! You over there!\n"
+	.string "{COLOR BLUE}Hello! You over there!\n"
 	.string "Please! Help!\p"
-	.string "In my {COLOR RED}Bag{COLOR GREEN}!\n"
-	.string "There's a {COLOR RED}Poké Ball{COLOR GREEN}!$"
+	.string "In my {COLOR RED}Bag{COLOR BLUE}!\n"
+	.string "There's a {COLOR RED}Poké Ball{COLOR BLUE}!$"
 
 Route101_Text_DontLeaveMe:
-	.string "{COLOR GREEN}Wh-Where are you going?!\n"
+	.string "{COLOR BLUE}Wh-Where are you going?!\n"
 	.string "Don't leave me like this!$"
 
 Route101_Text_YouSavedMe:
-	.string "{COLOR GREEN}Prof. Birch: Whew…\p"
+	.string "{COLOR BLUE}Prof. Birch: Whew…\p"
 	.string "I was in the tall grass studying wild\n"
-	.string "{COLOR DYNAMIC_COLOR6}Pokémon {COLOR GREEN}when I was jumped.\p"
+	.string "{COLOR RED}Pokémon {COLOR BLUE}when I was jumped.\p"
 	.string "You saved me.\n"
 	.string "Thanks a lot!\p"
 	.string "Oh?\p"
-	.string "Hi, you're {COLOR LIGHT_GREEN}{PLAYER}{KUN}{COLOR GREEN}!\p"
+	.string "Hi, you're {COLOR LIGHT_GREEN}{PLAYER}{KUN}{COLOR BLUE}!\p"
 	.string "This is not the place to chat, so come\n"
-	.string "by my {COLOR RED}Pokémon Lab {COLOR GREEN}later, okay?$"
+	.string "by my {COLOR RED}Pokémon Lab {COLOR BLUE}later, okay?$"
 
 Route101_Text_TakeTiredPokemonToPokeCenter:
-	.string "{COLOR BLUE}If {COLOR DYNAMIC_COLOR6}Pokémon {COLOR BLUE}get tired, take them to\n"
+	.string "{COLOR BLUE}If {COLOR RED}Pokémon {COLOR BLUE}get tired, take them to\n"
 	.string "a {COLOR RED}Pokémon Center{COLOR BLUE}.\p"
 	.string "There's a {COLOR RED}Pokémon Center {COLOR BLUE}in {COLOR RED}Oldale\n"
 	.string "Town {COLOR BLUE}right close by.$"
 
 Route101_Text_WildPokemonInTallGrass:
-	.string "{COLOR BLUE}Wild {COLOR DYNAMIC_COLOR6}Pokémon {COLOR BLUE}will jump out at you in\n"
+	.string "{COLOR BLUE}Wild {COLOR RED}Pokémon {COLOR BLUE}will jump out at you in\n"
 	.string "tall grass.\p"
-	.string "If you want to catch {COLOR DYNAMIC_COLOR6}Pokémon{COLOR BLUE}, you have\n"
+	.string "If you want to catch {COLOR RED}Pokémon{COLOR BLUE}, you have\n"
 	.string "to go into the tall grass and search.$"
 
 Route101_Text_RouteSign:
-	.string "{COLOR DARK_GRAY}Route 101\n"
-	.string "{COLOR RED}{UP_ARROW} {COLOR DARK_GRAY}Oldale Town$"
+	.string "{COLOR GREEN}Route 101\n"
+	.string "{COLOR RED}{UP_ARROW} {COLOR GREEN}Oldale Town$"
