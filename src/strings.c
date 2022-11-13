@@ -165,7 +165,7 @@ const u8 gText_SelectorArrow[] = _("▶");
 const u8 gText_EmptySpace[] = _(" "); // Unused
 const u8 gText_WelcomeToHOF[] = _("Welcome to the Hall Of Fame!");
 const u8 gText_HOFDexRating[] = _("Spotted Pokémon: {STR_VAR_1}!\nOwned Pokémon: {STR_VAR_2}!\pProf. Birch's Pokédex rating!\pProf. Birch: Let's see…\p");
-const u8 gText_HOFDexSaving[] = _("Saving…\nDon't Turn Off The Power.");
+const u8 gText_HOFDexSaving[] = _("{COLOR GREEN}Saving…\nDon't Turn Off The Power.");
 const u8 gText_HOFCorrupted[] = _("The Hall Of Fame data is corrupted.");
 const u8 gText_HOFNumber[] = _("Hall Of Fame No. {STR_VAR_1}");
 const u8 gText_LeagueChamp[] = _("League Champion!\nCongratulations!");
@@ -174,8 +174,8 @@ const u8 gText_Level[] = _("Lv. ");
 const u8 gText_IdNumberSlash[] = _("IDNo. /"); // Unused
 const u8 gText_Name[] = _("Name");
 const u8 gText_IDNumber[] = _("IDNo.");
-const u8 gText_BirchInTrouble[] = _("Prof. Birch is in trouble!\nRelease a Pokémon and rescue him!");
-const u8 gText_ConfirmStarterChoice[] = _("Do you choose this Pokémon?");
+const u8 gText_BirchInTrouble[] = _("{COLOR RED}Prof. Birch {COLOR GREEN}is in trouble!\nRelease a {COLOR RED}Pokémon {COLOR GREEN}and rescue him!");
+const u8 gText_ConfirmStarterChoice[] = _("{COLOR GREEN}Do you choose this {COLOR RED}Pokémon{COLOR GREEN}?");
 const u8 gText_Pokemon4[] = _("Pokémon"); // Unused
 const u8 gText_FlyToWhere[] = _("Fly to where?");
 const u8 gMenuText_Use[] = _("Use");
@@ -1959,7 +1959,7 @@ const u8 gText_FORMS_NONE[]                         = _("{STR_VAR_1} has no alte
 
 //// side quest data
 //generic strings
-const u8 gText_QuestAnnounce[] = _("The quest '{STR_VAR_1}'\nis now {STR_VAR_2}.");
+const u8 gText_QuestAnnounce[] = _("{COLOR GREEN} The quest {COLOR RED}'{STR_VAR_1}'\n{COLOR GREEN}is now {COLOR RED}{STR_VAR_2}{COLOR GREEN}.");
 const u8 gText_QuestComplete[] =_("complete");
 const u8 gText_QuestActive[] =_("active");
 

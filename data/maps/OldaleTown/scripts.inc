@@ -344,58 +344,58 @@ OldaleTown_Movement_ReturnToOriginalPosition:
 	step_end
 
 OldaleTown_Text_SavingMyProgress:
-	.string "I want to take a rest, so I'm saving my\n"
-	.string "progress.$"
+	.string "{COLOR BLUE}I want to take a rest, so I'm {COLOR RED}saving my\n"
+	.string "progress{COLOR BLUE}.$"
 
 OldaleTown_Text_IWorkAtPokemonMart:
-	.string "Hi!\n"
-	.string "I work at a Pokémon Mart.\p"
+	.string "{COLOR BLUE}Hi!\n"
+	.string "I work at the local {COLOR RED}Pokémon Mart{COLOR BLUE}.\p"
 	.string "Can I get you to come with me?$"
 
 OldaleTown_Text_ThisIsAPokemonMart:
-	.string "This is a Pokémon Mart.\n"
+	.string "{COLOR BLUE}This is a {COLOR RED}Pokémon Mart{COLOR BLUE}.\n"
 	.string "Just look for our blue roof.\p"
 	.string "We sell a variety of goods including\n"
-	.string "Poké Balls for catching Pokémon.\p"
+	.string "{COLOR RED}Poké Balls {COLOR BLUE}for catching {COLOR RED}Pokémon{COLOR BLUE}.\p"
 	.string "Here, I'd like you to have this as\n"
 	.string "a promotional item.$"
 
 OldaleTown_Text_PotionExplanation:
-	.string "A Potion can be used anytime, so it's\n"
-	.string "even more useful than a Pokémon Center\l"
-	.string "in certain situations.$"
+	.string "{COLOR BLUE}A {COLOR RED}Potion {COLOR BLUE}can be used anytime, so it's\n"
+	.string "even more useful than a {COLOR RED}Pokémon Center\l"
+	.string "{COLOR BLUE}in certain situations.$"
 
 OldaleTown_Text_WaitDontComeInHere:
-	.string "Aaaaah! Wait!\n"
+	.string "{COLOR BLUE}Aaaaah! Wait!\n"
 	.string "Please don't come in here.\p"
 	.string "I just discovered the footprints of\n"
-	.string "a rare Pokémon!\p"
+	.string "a rare {COLOR RED}Pokémon{COLOR BLUE}!\p"
 	.string "Wait until I finish sketching\n"
 	.string "them, okay?$"
 
 OldaleTown_Text_DiscoveredFootprints:
-	.string "I just discovered the footprints of\n"
-	.string "a rare Pokémon!\p"
+	.string "{COLOR BLUE}I just discovered the footprints of\n"
+	.string "a rare {COLOR RED}Pokémon{COLOR BLUE}!\p"
 	.string "Wait until I finish sketching\n"
 	.string "them, okay?$"
 
 OldaleTown_Text_FinishedSketchingFootprints:
-	.string "I finished sketching the footprints of\n"
-	.string "a rare Pokémon.\p"
+	.string "{COLOR BLUE}I finished sketching the footprints of\n"
+	.string "a rare {COLOR RED}Pokémon{COLOR BLUE}.\p"
 	.string "But it turns out they were only my\n"
 	.string "own footprints…$"
 
 OldaleTown_Text_MayLetsGoBack:
-	.string "May: {PLAYER}{KUN}!\n"
+	.string "{COLOR LIGHT_GREEN}{PLAYER}{KUN}{COLOR BLUE}!\n"
 	.string "Over here!\l"
 	.string "Let's hurry home!$"
 
 OldaleTown_Text_BrendanLetsGoBack:
-	.string "Brendan: I'm heading back to my dad's\n"
-	.string "Lab now.\l"
-	.string "{PLAYER}, you should hustle back, too.$"
+	.string "{COLOR BLUE}I'm heading back to my dad's\n"
+	.string "{COLOR RED}Lab {COLOR BLUE}now.\l"
+	.string "{COLOR LIGHT_GREEN}{PLAYER}{COLOR BLUE}, you should hustle back, too.$"
 
 OldaleTown_Text_CitySign:
-	.string "Oldale Town\n"
-	.string "“Where things start off scarce.”$"
+	.string "{COLOR RED}Oldale Town\n"
+	.string "{COLOR GREEN}“Where things start off scarce.”$"
 

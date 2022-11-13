@@ -420,20 +420,20 @@ PlayersHouse_1F_Text_IsThatABreakingStory:
 	.string "{COLOR BLUE}Is that a breaking news story?$"
 
 PlayersHouse_1F_Text_LatiEmergencyNewsFlash:
-	.string "We bring you this emergency\n"
+	.string "{COLOR BLUE}We bring you this emergency\n"
 	.string "news flash!\p"
-	.string "In various Hoenn locales, there have\n"
-	.string "been reports of a Bzzt…colored\l"
-	.string "Pokémon in flight.\p"
-	.string "The identity of this Pokémon is\n"
+	.string "In various {COLOR RED}Hoenn {COLOR BLUE}locales, there have\n"
+	.string "been reports of a {COLOR RED}Bzzt{COLOR BLUE}…colored\l"
+	.string "{COLOR RED}Pokémon {COLOR BLUE}in flight.\p"
+	.string "The identity of this {COLOR RED}Pokémon {COLOR BLUE}is\n"
 	.string "currently unknown.\p"
 	.string "We now return you to the regular\n"
 	.string "movie program.$"
 
 PlayersHouse_1F_Text_WhatColorDidTheySay:
-	.string "Mom: {PLAYER}, did you catch that?\p"
+	.string "{COLOR RED}Mom: {COLOR LIGHT_GREEN}{PLAYER}{COLOR BLUE}, did you catch that?\p"
 	.string "What color did the announcer say\n"
-	.string "that Pokémon was?$"
+	.string "that {COLOR RED}Pokémon {COLOR BLUE}was?$"
 
 PlayersHouse_1F_Text_StillUnknownPokemon:
 	.string "Mom: Well, isn't that something!\n"

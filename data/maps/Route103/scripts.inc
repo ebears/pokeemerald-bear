@@ -446,67 +446,67 @@ Route103_EventScript_Isabelle::
 	end
 
 Route103_Text_MayRoute103Pokemon:
-	.string "May: Let's see… The Pokémon found\n"
-	.string "on Route 103 include…$"
+	.string "{COLOR BLUE}Let's see… The {COLOR RED}Pokémon {COLOR BLUE}found\n"
+	.string "on {COLOR RED}Route 103 {COLOR BLUE}include…$"
 
 Route103_Text_MayLetsBattle:
-	.string "Oh, hi, {PLAYER}{KUN}!\p"
+	.string "{COLOR BLUE}Oh, hi, {COLOR LIGHT_GREEN}{PLAYER}{KUN}{COLOR BLUE}!\p"
 	.string "…Oh, I see, my dad gave you\n"
-	.string "a Pokémon as a gift.\p"
+	.string "a {COLOR RED}Pokémon {COLOR BLUE}as a gift.\p"
 	.string "Since we're here, let's have a quick\n"
 	.string "battle!\p"
 	.string "I'll give you a taste of what being\n"
-	.string "a Trainer is like.$"
+	.string "a trainer is like.$"
 
 Route103_Text_MayDefeated:
-	.string "Wow! That's great!\n"
-	.string "{PLAYER}{KUN}, you're pretty good!$"
+	.string "{COLOR BLUE}Wow! That's great!\n"
+	.string "{COLOR LIGHT_GREEN}{PLAYER}{KUN}{COLOR BLUE}, you're pretty good!$"
 
 Route103_Text_MayTimeToHeadBack:
-	.string "May: I think I know why my dad has\n"
+	.string "{COLOR BLUE}I think I know why my dad has\n"
 	.string "an eye out for you now.\p"
-	.string "I mean, you just got that Pokémon,\n"
+	.string "I mean, you just got that {COLOR RED}Pokémon{COLOR BLUE},\n"
 	.string "but it already likes you.\p"
 	.string "You might be able to befriend any\n"
-	.string "kind of Pokémon easily.\p"
+	.string "kind of {COLOR RED}Pokémon {COLOR BLUE}easily.\p"
 	.string "Well, it's time to head back to\n"
-	.string "the Lab.$"
+	.string "the {COLOR RED}Lab{COLOR BLUE}.$"
 
 Route103_Text_BrendanRoute103Pokemon:
-	.string "Brendan: Okay, so it's this one and\n"
-	.string "that one that live on Route 103…$"
+	.string "{COLOR BLUE}Okay, so it's this one and\n"
+	.string "that one that live on {COLOR RED}Route 103{COLOR BLUE}…$"
 
 Route103_Text_BrendanLetsBattle:
-	.string "Hey, it's {PLAYER}!\p"
-	.string "…Oh, yeah, Dad gave you a Pokémon.\p"
+	.string "{COLOR BLUE}Hey, it's {COLOR LIGHT_GREEN}{PLAYER}{COLOR BLUE}!\p"
+	.string "…Oh, yeah, {COLOR RED}Dad {COLOR BLUE}gave you a {COLOR RED}Pokémon{COLOR BLUE}.\p"
 	.string "Since we're here, how about a little\n"
 	.string "battle?\p"
-	.string "I'll teach you what being a Trainer's\n"
+	.string "I'll teach you what being a trainer's\n"
 	.string "about!$"
 
 Route103_Text_BrendanDefeated:
-	.string "Huh, {PLAYER}, you're not too shabby.$"
+	.string "{COLOR BLUE}Huh, {COLOR LIGHT_GREEN}{PLAYER}{COLOR BLUE}, you're not too shabby.$"
 
 Route103_Text_BrendanTimeToHeadBack:
-	.string "Brendan: I think I get it.\n"
+	.string "{COLOR BLUE}I think I get it.\n"
 	.string "I think I know why my dad has his eye\l"
 	.string "out for you now.\p"
-	.string "Look, your Pokémon already likes you,\n"
+	.string "Look, your {COLOR RED}Pokémon {COLOR BLUE}already likes you,\n"
 	.string "even though you just got it.\p"
-	.string "{PLAYER}, I get the feeling that you\n"
-	.string "could befriend any Pokémon with ease.\p"
-	.string "We should head back to the Lab.$"
+	.string "{COLOR LIGHT_GREEN}{PLAYER}{COLOR BLUE}, I get the feeling that you\n"
+	.string "could befriend any {COLOR RED}Pokémon {COLOR BLUE}with ease.\p"
+	.string "We should head back to the {COLOR RED}Lab{COLOR BLUE}.$"
 
 Route103_Text_ShouldHaveBroughtPotion:
-	.string "My Pokémon is staggeringly tired…\n"
-	.string "I should have brought a Potion…$"
+	.string "{COLOR BLUE}My {COLOR RED}Pokémon {COLOR BLUE}is staggeringly tired…\n"
+	.string "I should have brought a {COLOR RED}Potion{COLOR BLUE}…$"
 
 Route103_Text_ShortcutToOldale:
-	.string "If you cross the sea from here,\n"
-	.string "it'll be a shortcut to Oldale Town.\p"
+	.string "{COLOR BLUE}If you cross the sea from here,\n"
+	.string "it'll be a shortcut to {COLOR RED}Oldale Town{COLOR BLUE}.\p"
 	.string "Fufufu, that's useful, isn't it?$"
 
 Route103_Text_RouteSign:
-	.string "Route 103\n"
-	.string "{DOWN_ARROW} Oldale Town$"
+	.string "{COLOR RED}Route 103\n"
+	.string "{COLOR GREEN}{DOWN_ARROW} {COLOR RED}Oldale Town$"
 

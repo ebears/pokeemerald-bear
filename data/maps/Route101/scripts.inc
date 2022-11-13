@@ -346,5 +346,5 @@ Route101_Text_WildPokemonInTallGrass:
 	.string "to go into the tall grass and search.$"
 
 Route101_Text_RouteSign:
-	.string "{COLOR GREEN}Route 101\n"
-	.string "{COLOR RED}{UP_ARROW} {COLOR GREEN}Oldale Town$"
+	.string "{COLOR RED}Route 101\n"
+	.string "{COLOR GREEN}{UP_ARROW} {COLOR RED}Oldale Town$"

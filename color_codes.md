@@ -1,9 +1,9 @@
-DARK_GRAY - Non-narrated events
+DARK_GRAY - idk avoid
 
 RED - Important Objects
 LIGHT_RED (Purplish-pink)
 
-GREEN - Object text
+GREEN - Object/narrated text
 LIGHT_GREEN (Orange) - Player's name
 
 BLUE - NPC Text

@@ -166,6 +166,8 @@ PetalburgCity_Gym_EventScript_ThatIsARalts::
 	setflag FLAG_HIDE_LITTLEROOT_TOWN_BIRCHS_LAB_RIVAL
 	special InitBirchState
 	closemessage
+	msgbox PetalburgCity_Gym_Text_DadGoCollectBadges
+	closemessage
 	release
 	end
 
@@ -1097,127 +1099,111 @@ PetalburgCity_Gym_EventScript_GymStatue::
 	end
 
 PetalburgCity_Gym_Text_DadYoureHereWithYourPokemon:
-	.string "Dad: Hm?\p"
-	.string "Well, if it isn't {PLAYER}!\n"
+	.string "{COLOR RED}Dad: {COLOR BLUE}Hm?\p"
+	.string "Well, if it isn't {COLOR LIGHT_GREEN}{PLAYER}{COLOR BLUE}!\n"
 	.string "So you're all finished moving in?\p"
 	.string "I'm surprised that you managed to\n"
 	.string "get here by yourself.\p"
 	.string "Oh, I see.\n"
-	.string "You're with your Pokémon.\p"
+	.string "You're with your {COLOR RED}Pokémon{COLOR BLUE}.\p"
 	.string "Hm… Then I guess you're going to\n"
-	.string "become a Trainer like me, {PLAYER}.\p"
+	.string "become a trainer like me, {COLOR LIGHT_GREEN}{PLAYER}{COLOR BLUE}.\p"
 	.string "That's great news!\n"
 	.string "I'll be looking forward to it!$"
 
 PetalburgCity_Gym_Text_WallyIdLikeAPokemon:
-	.string "Um… I…\n"
-	.string "I'd like to get a Pokémon, please…$"
+	.string "{COLOR BLUE}Um… I…\n"
+	.string "I'd like to get a {COLOR LIGHT_GREEN}Pokémon{COLOR BLUE}, please…$"
 
 PetalburgCity_Gym_Text_DadOhYoureWallyRight:
-	.string "Dad: Hm? You're… Uh… Oh, right.\n"
-	.string "You're Wally, right?$"
+	.string "{COLOR RED}Dad: {COLOR BLUE}Hm? You're… Uh… Oh, right.\n"
+	.string "You're {COLOR RED}Wally{COLOR BLUE}, right?$"
 
 PetalburgCity_Gym_Text_WallyIveNeverCaughtAPokemon:
-	.string "Wally: I'm going to go stay with my\n"
-	.string "relatives in Verdanturf Town.\p"
+	.string "{COLOR RED}Wally: {COLOR BLUE}I'm going to go stay with my\n"
+	.string "relatives in {COLOR RED}Verdanturf Town{COLOR BLUE}.\p"
 	.string "I thought I would be lonely by myself,\n"
-	.string "so I wanted to take a Pokémon along.\p"
-	.string "But I've never caught a Pokémon before.$"
+	.string "so I wanted to take a {COLOR RED}Pokémon {COLOR BLUE}along.\p"
+	.string "But I've never caught a {COLOR RED}Pokémon {COLOR BLUE}before.$"
 
 PetalburgCity_Gym_Text_DadHmISee:
-	.string "Dad: Hm. I see.$"
+	.string "{COLOR RED}Dad: {COLOR BLUE}Hm. I see.$"
 
 PetalburgCity_Gym_Text_DadPlayerGoCatchForWally:
-	.string "Dad: {PLAYER}, you heard that,\n"
+	.string "{COLOR RED}Dad: {COLOR LIGHT_GREEN}{PLAYER}{COLOR BLUE}, you heard that,\n"
 	.string "right?\p"
 	.string "Considering you're a new trainer...\p"
-	.string "It's great experience if you caught Wally\n"
-	.string "his first Pokémon. Don't you think?$"
+	.string "It's great experience if you caught {COLOR RED}Wally\n"
+	.string "{COLOR BLUE}his first {COLOR RED}Pokémon{COLOR BLUE}. Don't you think?$"
 
 PetalburgCity_Gym_Text_DadOkayDoNotHelp:
-	.string "Very well, {PLAYER}. I suppose you\n"
+	.string "{COLOR BLUE}Very well, {COLOR LIGHT_GREEN}{PLAYER}{COLOR BLUE}. I suppose you\n"
 	.string "have better things to do...$"
 
 PetalburgCity_Gym_Text_DadWallyQuestInfo:
-	.string "Glad you can help.\p"
-	.string "There are Ralts in the routes\n"
+	.string "{COLOR BLUE}Glad you can help.\p"
+	.string "There are {COLOR RED}Ralts {COLOR BLUE}in the routes\n"
 	.string "to the east of here.\p"
 	.string "I think that would make a great\n"
-	.string "starter for Wally.$"
+	.string "starter for {COLOR RED}Wally{COLOR BLUE}.$"
 
 PetalburgCity_Gym_Text_DadWallyQuestExtraInfo:
-	.string "...\p"
-	.string "Oh {PLAYER}, now that you are a\n"
+	.string "{COLOR BLUE}...\p"
+	.string "Oh {COLOR LIGHT_GREEN}{PLAYER}{COLOR BLUE}, now that you are a\n"
 	.string "trainer, you should know:\p"
 	.string "The time of day affects which sort of\n"
-	.string "Pokémon you encounter in each route.\p"
+	.string "{COLOR RED}Pokémon {COLOR BLUE}you encounter in each route.\p"
 	.string "With that being said...\p"
-	.string "Ralts are known to appear in Route 102\n"
-	.string "during the day.\p"
-	.string "And in Route 101, right by our\n"
+	.string "{COLOR RED}Ralts {COLOR BLUE}are known to appear in {COLOR RED}Route 102\n"
+	.string "{COLOR BLUE}during the day.\p"
+	.string "And in {COLOR RED}Route 101{COLOR BLUE}, right by our\n"
 	.string "house, at night.$"
 
 PetalburgCity_Gym_Text_WallyQuestInProgress:
-	.string "{PLAYER}, have you found Wally\n"
-	.string "a Ralts?$"
+	.string "{COLOR LIGHT_GREEN}{PLAYER}{COLOR BLUE}, have you found {COLOR RED}Wally\n"
+	.string "{COLOR BLUE}a {COLOR RED}Ralts{COLOR BLUE}?$"
 
 PetalburgCity_Gym_Text_ThatIsNotARalts:
-	.string "Hm, come back when you've\n"
-	.string "found Wally a Ralts.$"
+	.string "{COLOR BLUE}Hm, come back when you've\n"
+	.string "found {COLOR RED}Wally {COLOR BLUE}a {COLOR RED}Ralts{COLOR BLUE}.$"
 
 PetalburgCity_Gym_Text_ThatIsARalts:
-	.string "Great, this looks like a fantastic\n"
-	.string "starter for Wally.$"
+	.string "{COLOR BLUE}Great, this looks like a fantastic\n"
+	.string "starter for {COLOR RED}Wally{COLOR BLUE}.$"
 
 PetalburgCity_Gym_Text_WallyThankYouForHelp:
-	.string "Wally: Thanks {PLAYER}, I am going\n"
-	.string "to become the best trainer ever!$"
+	.string "{COLOR RED}Wally: {COLOR BLUE}Thanks {COLOR LIGHT_GREEN}{PLAYER}{COLOR BLUE}, this looks\n"
+	.string "like a great friend.$"
 
 PetalburgCity_Gym_Text_ThanksForTheHelp:
-	.string "{PLAYER}, thank you for the help.$"
-
-PetalburgCity_Gym_Text_DadSoDidItWorkOut:
-	.string "Dad: So, did it work out?$"
-
-PetalburgCity_Gym_Text_WallyThankYouBye:
-	.string "Wally: Thank you, yes, it did.\n"
-	.string "Here's your Pokémon back.\p"
-	.string "{PLAYER}, thank you for coming along\n"
-	.string "with me.\p"
-	.string "You two are why I was able to catch\n"
-	.string "my Pokémon.\p"
-	.string "I promise I'll take really good\n"
-	.string "care of it.\p"
-	.string "Oh! My mom's waiting for me,\n"
-	.string "so I have to go!\p"
-	.string "Bye, {PLAYER}!$"
+	.string "{COLOR LIGHT_GREEN}{PLAYER}{COLOR BLUE}, thank you for the help.$"
 
 PetalburgCity_Gym_Text_DadGoCollectBadges:
-	.string "Dad: Now…\p"
-	.string "{PLAYER}, if you want to become a\n"
-	.string "strong Trainer, here's my advice.\p"
-	.string "Head for Rustboro City beyond this\n"
+	.string "{COLOR RED}Dad: {COLOR BLUE}Now…\p"
+	.string "{COLOR LIGHT_GREEN}{PLAYER}{COLOR BLUE}, if you want to become a\n"
+	.string "strong trainer, here's my advice.\p"
+	.string "Head for {COLOR RED}Rustboro City {COLOR BLUE}beyond this\n"
 	.string "town.\p"
 	.string "There, you should challenge\n"
-	.string "the Gym Leader, Roxanne.\p"
-	.string "After her, go on to other Pokémon\n"
-	.string "Gyms and defeat their Leaders.\p"
-	.string "Collect Badges from them,\n"
+	.string "the {COLOR RED}Gym Leader{COLOR BLUE}, {COLOR RED}Roxanne{COLOR BLUE}.\p"
+	.string "After her, go on to other {COLOR RED}Pokémon\n"
+	.string "Gyms {COLOR BLUE}and defeat their {COLOR RED}Gym Leaders{COLOR BLUE}.\p"
+	.string "Collect {COLOR RED}Badges {COLOR BLUE}from them,\n"
 	.string "understood?\p"
-	.string "Of course, I'm a Gym Leader, too.\n"
-	.string "We'll battle one day, {PLAYER}.\p"
+	.string "Of course, I'm a {COLOR RED}Gym Leader{COLOR BLUE}, too.\n"
+	.string "We'll battle one day, {COLOR LIGHT_GREEN}{PLAYER}{COLOR BLUE}.\p"
 	.string "But that's only after you become\n"
 	.string "stronger.$"
 
 PetalburgCity_Gym_Text_NormanGoToRustboro:
-	.string "Dad: Hm? Aren't you going to the\n"
-	.string "Pokémon Gym in Rustboro City?\p"
+	.string "{COLOR RED}Dad: {COLOR BLUE}Hm? Aren't you going to the\n"
+	.string "{COLOR RED}Pokémon Gym {COLOR BLUE}in {COLOR RED}Rustboro City{COLOR BLUE}?\p"
 	.string "There's no challenge for me to\n"
-	.string "battle a greenhorn Trainer.\p"
-	.string "{PLAYER}, I want you to challenge me\n"
+	.string "battle a greenhorn trainer.\p"
+	.string "{COLOR LIGHT_GREEN}{PLAYER}{COLOR BLUE}, I want you to challenge me\n"
 	.string "when you become a lot stronger.\p"
-	.string "I'll battle you, {PLAYER}, when you\n"
-	.string "can show me four Gym Badges, okay?$"
+	.string "I'll battle you, {COLOR LIGHT_GREEN}{PLAYER}{COLOR BLUE}, when you\n"
+	.string "can show me four {COLOR RED}Gym Badges{COLOR BLUE}, okay?$"
 
 PetalburgCity_Gym_Text_NormanGoToDewford:
 	.string "Dad: I see… So, you've beaten\n"

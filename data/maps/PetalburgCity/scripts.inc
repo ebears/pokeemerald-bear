@@ -602,63 +602,63 @@ PetalburgCity_EventScript_GymBoy::
 	end
 
 PetalburgCity_Text_WhereIsWally:
-	.string "Where has our Wally gone?\p"
-	.string "We have to leave for Verdanturf Town\n"
-	.string "very soon…$"
+	.string "{COLOR BLUE}Where has our {COLOR RED}Wally {COLOR BLUE}gone?\p"
+	.string "We have to leave for {COLOR RED}Verdanturf Town\n"
+	.string "{COLOR BLUE}very soon…$"
 
 PetalburgCity_Text_AreYouRookieTrainer:
-	.string "Hiya! Are you maybe…\n"
-	.string "A rookie Trainer?\p"
-	.string "Do you know what Pokémon Trainers\n"
-	.string "do when they reach a new town?\p"
-	.string "They first check what kind of Gym\n"
-	.string "is in the town.$"
+	.string "{COLOR BLUE}Hiya! Are you maybe…\n"
+	.string "A rookie trainer?\p"
+	.string "Do you know what {COLOR RED}Pokémon Trainers\n"
+	.string "{COLOR BLUE}do when they reach a new town?\p"
+	.string "They first check what kind of {COLOR RED}Gym\n"
+	.string "{COLOR BLUE}is in the town.$"
 
 PetalburgCity_Text_ThisIsPetalburgGym:
-	.string "See? This is Petalburg City's Gym.$"
+	.string "{COLOR BLUE}See? This is {COLOR RED}Petalburg City's Gym{COLOR BLUE}.$"
 
 PetalburgCity_Text_ThisIsGymSign:
-	.string "This is the Gym's sign. Look for it\n"
-	.string "whenever you're looking for a Gym.$"
+	.string "{COLOR BLUE}This is the {COLOR RED}Gym's {COLOR BLUE}sign. Look for it\n"
+	.string "whenever you're looking for a {COLOR RED}Gym{COLOR BLUE}.$"
 
 PetalburgCity_Text_WaterReflection:
-	.string "My face is reflected in the water.\p"
+	.string "{COLOR BLUE}My face is reflected in the water.\p"
 	.string "It's a shining grin full of hope…\p"
 	.string "Or it could be a look of somber silence\n"
 	.string "struggling with fear…\p"
 	.string "What do you see reflected in your face?$"
 
 PetalburgCity_Text_FullPartyExplanation:
-	.string "Let's say you have six Pokémon.\n"
+	.string "{COLOR BLUE}Let's say you have six {COLOR RED}Pokémon{COLOR BLUE}.\n"
 	.string "If you catch another one…\p"
-	.string "It is automatically sent to a Storage\n"
-	.string "Box over a PC connection.$"
+	.string "It is automatically sent to a {COLOR RED}Storage\n"
+	.string "Box {COLOR BLUE}over a {COLOR RED}PC {COLOR BLUE}connection.$"
 
 PetalburgCity_Text_GymSign:
-	.string "Petalburg City Pokémon Gym\n"
-	.string "Leader: Norman\l"
-	.string "“A man in pursuit of power!”$"
+	.string "{COLOR RED}Petalburg City Pokémon Gym\n"
+	.string "{COLOR GREEN}Leader: {COLOR RED}Norman\l"
+	.string "{COLOR GREEN}“A man in pursuit of power!”$"
 
 PetalburgCity_Text_CitySign:
-	.string "Petalburg City\n"
-	.string "“Where people mingle with nature.”$"
+	.string "{COLOR RED}Petalburg City\n"
+	.string "{COLOR GREEN}“Where people mingle with nature.”$"
 
 PetalburgCity_Text_WallyHouseSign:
-	.string "Wally's House$"
+	.string "{COLOR RED}Wally's House$"
 
 PetalburgCity_Text_AreYouATrainer:
-	.string "Excuse me!\p"
+	.string "{COLOR BLUE}Excuse me!\p"
 	.string "Let me guess, from the way you're\n"
-	.string "dressed, are you a Pokémon Trainer?$"
+	.string "dressed, are you a {COLOR RED}Pokémon Trainer{COLOR BLUE}?$"
 
 PetalburgCity_Text_WellMaybeNot:
-	.string "… … … … … …\p"
+	.string "{COLOR BLUE}… … … … … …\p"
 	.string "Well, maybe not.\n"
 	.string "Your clothes aren't all that dirty.\p"
-	.string "You're either a rookie Trainer,\n"
+	.string "You're either a rookie trainer,\n"
 	.string "or maybe you're just an ordinary kid.$"
 
 PetalburgCity_Text_ImLookingForTalentedTrainers:
-	.string "I'm roaming the land in search of\n"
-	.string "talented Trainers.\p"
+	.string "{COLOR BLUE}I'm roaming the land in search of\n"
+	.string "talented trainers.\p"
 	.string "I'm sorry to have taken your time.$"
