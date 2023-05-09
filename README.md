@@ -76,6 +76,10 @@ The blue in Mr. Briney's Cottage glows in the dark.
 
     - ~~Commit [2230a49602f6ac2090c01436ff2dc033861488fb](https://github.com/ebears/emerald-dx/commit/2230a49602f6ac2090c01436ff2dc033861488fb) reintroduced the original bug.~~
 
+## Installation
+
+Installation may be done from the [traditional methods](https://github.com/ebears/pokeemerald-bear/blob/master/INSTALL.md).\
+I have also included Docker (or Podman 😎) files for installation in a container.
 
 ## Credits
 

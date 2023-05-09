@@ -1,0 +1,9 @@
+version: '3'
+services:
+  pokeemerald-builder:
+    container_name: pokeemerald-builder
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - ./COMPLETE:/pokeemerald/output
